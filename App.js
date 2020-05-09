@@ -33,7 +33,7 @@ export default function App(props) {
         SplashScreen.hide();
       }
     }
-
+//Aaron's push needs some changes too
     loadResourcesAndDataAsync();
   }, []);
 
