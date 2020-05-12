@@ -43,6 +43,6 @@ function getHeaderTitle(route) {
     case 'Home':
       return 'How to get started';
     case 'Links':
-      return 'Links to learn more';
+      return 'Annotate Photo';
   }
 }
