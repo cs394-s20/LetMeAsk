@@ -1,55 +1,76 @@
-import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
+import { Ionicons } from "@expo/vector-icons";
+import * as WebBrowser from "expo-web-browser";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Image } from "react-native";
+import { RectButton, ScrollView } from "react-native-gesture-handler";
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function LinksScreen() {
   const [annCoords, setAnnCoords] = useState([]);
 
   const handleImageClick = (e) => {
-    setAnnCoords([e.nativeEvent.locationX, e.nativeEvent.locationY])
-  }
+    setAnnCoords([e.nativeEvent.locationX, e.nativeEvent.locationY]);
+  };
 
   return (
     <View>
-      <View>
-
+      <View style={styles.photoContainer}>
         <Image
           onTouchStart={(e) => handleImageClick(e)}
           style={styles.photo}
+          resizeMode={"contain"}
           source={{
-            uri: 'https://lh3.googleusercontent.com/proxy/iiaiDZ6QBxQKEWYIzams9m8Yq72zn6R5DlAIs2IXYSu37_UsvtHc4b-mz1KSdzWuJwj5OIlHfw0xEZxonz4CKvhAeFZ_URQ-JV5ezbfLE8SHslFy1_5OoIYXhdpm0DHz9MsX1LnTtQ',
+            uri:
+              "https://lh3.googleusercontent.com/proxy/gMrsrYWI3BmRkcFfQuRBAJCCr3LkfUaC0lnoxAsXqHQfNykkFKsBx1oH1YHeh9ENU7xKkvRfgXIRJasxt7J603Fx5JboWgIZyQ8j-Hju8xRTr5FVPrdCRH2oF7vsRD_b7gLhtbVeug",
           }}
         />
-        {/* <Pin coords={annCoords}></Pin> */}
-      </View >
-      <MaterialCommunityIcons name="map-marker-question" size={24} color="black" />
-      <View><Pin coords={annCoords}></Pin></View>
+      </View>
+      <View style={styles.pin}>
+        <Pin coords={annCoords}></Pin>
+      </View>
+      {/* <MaterialCommunityIcons
+        name="map-marker-question"
+        size={24}
+        color="black"
+      /> */}
     </View>
-
   );
 }
 
 const Pin = ({ coords }) => {
   return (
-    <View>
-      <MaterialCommunityIcons name="map-marker-question" size={24} color="black" />
-    </View>
-  )
-}
+    <MaterialCommunityIcons
+      name="map-marker-question"
+      size={24}
+      color="black"
+    />
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: "#fafafa",
   },
   photo: {
-    width: 200,
-    height: 300,
-    alignSelf: 'center',
-    marginTop: 10
-  }
+    width: 400,
+    height: 500,
+    alignSelf: "center",
+    marginTop: 10,
+    position: "absolute",
+  },
+  photoContainer: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  pin: {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
 });
