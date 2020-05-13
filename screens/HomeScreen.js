@@ -1,9 +1,10 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { MonoText } from '../components/StyledText';
+import { Camera } from 'expo-camera';
 
 export default function HomeScreen() {
   return (
@@ -19,6 +20,11 @@ export default function HomeScreen() {
             style={styles.welcomeImage}
           />
         </View>
+        <Button 
+          title = 'Camera'
+          
+
+        />
 
         <View style={styles.getStartedContainer}>
           <DevelopmentModeNotice />
