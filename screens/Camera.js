@@ -107,7 +107,7 @@ export default function App() {
                 <View style={{flex:1, alignItems:"center",justifyContent:"center",margin:20}}>
                   <TouchableOpacity style={{margin:10}} onPress = {() => {setImageOpen(false)}}>
                     <FontAwesome
-                      name="windoe-close"
+                      name="window-close"
                       style={{ color: "#ff0000", fontSize: 40}}
                   />
                     
@@ -142,7 +142,7 @@ export default function App() {
                 <View style={{flex:1, alignItems:"center",justifyContent:"center",margin:20}}>
                   <TouchableOpacity style={{margin:10}} onPress = {() => setOpen(false)}>
                     <FontAwesome
-                      name="windoe-close"
+                      name="window-close"
                       style={{ color: "#ff0000", fontSize: 40}}
                   />
                     
