@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
+  TextInput,
   View,
   Image,
   Dimensions,
@@ -17,12 +18,58 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 export default function LinksScreen() {
   const [annCoords, setAnnCoords] = useState([]);
 
+  const [title, setTitle] = useState('')
+  const [question, setQuestion] = useState('');
+  const [description, setDescription] = useState('');
+  const [pageNumber, setPageNumber] = useState('');
+  const [image, setImage] = useState('')
+  const [ISBN, setISBN] = useState('');
+
+  /*
+  Question Model
+    _id: String,
+    title: String,
+    description: String,
+    subject: String,
+    author: String,
+    image: String,
+    isbn: String,
+    position: {
+      page
+      coordinates
+    }
+  })
+
+  User Model {
+    _id: String,
+    email: String,
+    credentials: {
+      school: String,
+      AuthorFor: [] Subjects,
+      expertIn: [] Subjects,
+      ModeratorFor: [] Subjects,
+    },
+    questions: [] Question_id's
+  }
+
+  Book Model {
+   _id: String,
+    title: String,
+    author: String,
+    isbn: String,
+    questions: [] QuestionId's
+  }
+*/
+
   const pan = useRef(new Animated.ValueXY()).current;
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
+        setAnnCoords([pan.x._value, pan.y._value])
+        // console.log(pan.x._value)
+        // console.log(annCoords.toString())
         pan.setOffset({
           x: pan.x._value,
           y: pan.y._value,
@@ -35,39 +82,56 @@ export default function LinksScreen() {
     })
   ).current;
 
-  const handleImageClick = (e) => {
-    setAnnCoords([e.nativeEvent.locationX, e.nativeEvent.locationY]);
-    console.log(e);
-  };
+  // const handleImageClick = (e) => {
+  //   setAnnCoords([e.nativeEvent.locationX, e.nativeEvent.locationY]);
+  // };
+
   const deviceWidth = Dimensions.get("window").width;
   const deviceHeight = Dimensions.get("window").height * 0.809;
 
   return (
-    <View
-      style={{
-        borderColor: "red",
-        borderWidth: 2,
-        width: deviceWidth,
-        height: deviceHeight,
-      }}
-    >
-      <Image
-        onTouchStart={(e) => handleImageClick(e)}
-        style={styles.photo}
-        // resizeMode={"contain"}
-        source={{
-          uri:
-            "https://sputniktextbook.org/Pictures/About/TextBook/Page_118sm.jpg",
-        }}
-      />
-      <Animated.View
+    <View>
+      <View>
+        <TextInput
+          style={{ height: 40, borderColor: 'lightblue', borderWidth: 1 }}
+          onChangeText={text => setTitle(text)}
+          value={title}
+          placeholder="Title"
+        />
+        <TextInput
+          style={{ height: 40, borderColor: 'lightblue', borderWidth: 1 }}
+          onChangeText={text => setQuestion(text)}
+          value={question}
+          placeholder="Question"
+        />
+      </View>
+      <View
         style={{
-          transform: [{ translateX: pan.x }, { translateY: pan.y }],
+          // borderColor: "red",
+          // borderWidth: 2,
+          width: deviceWidth,
+          height: deviceHeight,
         }}
-        {...panResponder.panHandlers}
       >
-        <Pin coords={annCoords}></Pin>
-      </Animated.View>
+        <Text>Drag the Pin to the location on the page to which your question corresponds.</Text>
+        <Image
+          // onTouchStart={(e) => handleImageClick(e)}
+          style={styles.photo}
+          // resizeMode={"contain"}
+          source={{
+            uri:
+              "https://sputniktextbook.org/Pictures/About/TextBook/Page_118sm.jpg",
+          }}
+        />
+        <Animated.View
+          style={{
+            transform: [{ translateX: pan.x }, { translateY: pan.y }],
+          }}
+          {...panResponder.panHandlers}
+        >
+          <Pin coords={annCoords}></Pin>
+        </Animated.View>
+      </View>
     </View>
   );
 }
