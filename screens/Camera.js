@@ -3,11 +3,26 @@ import { Text, View, TouchableOpacity, Modal, Image } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
+import firebase from 'firebase';
 
 //Expo Icon
 import { FontAwesome, Ionicons,MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function App() {
+const firebaseConfig = {
+  apiKey: "AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0",
+  authDomain: "letmeask-e07af.firebaseapp.com",
+  databaseURL: "https://letmeask-e07af.firebaseio.com",
+  projectId: "letmeask-e07af",
+  storageBucket: "letmeask-e07af.appspot.com",
+  messagingSenderId: "431381968564",
+  appId: "1:431381968564:web:88796cb07396cbedb949e1",
+  measurementId: "G-FJCV2E9WK2"
+};
+
+//===========firebase=============
+firebase.initializeApp(firebaseConfig);
+
+export default function CameraApp() {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const camRef = useRef(null);
@@ -15,8 +30,7 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const [imageOpen, setImageOpen] = useState(false);
   const [pickPhoto, setPickPhoto] = useState(null);
-  
-  
+  const imageName = "test";
 
   useEffect(() => {
     (async () => {
@@ -42,18 +56,15 @@ export default function App() {
     // Camera Permission
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     setHasPermission(status === 'granted');
-  }
+  };
 
   async function takePicture(){
-    console.log("aaaa")
     if (camRef) {
-      console.log("aaaa")
       let photo = await camRef.current.takePictureAsync();
       setcapturedPhoto(photo.uri);
       setOpen(true);
-      console.log(capturedPhoto)
     }
-  }
+  };
 
   async function pickImage(){
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -62,7 +73,17 @@ export default function App() {
     console.log(result.uri);
     setPickPhoto(result.uri);
     setImageOpen(true);
-  }
+  };
+
+  async function uploadImage(uri, imageName){
+    
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    //console.log(response);
+
+    var ref = firebase.storage().ref().child("images/" + imageName);
+    return ref.put(blob);
+  };
 
   if (hasPermission === null) {
     return <View />;
@@ -147,6 +168,24 @@ export default function App() {
                   />
                     
                   </TouchableOpacity>
+
+                  <TouchableOpacity style={{margin:10}} onPress = {() => {
+                    uploadImage(capturedPhoto, imageName)
+                    .then(()=>{
+                      console.log("yes!!!!!!");
+                    })
+                    .catch((error) =>{
+                      console.log(error);
+                    });
+                  }
+                }>
+                    <FontAwesome
+                      name="window-close"
+                      style={{ color: "#ff0000", fontSize: 40}}
+                  />
+                    
+                  </TouchableOpacity>
+
                   <Image style={{width:'100%', height: 500, borderRadius: 20}}
                     source = {{uri: capturedPhoto}}
                   >
@@ -154,6 +193,7 @@ export default function App() {
                 </View>
               </Modal>
             }
+            
             <TouchableOpacity
               style={{
                 alignSelf: 'flex-end',
@@ -177,5 +217,4 @@ export default function App() {
         </View>
       </Camera>
     </View>
-  );
-}
+  );}
