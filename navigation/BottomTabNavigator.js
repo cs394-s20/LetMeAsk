@@ -4,7 +4,7 @@ import * as React from 'react';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
-import Camera from '../screens/Camera';
+// import Camera from '../screens/Camera';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Home';
@@ -21,7 +21,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'Get Started Now',
+          title: 'Browse',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
         }}
       />
@@ -29,18 +29,18 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="Links"
         component={LinksScreen}
         options={{
-          title: 'Resources',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
+          title: 'Ask',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
         }}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="Camera"
         component={Camera}
         options={{
           title: 'Camera',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
-      />
+      /> */}
     </BottomTab.Navigator>
   );
 }

@@ -22,15 +22,14 @@ const firebaseConfig = {
 //===========firebase=============
 firebase.initializeApp(firebaseConfig);
 
-export default function CameraApp() {
+export default function CameraApp({setPhoto, setCameraOpen}) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const camRef = useRef(null);
-  const [capturedPhoto, setcapturedPhoto] = useState(null);
+  const [capturedPhoto, setCapturedPhoto] = useState(null);
   const [open, setOpen] = useState(false);
   const [imageOpen, setImageOpen] = useState(false);
   const [pickPhoto, setPickPhoto] = useState(null);
-  const imageName = "test";
 
   useEffect(() => {
     (async () => {
@@ -61,7 +60,7 @@ export default function CameraApp() {
   async function takePicture(){
     if (camRef) {
       let photo = await camRef.current.takePictureAsync();
-      setcapturedPhoto(photo.uri);
+      setCapturedPhoto(photo.uri);
       setOpen(true);
     }
   };
@@ -75,14 +74,13 @@ export default function CameraApp() {
     setImageOpen(true);
   };
 
-  async function uploadImage(uri, imageName){
-    
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    //console.log(response);
-
-    var ref = firebase.storage().ref().child("images/" + imageName);
-    return ref.put(blob);
+  async function uploadImage(uri){
+    setPhoto(uri);
+    setCameraOpen(false);
+    //const response = await fetch(uri);
+    //const blob = await response.blob();
+    //var ref = firebase.storage().ref().child("images/" + imageName);
+    //return ref.put(blob);
   };
 
   if (hasPermission === null) {
@@ -170,9 +168,9 @@ export default function CameraApp() {
                   </TouchableOpacity>
 
                   <TouchableOpacity style={{margin:10}} onPress = {() => {
-                    uploadImage(capturedPhoto, imageName)
+                    uploadImage(capturedPhoto)
                     .then(()=>{
-                      console.log("yes!!!!!!");
+                      console.log("Photo Uploaded");
                     })
                     .catch((error) =>{
                       console.log(error);
@@ -180,8 +178,8 @@ export default function CameraApp() {
                   }
                 }>
                     <FontAwesome
-                      name="window-close"
-                      style={{ color: "#ff0000", fontSize: 40}}
+                      name="arrow-up"
+                      style={{ color: "#1ec929", fontSize: 40}}
                   />
                     
                   </TouchableOpacity>
