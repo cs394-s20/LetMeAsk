@@ -14,23 +14,22 @@ import {
   Button,
 } from "react-native";
 // import { RectButton, ScrollView } from "react-native-gesture-handler";
-import CameraApp from '../components/Camera'
+import CameraApp from "../components/Camera";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function LinksScreen() {
   const [annCoords, setAnnCoords] = useState([]);
 
-  const [cameraOpen, setCameraOpen] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false);
 
-  const [title, setTitle] = useState('')
-  const [question, setQuestion] = useState('');
-  const [description, setDescription] = useState('');
-  const [pageNumber, setPageNumber] = useState('');
-  const [image, setImage] = useState('')
-  const [ISBN, setISBN] = useState('');
-  const [photo, setPhoto] = useState('');
-
+  const [title, setTitle] = useState("");
+  const [question, setQuestion] = useState("");
+  const [description, setDescription] = useState("");
+  const [pageNumber, setPageNumber] = useState("");
+  const [image, setImage] = useState("");
+  const [ISBN, setISBN] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const pan = useRef(new Animated.ValueXY()).current;
 
@@ -38,7 +37,7 @@ export default function LinksScreen() {
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
-        setAnnCoords([pan.x._value, pan.y._value])
+        setAnnCoords([pan.x._value, pan.y._value]);
         // console.log(pan.x._value)
         // console.log(annCoords.toString())
         pan.setOffset({
@@ -53,61 +52,107 @@ export default function LinksScreen() {
     })
   ).current;
 
-  // const handleImageClick = (e) => {
-  //   setAnnCoords([e.nativeEvent.locationX, e.nativeEvent.locationY]);
-  // };
-
   const deviceWidth = Dimensions.get("window").width;
   const deviceHeight = Dimensions.get("window").height * 0.5;
 
   async function uploadImage(photo) {
     const response = await fetch(photo);
     const blob = await response.blob();
-    var ref = firebase.storage().ref().child("images/" + "test");
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("images/" + "test");
     return ref.put(blob);
-  };
+  }
 
   const Preview = () => {
     if (photo) {
-      return(
-      <Image
+      return (
+        <Image
           // onTouchStart={(e) => handleImageClick(e)}
           style={styles.photo}
           // resizeMode={"contain"}
           source={{
-            uri: photo
+            uri: photo,
           }}
-      />
-      )
+        />
+      );
     }
-    return ( <Text>Photo not here</Text>)
-   
-  }
-    
-
+    return <Text>Photo not here</Text>;
+  };
 
   if (cameraOpen) {
-    return <CameraApp setPhoto={setPhoto} setCameraOpen={setCameraOpen}></CameraApp>
+    return <CameraApp setPhoto={setPhoto} setCameraOpen={setCameraOpen} />;
+  }
+
+  if (photo) {
+    return (
+      <View>
+        <Text style={{ padding: 10 }}>
+          Drag the Pin to the location on the page to which your question
+          corresponds.
+        </Text>
+
+        <View style={{ width: deviceWidth, height: deviceHeight }}>
+          <Image
+            // onTouchStart={(e) => handleImageClick(e)}
+            style={styles.photo}
+            // resizeMode={"contain"}
+            source={{
+              uri: photo,
+            }}
+          />
+          <Animated.View
+            style={{
+              transform: [{ translateX: pan.x }, { translateY: pan.y }],
+            }}
+            {...panResponder.panHandlers}
+          >
+            <Pin coords={annCoords}></Pin>
+          </Animated.View>
+        </View>
+        <Button
+          onPress={() => submit()}
+          title="Submit Question"
+          accessibilityLabel="Submit Your Question"
+        />
+      </View>
+    );
   }
 
   return (
     <View>
       <View>
         <TextInput
-          style={{ height: 40, borderColor: 'lightblue', borderWidth: 1 }}
-          onChangeText={text => setQuestion(text)}
+          style={{
+            height: 40,
+            borderColor: "lightblue",
+            borderWidth: 1,
+            padding: 10,
+          }}
+          onChangeText={(text) => setQuestion(text)}
           value={question}
           placeholder="Question"
         />
         <TextInput
-          style={{ height: 40, borderColor: 'lightblue', borderWidth: 1 }}
-          onChangeText={text => setISBN(text)}
+          style={{
+            height: 40,
+            borderColor: "lightblue",
+            borderWidth: 1,
+            padding: 10,
+          }}
+          onChangeText={(text) => setISBN(text)}
           value={ISBN}
           placeholder="ISBN"
         />
-         <TextInput
-          style={{ height: 40, borderColor: 'lightblue', borderWidth: 1 }}
-          onChangeText={text => setPageNumber(text)}
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: "lightblue",
+            borderWidth: 1,
+            padding: 10,
+          }}
+          onChangeText={(text) => setPageNumber(text)}
           value={pageNumber}
           placeholder="Page Number"
         />
@@ -117,7 +162,11 @@ export default function LinksScreen() {
           accessibilityLabel="Take Photo of Page"
         />
       </View>
-      <Text>Drag the Pin to the location on the page to which your question corresponds.</Text>
+
+      {/* <Text>
+        Drag the Pin to the location on the page to which your question
+        corresponds.
+      </Text>
       <View
         style={{
           // borderColor: "red",
@@ -136,11 +185,11 @@ export default function LinksScreen() {
           <Pin coords={annCoords}></Pin>
         </Animated.View>
       </View>
-      <Button 
-          onPress={() => submit()}
-          title="Submit Question"
-          accessibilityLabel="Submit Your Question"
-        />
+      <Button
+        onPress={() => submit()}
+        title="Submit Question"
+        accessibilityLabel="Submit Your Question"
+      /> */}
     </View>
   );
 }
