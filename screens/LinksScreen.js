@@ -12,6 +12,7 @@ import {
   Animated,
   PanResponder,
   Button,
+  Alert,
 } from "react-native";
 // import { RectButton, ScrollView } from "react-native-gesture-handler";
 import CameraApp from "../components/Camera";
@@ -30,6 +31,7 @@ export default function LinksScreen() {
   const [image, setImage] = useState("");
   const [ISBN, setISBN] = useState("");
   const [photo, setPhoto] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   const pan = useRef(new Animated.ValueXY()).current;
 
@@ -65,24 +67,26 @@ export default function LinksScreen() {
     return ref.put(blob);
   }
 
-  const Preview = () => {
-    if (photo) {
-      return (
-        <Image
-          // onTouchStart={(e) => handleImageClick(e)}
-          style={styles.photo}
-          // resizeMode={"contain"}
-          source={{
-            uri: photo,
-          }}
-        />
-      );
-    }
-    return <Text>Photo not here</Text>;
-  };
-
   if (cameraOpen) {
     return <CameraApp setPhoto={setPhoto} setCameraOpen={setCameraOpen} />;
+  }
+
+  const ShowAlertWithDelay = () => {
+    setTimeout(function () {
+      Alert.alert("An expert has answered your question!");
+    }, 2000);
+  };
+
+  if (submitted) {
+    ShowAlertWithDelay();
+    return (
+      <View>
+        <Text style={{ padding: 10 }}>
+          Your question has been submitted! Our experts will be in contact with
+          you soon!
+        </Text>
+      </View>
+    );
   }
 
   if (photo) {
@@ -112,7 +116,9 @@ export default function LinksScreen() {
           </Animated.View>
         </View>
         <Button
-          onPress={() => submit()}
+          onPress={() => {
+            setSubmitted(true);
+          }}
           title="Submit Question"
           accessibilityLabel="Submit Your Question"
         />
@@ -162,34 +168,6 @@ export default function LinksScreen() {
           accessibilityLabel="Take Photo of Page"
         />
       </View>
-
-      {/* <Text>
-        Drag the Pin to the location on the page to which your question
-        corresponds.
-      </Text>
-      <View
-        style={{
-          // borderColor: "red",
-          // borderWidth: 2,
-          width: deviceWidth,
-          height: deviceHeight,
-        }}
-      >
-        <Preview></Preview>
-        <Animated.View
-          style={{
-            transform: [{ translateX: pan.x }, { translateY: pan.y }],
-          }}
-          {...panResponder.panHandlers}
-        >
-          <Pin coords={annCoords}></Pin>
-        </Animated.View>
-      </View>
-      <Button
-        onPress={() => submit()}
-        title="Submit Question"
-        accessibilityLabel="Submit Your Question"
-      /> */}
     </View>
   );
 }
