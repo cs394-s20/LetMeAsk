@@ -99,11 +99,44 @@ export default function LinksScreen() {
   if (submitted) {
     ShowAlertWithDelay();
     return (
-      <View style={{ backgroundColor: "orange" }}>
-        <Text style={{ padding: 10, fontSize: 16, color: "white" }}>
-          Your question has been submitted! Our experts will be in contact with
-          you soon!
-        </Text>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View
+          style={{
+            backgroundColor: "orange",
+            width: "55%",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 100,
+            padding: 5,
+            borderRadius: 8,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 3.84,
+
+            elevation: 5,
+          }}
+        >
+          <Text
+            style={{
+              padding: 10,
+              fontSize: 20,
+              color: "white",
+            }}
+          >
+            Your question has been submitted! Our experts will be in contact
+            with you soon!
+          </Text>
+        </View>
+        <MaterialCommunityIcons
+          name="check-circle"
+          size={100}
+          color="#00B300"
+          style={{ marginTop: 20 }}
+        />
       </View>
     );
   }
@@ -156,7 +189,6 @@ export default function LinksScreen() {
               },
               shadowOpacity: 0.2,
               shadowRadius: 3.84,
-
               elevation: 5,
             }}
           >
