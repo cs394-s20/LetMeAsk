@@ -80,15 +80,27 @@ export default function LinksScreen() {
 
   const ShowAlertWithDelay = () => {
     setTimeout(function () {
-      Alert.alert("An expert has answered your question!");
+      Alert.alert(
+        "An expert has answered your question!",
+        "",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "View", onPress: () => console.log("View Pressed") },
+        ],
+        { cancelable: false }
+      );
     }, 2000);
   };
 
   if (submitted) {
     ShowAlertWithDelay();
     return (
-      <View>
-        <Text style={{ padding: 10 }}>
+      <View style={{ backgroundColor: "orange" }}>
+        <Text style={{ padding: 10, fontSize: 16, color: "white" }}>
           Your question has been submitted! Our experts will be in contact with
           you soon!
         </Text>
@@ -137,6 +149,15 @@ export default function LinksScreen() {
               width: "50%",
               borderRadius: 7,
               marginTop: 15,
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.2,
+              shadowRadius: 3.84,
+
+              elevation: 5,
             }}
           >
             <View style={{}}>
@@ -270,7 +291,7 @@ const styles = StyleSheet.create({
   //   // borderTopWidth: 5,
   // },
   pin: {
-    top: 10,
+    top: 100,
     bottom: 0,
     left: 70,
     right: 0,
