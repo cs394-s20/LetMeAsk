@@ -18,7 +18,7 @@ import {
   BackHandler,
 } from "react-native";
 // import { RectButton, ScrollView } from "react-native-gesture-handler";
-import CameraApp from "../components/Camera";
+import CameraApp from "./Camera";
 import {
   TextInput,
   DefaultTheme,
@@ -30,7 +30,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
-export default function LinksScreen({ navigation }) {
+export default function LinksScreen({ navigation, photo_uri }) {
   const [annCoords, setAnnCoords] = useState([]);
 
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -66,8 +66,8 @@ export default function LinksScreen({ navigation }) {
     })
   ).current;
 
-  async function uploadImage(photo) {
-    const response = await fetch(photo);
+  async function uploadImage(photo_uri) {
+    const response = await fetch(photo_uri);
     const blob = await response.blob();
     var ref = firebase
       .storage()
@@ -76,9 +76,9 @@ export default function LinksScreen({ navigation }) {
     return ref.put(blob);
   }
 
-  if (cameraOpen) {
-    return <CameraApp setPhoto={setPhoto} setCameraOpen={setCameraOpen} />;
-  }
+  //if (cameraOpen) {
+  //  return <CameraApp setPhoto={setPhoto} setCameraOpen={setCameraOpen} />;
+  //}
 
   const ShowAlertWithDelay = () => {
     setTimeout(function () {
@@ -204,7 +204,8 @@ export default function LinksScreen({ navigation }) {
     );
   }
 
-  if (photo) {
+  if (photo_uri) {
+    console.log('photo is here');
     return (
       <View>
         <Text style={{ padding: 25, fontSize: 18 }}>
@@ -220,7 +221,7 @@ export default function LinksScreen({ navigation }) {
             style={styles.photo}
             // resizeMode={"contain"}
             source={{
-              uri: photo,
+              uri: photo_uri,
             }}
           />
           <Animated.View
@@ -325,7 +326,7 @@ export default function LinksScreen({ navigation }) {
             borderWidth: 2,
             borderStyle: "dashed",
           }}
-          onPress={() => navigation.navigate("CameraApp")}
+          onPress={() => navigation.navigate("CameraApp", {navigation: navigation})}
           //</View>navigation.navigate("CameraApp")}
 
           title="Upload Photo of Page"
