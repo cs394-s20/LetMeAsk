@@ -30,11 +30,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
-export default function QuestionAnnotation({navigation, photo_uri}){
+export default function QuestionAnnotation({navigation}){
 
     const [annCoords, setAnnCoords] = useState([]);
     const pan = useRef(new Animated.ValueXY()).current;
-    console.log("qaaaa" + photo_uri);
+    const photo_uri = this.props.navigation.state.params.photo_uri;
+    console.log("qaaaa     " + photo_uri);
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,

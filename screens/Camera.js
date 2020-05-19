@@ -85,10 +85,10 @@ export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
   async function uploadImage(uri) {
     // //setPhoto(uri);
     // //console.log(uri);
-    console.log("before setopen" + uri);
+    console.log("before setopen    " + uri);
     setOpen(false);
-    console.log("after setopen" + uri);
-    navigation.navigate('QuestionAnnotation', {navigation: navigation, photo_uri: uri})
+    console.log("after setopen      " + uri);
+    navigation.navigate('QuestionAnnotation', {navigation: navigation, photo_uri: "hello"})
     // navigation.navigate('Root', {
     //   screen: 'LinksScreen',
     //   params: {photo_uri: uri}
