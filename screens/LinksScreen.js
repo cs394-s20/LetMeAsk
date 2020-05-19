@@ -42,6 +42,7 @@ export default function LinksScreen() {
   const [ISBN, setISBN] = useState("");
   const [photo, setPhoto] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [viewAnswer, setViewAnswer] = useState(false);
 
   const pan = useRef(new Animated.ValueXY()).current;
 
@@ -89,12 +90,75 @@ export default function LinksScreen() {
             onPress: () => console.log("Cancel Pressed"),
             style: "cancel",
           },
-          { text: "View", onPress: () => console.log("View Pressed") },
+          { text: "View", onPress: () => setViewAnswer(true) },
         ],
         { cancelable: false }
       );
     }, 2000);
   };
+
+  if (viewAnswer) {
+    return (
+      <View
+        style={{ padding: 10, alignItems: "center", justifyContent: "center" }}
+      >
+        <View
+          style={{
+            borderRadius: 5,
+            backgroundColor: "orange",
+            padding: 10,
+            width: "92%",
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 3.84,
+            elevation: 2,
+            marginBottom: 10,
+            marginTop: 10,
+          }}
+        >
+          <Text style={{ lineHeight: 20, fontSize: 15 }}>
+            <Text style={{ fontSize: 20 }}>Q:</Text> Can someone explain what
+            make up the flagella and cilia and what are their connection to
+            microtubules?
+          </Text>
+        </View>
+        <View
+          style={{
+            borderRadius: 5,
+            backgroundColor: "#6767FF",
+            padding: 10,
+            width: "92%",
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 3.84,
+            elevation: 2,
+            marginTop: 10,
+          }}
+        >
+          <Text style={{ color: "white", lineHeight: 20, fontSize: 15 }}>
+            <Text style={{ fontSize: 20 }}>A:</Text> In eukaryotic cells, cilia
+            and flagella contain the motor protein dynein and microtubules,
+            which are composed of linear polymers of globular proteins called
+            tubulin. The core of each of the structures is termed the axoneme
+            and contains two central microtubules that are surrounded by an
+            outer ring of nine doublet microtubules. One full microtubule and
+            one partial microtubule, the latter of which shares a tubule wall
+            with the other microtubule, comprise each doublet microtubule {"\n"}
+            {"\n"}
+            <Text>Responded by Christopher Deal</Text>
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   if (submitted) {
     ShowAlertWithDelay();
@@ -116,7 +180,6 @@ export default function LinksScreen() {
             },
             shadowOpacity: 0.2,
             shadowRadius: 3.84,
-
             elevation: 5,
           }}
         >
