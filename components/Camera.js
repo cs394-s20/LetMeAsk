@@ -149,6 +149,24 @@ export default function CameraApp({ setPhoto, setCameraOpen }) {
                       style={{ color: "#ff0000", fontSize: 40 }}
                     />
                   </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{ margin: 10 }}
+                    onPress={() => {
+                      uploadImage(pickPhoto)
+                        .then(() => {
+                          console.log("Photo Uploaded");
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
+                    }}
+                  >
+                    <FontAwesome
+                      name="arrow-up"
+                      style={{ color: "#1ec929", fontSize: 40 }}
+                    />
+                  </TouchableOpacity>
                   <Image
                     style={{ width: "100%", height: 500, borderRadius: 20 }}
                     source={{ uri: pickPhoto }}
