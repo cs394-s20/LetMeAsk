@@ -26,7 +26,7 @@ const firebaseConfig = {
 //===========firebase=============
 firebase.initializeApp(firebaseConfig);
 
-export default function CameraApp({ setPhoto, setCameraOpen }) {
+export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const camRef = useRef(null);
@@ -153,6 +153,7 @@ export default function CameraApp({ setPhoto, setCameraOpen }) {
                   <TouchableOpacity
                     style={{ margin: 10 }}
                     onPress={() => {
+                      // navigation.navigate("AnnotateQuestion");
                       uploadImage(pickPhoto)
                         .then(() => {
                           console.log("Photo Uploaded");

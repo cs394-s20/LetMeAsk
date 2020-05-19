@@ -1,13 +1,13 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as React from 'react';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import * as React from "react";
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import TabBarIcon from "../components/TabBarIcon";
+import HomeScreen from "../screens/HomeScreen";
+import LinksScreen from "../screens/LinksScreen";
 // import Camera from '../screens/Camera';
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Home';
+const INITIAL_ROUTE_NAME = "Home";
 
 export default function BottomTabNavigator({ navigation, route }) {
   // Set the header title on the parent stack navigator depending on the
@@ -21,16 +21,20 @@ export default function BottomTabNavigator({ navigation, route }) {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'Browse',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+          title: "Browse",
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon focused={focused} name="md-code-working" />
+          ),
         }}
       />
       <BottomTab.Screen
-        name="Links"
+        name="Ask"
         component={LinksScreen}
         options={{
-          title: 'Ask',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-add" />,
+          title: "Ask",
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon focused={focused} name="md-add" />
+          ),
         }}
       />
       {/* <BottomTab.Screen
@@ -46,12 +50,13 @@ export default function BottomTabNavigator({ navigation, route }) {
 }
 
 function getHeaderTitle(route) {
-  const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
+  const routeName =
+    route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
 
   switch (routeName) {
-    case 'Home':
-      return 'How to get started';
-    case 'Links':
-      return 'Submit Question';
+    case "Home":
+      return "How to get started";
+    case "Ask":
+      return "Submit Question";
   }
 }

@@ -15,6 +15,7 @@ import {
   Button,
   Alert,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
 // import { RectButton, ScrollView } from "react-native-gesture-handler";
 import CameraApp from "../components/Camera";
@@ -29,7 +30,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
-export default function LinksScreen() {
+export default function LinksScreen({ navigation }) {
   const [annCoords, setAnnCoords] = useState([]);
 
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -122,8 +123,7 @@ export default function LinksScreen() {
         >
           <Text style={{ lineHeight: 20, fontSize: 15 }}>
             <Text style={{ fontSize: 20 }}>Q:</Text> Can someone explain what
-            make up the flagella and cilia and what are their connection to
-            microtubules?
+            make up the flagella and what is its connection to microtubules?
           </Text>
         </View>
         <View
@@ -144,14 +144,14 @@ export default function LinksScreen() {
           }}
         >
           <Text style={{ color: "white", lineHeight: 20, fontSize: 15 }}>
-            <Text style={{ fontSize: 20 }}>A:</Text> In eukaryotic cells, cilia
-            and flagella contain the motor protein dynein and microtubules,
-            which are composed of linear polymers of globular proteins called
-            tubulin. The core of each of the structures is termed the axoneme
-            and contains two central microtubules that are surrounded by an
-            outer ring of nine doublet microtubules. One full microtubule and
-            one partial microtubule, the latter of which shares a tubule wall
-            with the other microtubule, comprise each doublet microtubule {"\n"}
+            <Text style={{ fontSize: 20 }}>A:</Text> In eukaryotic cells,
+            flagella contain the motor protein dynein and microtubules, which
+            are composed of linear polymers of globular proteins called tubulin.
+            The core of each of the structures is termed the axoneme and
+            contains two central microtubules that are surrounded by an outer
+            ring of nine doublet microtubules. One full microtubule and one
+            partial microtubule, the latter of which shares a tubule wall with
+            the other microtubule, comprise each doublet microtubule {"\n"}
             {"\n"}
             <Text>Responded by Christopher Deal</Text>
           </Text>
@@ -207,12 +207,14 @@ export default function LinksScreen() {
   if (photo) {
     return (
       <View>
-        <Text style={{ padding: 10, fontSize: 18 }}>
+        <Text style={{ padding: 25, fontSize: 18 }}>
           Drag the Pin to the location on the page to which your question
           corresponds.
         </Text>
 
-        <View style={{ width: deviceWidth, height: deviceHeight }}>
+        <View
+          style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
+        >
           <Image
             // onTouchStart={(e) => handleImageClick(e)}
             style={styles.photo}
@@ -244,7 +246,7 @@ export default function LinksScreen() {
               height: 60,
               width: "50%",
               borderRadius: 7,
-              marginTop: 15,
+              marginTop: 25,
               shadowColor: "#000",
               shadowOffset: {
                 width: 0,
@@ -323,7 +325,9 @@ export default function LinksScreen() {
             borderWidth: 2,
             borderStyle: "dashed",
           }}
-          onPress={() => setCameraOpen(true)}
+          onPress={() => navigation.navigate("CameraApp")}
+          //</View>navigation.navigate("CameraApp")}
+
           title="Upload Photo of Page"
           accessibilityLabel="Take Photo of Page"
         >
