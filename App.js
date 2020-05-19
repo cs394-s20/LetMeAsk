@@ -8,7 +8,9 @@ import { Platform, StatusBar, StyleSheet, View } from "react-native";
 
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import LinkingConfiguration from "./navigation/LinkingConfiguration";
-import CameraApp from "./components/Camera";
+import CameraApp from "./screens/Camera";
+// import Test from "./screens/Test"
+import QuestionAnnotation from './screens/QuestionAnnotation'
 
 const Stack = createStackNavigator();
 
@@ -48,6 +50,7 @@ export default function App(props) {
           <Stack.Navigator>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
             <Stack.Screen name="CameraApp" component={CameraApp} />
+            <Stack.Screen name="QuestionAnnotation" component={QuestionAnnotation} />
           </Stack.Navigator>
         </NavigationContainer>
       </View>

@@ -30,9 +30,13 @@ export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const camRef = useRef(null);
+  //camera photo
   const [capturedPhoto, setCapturedPhoto] = useState(null);
+  //open the image dialog after taking a photo
   const [open, setOpen] = useState(false);
+  //open the image dialog after choosing from album
   const [imageOpen, setImageOpen] = useState(false);
+  //album photo
   const [pickPhoto, setPickPhoto] = useState(null);
 
   useEffect(() => {
@@ -79,8 +83,16 @@ export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
   }
 
   async function uploadImage(uri) {
-    setPhoto(uri);
-    setCameraOpen(false);
+    // //setPhoto(uri);
+    // //console.log(uri);
+    console.log("before setopen" + uri);
+    setOpen(false);
+    console.log("after setopen" + uri);
+    navigation.navigate('QuestionAnnotation', {navigation: navigation, photo_uri: uri})
+    // navigation.navigate('Root', {
+    //   screen: 'LinksScreen',
+    //   params: {photo_uri: uri}
+    // });
     //const response = await fetch(uri);
     //const blob = await response.blob();
     //var ref = firebase.storage().ref().child("images/" + imageName);
