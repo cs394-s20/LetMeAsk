@@ -55,7 +55,7 @@ function getHeaderTitle(route) {
 
   switch (routeName) {
     case "Home":
-      return "How to get started";
+      return "Browse Questions";
     case "Ask":
       return "Submit Question";
   }
