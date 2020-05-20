@@ -4,6 +4,13 @@ import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, Text
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, Title, Paragraph } from 'react-native-paper';
 
+//Expo Icon
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+
 
 export default function HomeScreen() {
   const [search, onChangeSearch] = useState('')
@@ -11,23 +18,29 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-
-      <TextInput
-          style={{ height: 40, borderColor: 'gray', borderWidth: 1,  }}
+      <View style={styles.containeritems} >
+          <TextInput
+            style={{ height: 40, borderColor: 'gray', borderWidth: 1, paddingRight: 5 }}
             onChangeText={text => onChangeSearch(text)}
             value={search}
             placeholder="Search for Questions"
           />
+      </View>
+
       </ScrollView>
       <View>
-        <Text>Answered Questions</Text>
+        <Text style={styles.collectiontitle}>Answered Questions</Text>
       </View>
       
-      <ScrollView horizontal={true} decelerationRate={0} snapToInterval={200} snapToAlignment={"center"}>
+      <ScrollView style={styles.horzscroll} horizontal={true} decelerationRate={0} snapToInterval={200} snapToAlignment={"center"}>
         <Card style={styles.answeredQ}>
           <Card.Content>
             <Title>Do jellyfish sleep?</Title>
-            <Paragraph>If so, how do they sleep?</Paragraph>
+            <Paragraph>If so, how do they sleep? Are they able to close their eyes?</Paragraph>
+            <Ionicons
+              name="ios-heart"
+              style={{ color: "#fff", fontSize: 40 }}
+            />
           </Card.Content>
         </Card>
         <Card style={styles.answeredQ}>
@@ -38,18 +51,23 @@ export default function HomeScreen() {
         </Card>
       </ScrollView>
       <View>
-        <Text>Unanswered Questions</Text>
+        <Text style={styles.collectiontitle}>Unanswered Questions</Text>
       </View>
       <ScrollView
         horizontal= {true}
         decelerationRate={0}
         snapToInterval={200}
         snapToAlignment={"center"}
+        style={styles.horzscroll}
         >
         <Card style={styles.unansweredQ}>
           <Card.Content>
             <Title>Do jellyfish sleep?</Title>
             <Paragraph>If so, how do they sleep?</Paragraph>
+            <Ionicons
+              name="ios-chatboxes"
+              style={{ color: "#fff", fontSize: 40 }}
+            />
           </Card.Content>
         </Card>
         <Card style={styles.unansweredQ}>
@@ -70,27 +88,32 @@ HomeScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   answeredQ: {
-    height: '50%',
-    backgroundColor: '#3686E4',
-    margin: 10
+    height: '80%',
+    maxWidth: 200,
+    backgroundColor: '#378be5',
+    margin: 10,
   },
   unansweredQ: {
-    height: '50%',
-    backgroundColor: '#E14321',
+    height: '80%',
+    backgroundColor: '#e57359',
     margin: 10
+  },
+  horzscroll: {
+    height: 125,
   },
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingLeft:5,
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
+  containeritems: {
+    paddingRight: 10,
+  },
+  collectiontitle: {
+    fontWeight: 'bold',
+    fontSize: 19
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 20,
   },
 });
