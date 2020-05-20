@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Text, View, TouchableOpacity, Modal, Image } from "react-native";
+import { CommonActions } from "@react-navigation/native";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
@@ -26,7 +27,8 @@ const firebaseConfig = {
 //===========firebase=============
 firebase.initializeApp(firebaseConfig);
 
-export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
+//setPhoto, setCameraOpen
+export default function CameraApp({ navigation, route }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const camRef = useRef(null);
@@ -38,6 +40,7 @@ export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
   const [imageOpen, setImageOpen] = useState(false);
   //album photo
   const [pickPhoto, setPickPhoto] = useState(null);
+  const [photo, setPhoto] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -83,20 +86,25 @@ export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
   }
 
   async function uploadImage(uri) {
-    // //setPhoto(uri);
+    // navigation.dispatch({
+    //   ...CommonActions.setParams({ my_photo_uri: uri }),
+    //   source: route.key,
+    // });
+
     // //console.log(uri);
+    setPhoto(uri);
     console.log("before setopen    " + uri);
     setOpen(false);
+    setImageOpen(false);
+
     console.log("after setopen      " + uri);
-    navigation.navigate('QuestionAnnotation', {navigation: navigation, photo_uri: "hello"})
-    // navigation.navigate('Root', {
-    //   screen: 'LinksScreen',
-    //   params: {photo_uri: uri}
-    // });
-    //const response = await fetch(uri);
-    //const blob = await response.blob();
-    //var ref = firebase.storage().ref().child("images/" + imageName);
-    //return ref.put(blob);
+    navigation.setParams({ photo_uri: uri });
+    navigation.navigate("Annotate", {
+      route: route,
+      navigation: navigation,
+      photo_uri: uri,
+    });
+    // navigation.navigate("Annotate", { navigation: navigation });
   }
 
   if (hasPermission === null) {
@@ -166,9 +174,10 @@ export default function CameraApp({ navigation, setPhoto, setCameraOpen }) {
                     style={{ margin: 10 }}
                     onPress={() => {
                       // navigation.navigate("AnnotateQuestion");
+
                       uploadImage(pickPhoto)
                         .then(() => {
-                          console.log("Photo Uploaded");
+                          console.log("pickPhoto Uploaded");
                         })
                         .catch((error) => {
                           console.log(error);

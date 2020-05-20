@@ -9,9 +9,6 @@ import LinksScreen from "../screens/LinksScreen";
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Home";
 
-
-
-
 export default function BottomTabNavigator({ navigation, route }) {
   // Set the header title on the parent stack navigator depending on the
   // currently active tab. Learn more in the documentation:
@@ -26,7 +23,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         options={{
           title: "Browse",
           tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="md-code-working" />
+            <TabBarIcon focused={focused} name="md-search" />
           ),
         }}
       />

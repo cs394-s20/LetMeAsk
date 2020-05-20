@@ -5,20 +5,12 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  // TextInput,
   View,
-  ScrollView,
-  Image,
   Dimensions,
   Animated,
   PanResponder,
-  Button,
-  Alert,
   TouchableOpacity,
-  BackHandler,
 } from "react-native";
-// import { RectButton, ScrollView } from "react-native-gesture-handler";
-import CameraApp from "./Camera";
 import {
   TextInput,
   DefaultTheme,
@@ -30,7 +22,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
-export default function LinksScreen({ navigation }) {
+export default function LinksScreen({ navigation, route }) {
   const [annCoords, setAnnCoords] = useState([]);
 
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -75,28 +67,6 @@ export default function LinksScreen({ navigation }) {
       .child("images/" + "test");
     return ref.put(blob);
   }
-
-  //if (cameraOpen) {
-  //  return <CameraApp setPhoto={setPhoto} setCameraOpen={setCameraOpen} />;
-  //}
-
-  const ShowAlertWithDelay = () => {
-    setTimeout(function () {
-      Alert.alert(
-        "An expert has answered your question!",
-        "",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
-          { text: "View", onPress: () => setViewAnswer(true) },
-        ],
-        { cancelable: false }
-      );
-    }, 2000);
-  };
 
   if (viewAnswer) {
     return (
@@ -204,71 +174,6 @@ export default function LinksScreen({ navigation }) {
     );
   }
 
-  if (photo_uri) {
-    console.log('photo is here');
-    return (
-      <View>
-        <Text style={{ padding: 25, fontSize: 18 }}>
-          Drag the Pin to the location on the page to which your question
-          corresponds.
-        </Text>
-
-        <View
-          style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
-        >
-          <Image
-            // onTouchStart={(e) => handleImageClick(e)}
-            style={styles.photo}
-            // resizeMode={"contain"}
-            source={{
-              uri: photo_uri,
-            }}
-          />
-          <Animated.View
-            style={{
-              transform: [{ translateX: pan.x }, { translateY: pan.y }],
-            }}
-            {...panResponder.panHandlers}
-          >
-            <Pin coords={annCoords}></Pin>
-          </Animated.View>
-        </View>
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <TouchableOpacity
-            onPress={() => {
-              setSubmitted(true);
-            }}
-            title="Submit Question"
-            accessibilityLabel="Submit Your Question"
-            style={{
-              backgroundColor: "orange",
-              alignItems: "center",
-              justifyContent: "center",
-              height: 60,
-              width: "50%",
-              borderRadius: 7,
-              marginTop: 25,
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.2,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}
-          >
-            <View style={{}}>
-              <Text style={{ color: "white", fontSize: 20 }}>
-                Submit Question
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
   const theme = {
     ...DefaultTheme,
     roundness: 2,
@@ -326,9 +231,13 @@ export default function LinksScreen({ navigation }) {
             borderWidth: 2,
             borderStyle: "dashed",
           }}
-          onPress={() => navigation.navigate("CameraApp", {navigation: navigation})}
-          //</View>navigation.navigate("CameraApp")}
-
+          onPress={() =>
+            navigation.navigate("Camera", {
+              navigation: navigation,
+              route: route,
+              setPhoto: setPhoto,
+            })
+          }
           title="Upload Photo of Page"
           accessibilityLabel="Take Photo of Page"
         >
