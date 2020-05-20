@@ -23,50 +23,45 @@ export default function HomeScreen() {
             placeholder="Search for Questions"
           />
       </ScrollView>
+      <View>
+        <Text>Answered Questions</Text>
+      </View>
+      
       <ScrollView horizontal={true} decelerationRate={0} snapToInterval={200} snapToAlignment={"center"}>
-        {/* <Card>
-          <Card.Title title="Card Title" subtitle="Card Subtitle" />
+        <Card style={{ height: '50%', backgroundColor: '#3686E4', margin:10 }}>
           <Card.Content>
-            <Title>Card title</Title>
-            <Paragraph>Card content</Paragraph>
+            <Title>Do jellyfish sleep?</Title>
+            <Paragraph>If so, how do they sleep?</Paragraph>
           </Card.Content>
         </Card>
-        <Card>
-          <Card.Title title="Card Title" subtitle="Card Subtitle" />
+        <Card style={{ height: '50%', backgroundColor: '#3686E4', margin: 10 }}>
           <Card.Content>
-            <Title>Card title</Title>
-            <Paragraph>Card content</Paragraph>
+            <Title>Do jellyfish sleep?</Title>
+            <Paragraph>If so, how do they sleep?</Paragraph>
           </Card.Content>
         </Card>
-        <Card>
-          <Card.Title title="Card Title" subtitle="Card Subtitle" />
-          <Card.Content>
-            <Title>Card title</Title>
-            <Paragraph>Card content</Paragraph>
-          </Card.Content>
-        </Card>
-        <Card>
-          <Card.Title title="Card Title" subtitle="Card Subtitle" />
-          <Card.Content>
-            <Title>Card title</Title>
-            <Paragraph>Card content</Paragraph>
-          </Card.Content>
-        </Card>
-        <Card>
-          <Card.Title title="Card Title" subtitle="Card Subtitle" />
-          <Card.Content>
-            <Title>Card title</Title>
-            <Paragraph>Card content</Paragraph>
-          </Card.Content>
-        </Card> */}
       </ScrollView>
+      <View>
+        <Text>Unanswered Questions</Text>
+      </View>
       <ScrollView
         horizontal= {true}
         decelerationRate={0}
         snapToInterval={200}
         snapToAlignment={"center"}
         >
-
+        <Card style={{ height: '50%', backgroundColor: '#E14321', margin: 10 }}>
+          <Card.Content>
+            <Title>Do jellyfish sleep?</Title>
+            <Paragraph>If so, how do they sleep?</Paragraph>
+          </Card.Content>
+        </Card>
+        <Card style={{ height: '50%', backgroundColor: '#E14321', margin: 10 }}>
+          <Card.Content>
+            <Title>Do jellyfish sleep?</Title>
+            <Paragraph>If so, how do they sleep?</Paragraph>
+          </Card.Content>
+        </Card>
       </ScrollView>
     </View>
   );
