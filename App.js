@@ -12,6 +12,7 @@ import CameraApp from "./screens/Camera";
 import QuestionAnnotation from "./screens/QuestionAnnotation";
 import QuestionSubmitted from "./screens/QuestionSubmitted";
 import ViewAnswer from "./screens/ViewAnswer";
+import PDFDoc from "./screens/PDF";
 
 const Stack = createStackNavigator();
 
@@ -54,6 +55,7 @@ export default function App(props) {
             <Stack.Screen name="Annotate" component={QuestionAnnotation} />
             <Stack.Screen name="Submitted" component={QuestionSubmitted} />
             <Stack.Screen name="Answer" component={ViewAnswer} />
+            <Stack.Screen name ="PDF" component={PDFDoc}/>
           </Stack.Navigator>
         </NavigationContainer>
       </View>
