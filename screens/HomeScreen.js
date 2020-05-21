@@ -39,11 +39,15 @@ const textbooks = [
   },
 ]
 
-const TopicChip = ({ topic }) => (
-  <View style={styles.topicChip}>
-    <Text>{topic}</Text>
-  </View>
-)
+const TopicChip = ({ topic }) => {
+  const truncate = (input) => input.length > 10 ? `${input.substring(0, 10)}...` : input;
+
+  return (
+    <View style={styles.topicChip}>
+      <Text style={styles.topicChipText}>{topic}</Text>
+    </View>
+  )
+}
 
 export default function HomeScreen() {
   const [search, onChangeSearch] = useState('')
@@ -121,8 +125,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
   },
   topicChip: {
-    padding: 3
-    // backgroundColor: '#FFFFFF'
+    color: "white",
+    paddingVertical: 4,
+    backgroundColor: '#233450',
+    borderRadius: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    margin: 1
+  },
+  topicChipText: {
+    color: "white",
+    fontSize: 10
   },
   horzscroll: {
     height: 125,
