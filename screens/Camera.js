@@ -91,7 +91,7 @@ export default function CameraApp({ navigation, route }) {
     //   source: route.key,
     // });
 
-    // //console.log(uri);
+    // console.log(uri);
     setPhoto(uri);
     console.log("before setopen    " + uri);
     setOpen(false);
