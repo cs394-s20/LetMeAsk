@@ -3,6 +3,7 @@ import * as WebBrowser from "expo-web-browser";
 import React, { useState, useEffect, useRef } from "react";
 import {
   AppRegistry,
+  Button,
   StyleSheet,
   Text,
   View,
@@ -258,6 +259,11 @@ export default function LinksScreen({ navigation, route }) {
             </Text>
           </View>
         </TouchableOpacity>
+
+        <Button title="Press Me" onPress={()=>{navigation.navigate('PDF')}}>
+          Go to PDF
+      
+          </Button>
       </View>
     </View>
   );
