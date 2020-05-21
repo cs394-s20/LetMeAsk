@@ -1,8 +1,8 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, {useState} from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, TextInput } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Card, Title, Paragraph, Chip } from 'react-native-paper';
+import { Card, Title, Paragraph, Chip, Searchbar } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
 
 //Expo Icon
@@ -55,21 +55,21 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.containeritems} >
-          <TextInput
+          <Searchbar
             onChangeText={text => onChangeSearch(text)}
             value={search}
-            placeholder="Search for Questions"
+            placeholder="Search for Textbooks"
           />
       </View>
-    <View style={styles.containeritems} >
-        <RNPickerSelect 
+      <View style={styles.topicSelectionContainer}>
+      <RNPickerSelect 
             placeholder={{
-              label: 'Select a Field',
+              label: 'Select a Field of Study',
               value: 'astronomy',
               color: 'blue',
             }}
+            style={styles.topicSelection}
             onValueChange={(value) => setTopic(value)}
             items={[
                 { label: 'Anatomy', value: 'anatomy' },
@@ -82,7 +82,6 @@ export default function HomeScreen() {
             ]}
         />
       </View>
-      </ScrollView>
       <View>
         <Text style={styles.collectiontitle}>{ topic.charAt(0).toUpperCase() + topic.slice(1)} Textbooks</Text>
       </View>
@@ -141,10 +140,16 @@ const styles = StyleSheet.create({
   horzscroll: {
     height: 125,
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingLeft:5,
+  // container: {
+  //   flex: 1,
+  //   backgroundColor: '#fff',
+  //   paddingLeft:5,
+  // },
+  topicSelectionContainer: {
+    marginVertical: 10
+  },
+  topicSelection: {
+    fontSize: 20
   },
   textbooksContainer: {
     maxHeight: '80%',
@@ -158,19 +163,19 @@ const styles = StyleSheet.create({
     height: 150,
     padding: 2
   },
-  containeritems: {
-    paddingRight: 10,
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 1,
-    marginTop: 10,
-    marginRight: 10
-  },
+  // containeritems: {
+  //   paddingRight: 10,
+  //   borderColor: 'gray',
+  //   borderWidth: 1,
+  //   padding: 1,
+  //   marginTop: 10,
+  //   marginRight: 10
+  // },
   collectiontitle: {
     fontWeight: 'bold',
     fontSize: 19
   },
-  contentContainer: {
-    paddingTop: 20,
-  },
+  // contentContainer: {
+  //   paddingTop: 20,
+  // },
 });
