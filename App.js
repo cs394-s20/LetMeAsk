@@ -14,6 +14,22 @@ import QuestionSubmitted from "./screens/QuestionSubmitted";
 import ViewAnswer from "./screens/ViewAnswer";
 import PDFDoc from "./screens/PDF";
 
+import { decode, encode } from "base-64";
+global.crypto = require("@firebase/firestore");
+global.crypto.getRandomValues = (byteArray) => {
+  for (let i = 0; i < byteArray.length; i++) {
+    byteArray[i] = Math.floor(256 * Math.random());
+  }
+};
+
+if (!global.btoa) {
+  global.btoa = encode;
+}
+
+if (!global.atob) {
+  global.atob = decode;
+}
+
 const Stack = createStackNavigator();
 
 export default function App(props) {
@@ -55,7 +71,7 @@ export default function App(props) {
             <Stack.Screen name="Annotate" component={QuestionAnnotation} />
             <Stack.Screen name="Submitted" component={QuestionSubmitted} />
             <Stack.Screen name="Answer" component={ViewAnswer} />
-            <Stack.Screen name ="PDF" component={PDFDoc}/>
+            <Stack.Screen name="PDF" component={PDFDoc} />
           </Stack.Navigator>
         </NavigationContainer>
       </View>

@@ -47,39 +47,47 @@ export default function LinksScreen({ navigation, route }) {
 
   const pan = useRef(new Animated.ValueXY()).current;
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        setAnnCoords([pan.x._value, pan.y._value]);
-        // console.log(pan.x._value)
-        // console.log(annCoords.toString())
-        pan.setOffset({
-          x: pan.x._value,
-          y: pan.y._value,
-        });
-      },
-      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
-      onPanResponderRelease: () => {
-        pan.flattenOffset();
-      },
-    })
-  ).current;
+  // const panResponder = useRef(
+  //   PanResponder.create({
+  //     onMoveShouldSetPanResponder: () => true,
+  //     onPanResponderGrant: () => {
+  //       setAnnCoords([pan.x._value, pan.y._value]);
+  //       // console.log(pan.x._value)
+  //       // console.log(annCoords.toString())
+  //       pan.setOffset({
+  //         x: pan.x._value,
+  //         y: pan.y._value,
+  //       });
+  //     },
+  //     onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
+  //     onPanResponderRelease: () => {
+  //       pan.flattenOffset();
+  //     },
+  //   })
+  // ).current;
+
+  // const uploadQuestion = () => {
+  //   db.collection("Questions")
+  //     .add({
+  //       title: "A TITLE",
+  //     })
+  //     .then((ref) => {
+  //       console.log("added doc with ID: ", ref.id);
+  //     });
+  // };
 
   const uploadQuestion = async () => {
     try {
-      await db
-        .collection("Questions")
-        .doc("TestQuestion123")
-        .set({
-          title: title,
-          question: question,
-          author: "Brian",
-          isbn: ISBN,
-          page: pageNumber,
-          loc: [32, 23], // Example!
-          status: "open",
-        });
+      //await db.collection("Questions").doc("0tbams66XiVMa1vr1Ajk").set({
+      await db.collection("Questions").add({
+        title: "hello",
+        question: question,
+        author: "Brian",
+        isbn: ISBN,
+        page: pageNumber,
+        loc: [32, 23], // Example!
+        status: "open",
+      });
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -183,6 +191,7 @@ export default function LinksScreen({ navigation, route }) {
         <Button
           title="Press Me"
           onPress={() => {
+            console.log("uploaded question pressed");
             uploadQuestion();
             // navigation.navigate("PDF");
           }}
