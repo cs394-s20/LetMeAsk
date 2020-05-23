@@ -39,8 +39,8 @@ export default function BottomTabNavigator({ navigation, route }) {
         }}
       />
       {/* <BottomTab.Screen
-        name="Camera"
-        component={Camera}
+        name="Textbook"
+        component={Textbook}
         options={{
           title: 'Camera',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
