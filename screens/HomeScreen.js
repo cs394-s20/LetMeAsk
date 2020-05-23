@@ -1,9 +1,10 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, {useState} from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, TouchableWithoutFeedback } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, Title, Paragraph, Chip, Searchbar } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
+import Textbook from '../components/Textbook'
 
 //Expo Icon
 import {
@@ -52,7 +53,13 @@ const TopicChip = ({ topic }) => {
 export default function HomeScreen() {
   const [search, onChangeSearch] = useState('')
   const [topic, setTopic] = useState('astronomy')
+  const [currentbook, setCurrentbook] = useState(null)
+  const handleBook = (book) => {
+    setCurrentbook(book)
+    return null
+  }
 
+  if (currentbook === null){
   return (
     <View style={styles.container}>
       <View style={styles.containeritems} >
@@ -88,20 +95,30 @@ export default function HomeScreen() {
       
       <ScrollView style={styles.textbooksContainer}>
         {textbooks.map((book, index) => (
-          <View style={styles.bookCard}>
-              <Image style={styles.textbookImage} source={{ uri: book.image }} />
-              <View style={styles.textbookInfo} >
-                <Title>{book.title}</Title>
-                <Paragraph>{book.author}</Paragraph>
-                {book.topic.map((t, i) => (
-                  <TopicChip topic={t}></TopicChip>
-                ))}
-              </View>
-          </View>
+          <TouchableWithoutFeedback
+            onPress={() => handleBook(book)}
+            >
+            <View style={styles.bookCard}>
+                <Image style={styles.textbookImage} source={{ uri: book.image }} />
+                <View style={styles.textbookInfo} >
+                  <Title>{book.title}</Title>
+                  <Paragraph>{book.author}</Paragraph>
+                  {book.topic.map((t, i) => (
+                    <TopicChip topic={t}></TopicChip>
+                  ))}
+                </View>
+            </View>
+          </TouchableWithoutFeedback>
         ))}
       </ScrollView>
     </View>
   );
+ }
+ else {
+   return(
+     <Textbook book={currentbook} setCurrentBook={setCurrentbook}></Textbook>
+   )
+ }
 }
 
 HomeScreen.navigationOptions = {
