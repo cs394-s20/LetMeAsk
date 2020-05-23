@@ -17,6 +17,9 @@ import {
   DefaultTheme,
   Provider as PaperProvider,
 } from "react-native-paper";
+import firebase from "../shared/firebase";
+
+// import uuid from "react-native-uuid";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -24,11 +27,15 @@ const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function LinksScreen({ navigation, route }) {
+  console.log(route);
+  const db = firebase.firestore();
+  //const { loc, photo_uri } = route.params;
   const [annCoords, setAnnCoords] = useState([]);
 
   const [cameraOpen, setCameraOpen] = useState(false);
 
   const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
   const [pageNumber, setPageNumber] = useState("");
@@ -59,6 +66,25 @@ export default function LinksScreen({ navigation, route }) {
     })
   ).current;
 
+  const uploadQuestion = async () => {
+    try {
+      await db
+        .collection("Questions")
+        .doc("TestQuestion123")
+        .set({
+          title: title,
+          question: question,
+          author: "Brian",
+          isbn: ISBN,
+          page: pageNumber,
+          loc: [32, 23], // Example!
+          status: "open",
+        });
+    } catch (e) {
+      console.error("Error writing document: ", e);
+    }
+  };
+
   async function uploadImage(photo_uri) {
     const response = await fetch(photo_uri);
     const blob = await response.blob();
@@ -67,112 +93,6 @@ export default function LinksScreen({ navigation, route }) {
       .ref()
       .child("images/" + "test");
     return ref.put(blob);
-  }
-
-  if (viewAnswer) {
-    return (
-      <View
-        style={{ padding: 10, alignItems: "center", justifyContent: "center" }}
-      >
-        <View
-          style={{
-            borderRadius: 5,
-            backgroundColor: "orange",
-            padding: 10,
-            width: "92%",
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.2,
-            shadowRadius: 3.84,
-            elevation: 2,
-            marginBottom: 10,
-            marginTop: 10,
-          }}
-        >
-          <Text style={{ lineHeight: 20, fontSize: 15 }}>
-            <Text style={{ fontSize: 20 }}>Q:</Text> Can someone explain what
-            make up the flagella and what is its connection to microtubules?
-          </Text>
-        </View>
-        <View
-          style={{
-            borderRadius: 5,
-            backgroundColor: "#6767FF",
-            padding: 10,
-            width: "92%",
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.2,
-            shadowRadius: 3.84,
-            elevation: 2,
-            marginTop: 10,
-          }}
-        >
-          <Text style={{ color: "white", lineHeight: 20, fontSize: 15 }}>
-            <Text style={{ fontSize: 20 }}>A:</Text> In eukaryotic cells,
-            flagella contain the motor protein dynein and microtubules, which
-            are composed of linear polymers of globular proteins called tubulin.
-            The core of each of the structures is termed the axoneme and
-            contains two central microtubules that are surrounded by an outer
-            ring of nine doublet microtubules. One full microtubule and one
-            partial microtubule, the latter of which shares a tubule wall with
-            the other microtubule, comprise each doublet microtubule {"\n"}
-            {"\n"}
-            <Text>Responded by Christopher Deal</Text>
-          </Text>
-        </View>
-      </View>
-    );
-  }
-
-  if (submitted) {
-    ShowAlertWithDelay();
-    return (
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <View
-          style={{
-            backgroundColor: "orange",
-            width: "55%",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 100,
-            padding: 5,
-            borderRadius: 8,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.2,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <Text
-            style={{
-              padding: 10,
-              fontSize: 20,
-              color: "white",
-            }}
-          >
-            Your question has been submitted! Our experts will be in contact
-            with you soon!
-          </Text>
-        </View>
-        <MaterialCommunityIcons
-          name="check-circle"
-          size={100}
-          color="#00B300"
-          style={{ marginTop: 20 }}
-        />
-      </View>
-    );
   }
 
   const theme = {
@@ -260,10 +180,15 @@ export default function LinksScreen({ navigation, route }) {
           </View>
         </TouchableOpacity>
 
-        <Button title="Press Me" onPress={()=>{navigation.navigate('PDF')}}>
+        <Button
+          title="Press Me"
+          onPress={() => {
+            uploadQuestion();
+            // navigation.navigate("PDF");
+          }}
+        >
           Go to PDF
-      
-          </Button>
+        </Button>
       </View>
     </View>
   );
@@ -295,16 +220,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     ...StyleSheet.absoluteFillObject,
   },
-  // photoContainer: {
-  //   position: "absolute",
-  //   top: 0,
-  //   bottom: 0,
-  //   left: 0,
-  //   right: 0,
-  //   borderColor: "red",
-  //   borderWidth: 2,
-  //   // borderTopWidth: 5,
-  // },
   pin: {
     top: 100,
     bottom: 0,

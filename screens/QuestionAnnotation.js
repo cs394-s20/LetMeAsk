@@ -79,10 +79,18 @@ export default function QuestionAnnotation({ navigation, route }) {
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Submitted", { navigation: navigation });
+            navigation.navigate("Root", {
+              screens: "LinksScreen",
+              params: {
+                // navigation: navigation,
+                route: route,
+                photo_uri: "photo_uri",
+                loc: [pan.x, pan.y],
+              },
+            });
           }}
           title="Submit Question"
-          accessibilityLabel="Submit Your Question"
+          accessibilityLabel="Submit Question"
           style={{
             backgroundColor: "orange",
             alignItems: "center",
@@ -102,9 +110,7 @@ export default function QuestionAnnotation({ navigation, route }) {
           }}
         >
           <View style={{}}>
-            <Text style={{ color: "white", fontSize: 20 }}>
-              Submit Question
-            </Text>
+            <Text style={{ color: "white", fontSize: 20 }}>Confirm</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -128,16 +134,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     ...StyleSheet.absoluteFillObject,
   },
-  // photoContainer: {
-  //   position: "absolute",
-  //   top: 0,
-  //   bottom: 0,
-  //   left: 0,
-  //   right: 0,
-  //   borderColor: "red",
-  //   borderWidth: 2,
-  //   // borderTopWidth: 5,
-  // },
   pin: {
     top: 100,
     bottom: 0,
