@@ -61,12 +61,12 @@ export default function LinksScreen({ navigation, route }) {
   const uploadQuestion = async () => {
     try {
       await db.collection("Questions").add({
-        title: "hello",
+        title: "hello2",
         question: question,
-        author: "Brian",
+        author: "yo",
         isbn: ISBN,
         page: pageNumber,
-        loc: [32, 23], // Example!
+        loc: coords, // Example!
         status: "open",
       });
     } catch (e) {
@@ -83,6 +83,13 @@ export default function LinksScreen({ navigation, route }) {
       accent: "#f1c40f",
     },
   };
+
+  const coords = annCoords.map((obj) => {
+    return Object.assign({}, obj)._value;
+  });
+
+  console.log(coords);
+
   return (
     <View>
       <View>
@@ -118,46 +125,48 @@ export default function LinksScreen({ navigation, route }) {
             theme={theme}
           />
         </View>
-        <TouchableOpacity
-          style={{
-            // borderColor: "red",
-            // borderWidth: 2,
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 20,
-            marginLeft: 21,
-            width: "27%",
-            borderColor: "orange",
-            borderWidth: 2,
-            borderStyle: "dashed",
-          }}
-          onPress={() =>
-            navigation.navigate("Camera", {
-              navigation: navigation,
-              route: route,
-              setAnnCoords: setAnnCoords,
-            })
-          }
-          title="Upload Photo of Page"
-          accessibilityLabel="Take Photo of Page"
-        >
-          <View
+        {annCoords.length === 0 && (
+          <TouchableOpacity
             style={{
-              padding: 20,
+              // borderColor: "red",
+              // borderWidth: 2,
               alignItems: "center",
               justifyContent: "center",
+              marginTop: 20,
+              marginLeft: 21,
+              width: "27%",
+              borderColor: "orange",
+              borderWidth: 2,
+              borderStyle: "dashed",
             }}
+            onPress={() =>
+              navigation.navigate("Camera", {
+                navigation: navigation,
+                route: route,
+                setAnnCoords: setAnnCoords,
+              })
+            }
+            title="Upload Photo of Page"
+            accessibilityLabel="Take Photo of Page"
           >
-            <MaterialCommunityIcons
-              name="camera-plus"
-              size={50}
-              color="orange"
-            />
-            <Text style={{ fontSize: 12, marginTop: 5, color: "orange" }}>
-              Add Photo
-            </Text>
-          </View>
-        </TouchableOpacity>
+            <View
+              style={{
+                padding: 20,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="camera-plus"
+                size={50}
+                color="orange"
+              />
+              <Text style={{ fontSize: 12, marginTop: 5, color: "orange" }}>
+                Add Photo
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
         {/* <View style={{ margin: 10, borderWidth: 0.5 }}>
           <Text>uh</Text>
           <Image
@@ -171,16 +180,19 @@ export default function LinksScreen({ navigation, route }) {
         <View style={{ margin: 10, borderWidth: 0.5 }}>
           <Text>Points: {JSON.stringify(annCoords)}</Text>
         </View>
+        {annCoords.length !== 0 && (
+          <Button
+            title="Submit Question"
+            onPress={() => {
+              console.log("uploaded question pressed");
+              console.log(annCoords);
 
-        <Button
-          title="Submit Question"
-          onPress={() => {
-            console.log("uploaded question pressed");
-            uploadQuestion();
-            navigation.navigate("Submitted");
-            // navigation.navigate("PDF");
-          }}
-        ></Button>
+              uploadQuestion();
+              navigation.navigate("Submitted");
+              // navigation.navigate("PDF");
+            }}
+          ></Button>
+        )}
       </View>
     </View>
   );
