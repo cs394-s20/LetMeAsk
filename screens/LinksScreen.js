@@ -11,6 +11,7 @@ import {
   Animated,
   PanResponder,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import {
   TextInput,
@@ -27,9 +28,18 @@ const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function LinksScreen({ navigation, route }) {
-  console.log(route);
   const db = firebase.firestore();
-  //const { loc, photo_uri } = route.params;
+  console.log("CONSOLLEEEINNG", route.params?.x);
+
+  // useEffect(() => {
+  //   if (route.params?.x) {
+  //     console.log("x yay");
+  //   }
+  //   else {
+  //     console.log("this sucks");
+  //   }
+  // }, [route.params?.x]);
+
   const [annCoords, setAnnCoords] = useState([]);
 
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -41,44 +51,15 @@ export default function LinksScreen({ navigation, route }) {
   const [pageNumber, setPageNumber] = useState("");
   const [image, setImage] = useState("");
   const [ISBN, setISBN] = useState("");
-  const [photo, setPhoto] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [viewAnswer, setViewAnswer] = useState(false);
 
+  // const [xCoord, setXCoord] = useState(0);
+
   const pan = useRef(new Animated.ValueXY()).current;
-
-  // const panResponder = useRef(
-  //   PanResponder.create({
-  //     onMoveShouldSetPanResponder: () => true,
-  //     onPanResponderGrant: () => {
-  //       setAnnCoords([pan.x._value, pan.y._value]);
-  //       // console.log(pan.x._value)
-  //       // console.log(annCoords.toString())
-  //       pan.setOffset({
-  //         x: pan.x._value,
-  //         y: pan.y._value,
-  //       });
-  //     },
-  //     onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
-  //     onPanResponderRelease: () => {
-  //       pan.flattenOffset();
-  //     },
-  //   })
-  // ).current;
-
-  // const uploadQuestion = () => {
-  //   db.collection("Questions")
-  //     .add({
-  //       title: "A TITLE",
-  //     })
-  //     .then((ref) => {
-  //       console.log("added doc with ID: ", ref.id);
-  //     });
-  // };
 
   const uploadQuestion = async () => {
     try {
-      //await db.collection("Questions").doc("0tbams66XiVMa1vr1Ajk").set({
       await db.collection("Questions").add({
         title: "hello",
         question: question,
@@ -92,16 +73,6 @@ export default function LinksScreen({ navigation, route }) {
       console.error("Error writing document: ", e);
     }
   };
-
-  async function uploadImage(photo_uri) {
-    const response = await fetch(photo_uri);
-    const blob = await response.blob();
-    var ref = firebase
-      .storage()
-      .ref()
-      .child("images/" + "test");
-    return ref.put(blob);
-  }
 
   const theme = {
     ...DefaultTheme,
@@ -164,7 +135,7 @@ export default function LinksScreen({ navigation, route }) {
             navigation.navigate("Camera", {
               navigation: navigation,
               route: route,
-              setPhoto: setPhoto,
+              setAnnCoords: setAnnCoords,
             })
           }
           title="Upload Photo of Page"
@@ -187,17 +158,29 @@ export default function LinksScreen({ navigation, route }) {
             </Text>
           </View>
         </TouchableOpacity>
+        {/* <View style={{ margin: 10, borderWidth: 0.5 }}>
+          <Text>uh</Text>
+          <Image
+            source={{
+              uri: route.params?.photo_uri,
+            }}
+          ></Image>
+          
+        </View> */}
+
+        <View style={{ margin: 10, borderWidth: 0.5 }}>
+          <Text>Points: {JSON.stringify(annCoords)}</Text>
+        </View>
 
         <Button
-          title="Press Me"
+          title="Submit Question"
           onPress={() => {
             console.log("uploaded question pressed");
             uploadQuestion();
+            navigation.navigate("Submitted");
             // navigation.navigate("PDF");
           }}
-        >
-          Go to PDF
-        </Button>
+        ></Button>
       </View>
     </View>
   );

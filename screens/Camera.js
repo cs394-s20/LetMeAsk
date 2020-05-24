@@ -15,6 +15,9 @@ import {
 
 //setPhoto, setCameraOpen
 export default function CameraApp({ navigation, route }) {
+  const { setXCoord } = route.params;
+  const { setAnnCoords } = route.params;
+
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const camRef = useRef(null);
@@ -72,26 +75,17 @@ export default function CameraApp({ navigation, route }) {
   }
 
   async function uploadImage(uri) {
-    // console.log(uri);
-    // const response = await fetch(uri);
-    // const blob = await response.blob();
-    // var ref = firebase
-    //   .storage()
-    //   .ref()
-    //   .child("images/" + "test");
-    // return ref.put(blob);
-
     setPhoto(uri);
-    console.log("before setopen    " + uri);
+    // console.log("before setopen    " + uri);
     setOpen(false);
     setImageOpen(false);
-
-    console.log("after setopen      " + uri);
+    // console.log("after setopen      " + uri);
     navigation.setParams({ photo_uri: uri });
     navigation.navigate("Annotate", {
       route: route,
       navigation: navigation,
       photo_uri: uri,
+      setAnnCoords: setAnnCoords,
     });
     // navigation.navigate("Annotate", { navigation: navigation });
   }

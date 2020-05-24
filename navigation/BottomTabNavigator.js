@@ -17,7 +17,10 @@ export default function BottomTabNavigator({ navigation, route }) {
   // const { loc, photo_uri } = route.params;
 
   return (
-    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+    <BottomTab.Navigator
+      initialRouteName={INITIAL_ROUTE_NAME}
+      params={{ photo_uri: null }}
+    >
       <BottomTab.Screen
         name="Home"
         component={HomeScreen}

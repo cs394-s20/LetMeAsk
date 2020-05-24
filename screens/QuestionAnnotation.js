@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState, useEffect, useRef } from "react";
+import { CommonActions } from "@react-navigation/native";
 import {
   StyleSheet,
   Text,
@@ -18,8 +19,11 @@ const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function QuestionAnnotation({ navigation, route }) {
+  const { setAnnCoords } = route.params;
   const { photo_uri } = route.params;
-  const [annCoords, setAnnCoords] = useState([]);
+  // const [annCoords, setAnnCoords] = useState([]);
+  // // const [xCoord, setXCoord] = useState(0);
+
   const pan = useRef(new Animated.ValueXY()).current;
   // const photo_uri = this.props.navigation.state.params.photo_uri;
   // console.log("qaaaa     " + photo_uri);
@@ -41,7 +45,9 @@ export default function QuestionAnnotation({ navigation, route }) {
       },
     })
   ).current;
-
+  // console.log(pan.x);
+  // console.log(pan.y);
+  // console.log(photo_uri);
   const Pin = ({ coords }) => {
     return (
       <MaterialCommunityIcons
@@ -73,22 +79,28 @@ export default function QuestionAnnotation({ navigation, route }) {
           }}
           {...panResponder.panHandlers}
         >
-          <Pin coords={annCoords}></Pin>
+          <Pin></Pin>
         </Animated.View>
       </View>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Root", {
-              screens: "LinksScreen",
-              params: {
-                // navigation: navigation,
+          onPress={
+            () => {
+              setAnnCoords([pan.x, pan.y]);
+              navigation.setParams({ xy: [pan.x, pan.y] });
+              navigation.navigate("Root", {
                 route: route,
-                photo_uri: "photo_uri",
-                loc: [pan.x, pan.y],
-              },
-            });
-          }}
+                navigation: navigation,
+                xy: [pan.x, pan.y],
+              });
+            }
+            // navigation.navigate("Root", { x: xCoord });
+          }
+          //   () => {
+          //   handleOnPress;
+          //   console.log(xCoord);
+          //   navigation.navigate("Root", { x: pan.x });
+          // }}
           title="Submit Question"
           accessibilityLabel="Submit Question"
           style={{
