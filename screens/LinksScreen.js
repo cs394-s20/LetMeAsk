@@ -12,6 +12,7 @@ import {
   PanResponder,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import {
   TextInput,
@@ -41,6 +42,8 @@ export default function LinksScreen({ navigation, route }) {
   // }, [route.params?.x]);
 
   const [annCoords, setAnnCoords] = useState([]);
+  const [photouri, setPhotoUri] = useState([]);
+  console.log(photouri);
 
   const [cameraOpen, setCameraOpen] = useState(false);
 
@@ -61,13 +64,16 @@ export default function LinksScreen({ navigation, route }) {
   const uploadQuestion = async () => {
     try {
       await db.collection("Questions").add({
-        title: "hello2",
+        title: "try",
         question: question,
         author: "yo",
         isbn: ISBN,
         page: pageNumber,
+        image: photouri,
         loc: coords, // Example!
         status: "open",
+      }).then(() => {
+        console.log('question added!');
       });
     } catch (e) {
       console.error("Error writing document: ", e);
@@ -123,6 +129,7 @@ export default function LinksScreen({ navigation, route }) {
             underlineColor="orange"
             selectionColor="orange"
             theme={theme}
+            keyboardType = {'numeric'}
           />
         </View>
         {annCoords.length === 0 && (
@@ -144,6 +151,7 @@ export default function LinksScreen({ navigation, route }) {
                 navigation: navigation,
                 route: route,
                 setAnnCoords: setAnnCoords,
+                setPhotoUri: setPhotoUri,
               })
             }
             title="Upload Photo of Page"
@@ -167,25 +175,29 @@ export default function LinksScreen({ navigation, route }) {
             </View>
           </TouchableOpacity>
         )}
-        {/* <View style={{ margin: 10, borderWidth: 0.5 }}>
-          <Text>uh</Text>
-          <Image
-            source={{
-              uri: route.params?.photo_uri,
-            }}
-          ></Image>
-          
-        </View> */}
-
-        <View style={{ margin: 10, borderWidth: 0.5 }}>
-          <Text>Points: {JSON.stringify(annCoords)}</Text>
-        </View>
+        {photouri.length !== 0 && (
+          <ScrollView>
+            <Image
+               style={{ width: 200, height: 300, borderRadius: 20, marginLeft: 90}}
+               source={{ uri: photouri }}
+             ></Image>
+          </ScrollView>
+               
+        )}
+        
         {annCoords.length !== 0 && (
+          <View style={{ margin: 10, borderWidth: 0.5 }}>
+            <Text>Points: {JSON.stringify(annCoords)}</Text>
+          </View>  
+        )}
+
+        {annCoords.length !== 0 && photouri.length !== 0 &&(
           <Button
             title="Submit Question"
             onPress={() => {
               console.log("uploaded question pressed");
               console.log(annCoords);
+              console.log("hahaha   " + photouri);
 
               uploadQuestion();
               navigation.navigate("Submitted");

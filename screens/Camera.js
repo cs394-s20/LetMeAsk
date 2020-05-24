@@ -17,6 +17,7 @@ import {
 export default function CameraApp({ navigation, route }) {
   const { setXCoord } = route.params;
   const { setAnnCoords } = route.params;
+  const { setPhotoUri } = route.params;
 
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -85,6 +86,7 @@ export default function CameraApp({ navigation, route }) {
       route: route,
       navigation: navigation,
       photo_uri: uri,
+      setPhotoUri: setPhotoUri,
       setAnnCoords: setAnnCoords,
     });
     // navigation.navigate("Annotate", { navigation: navigation });

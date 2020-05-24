@@ -20,7 +20,9 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function QuestionAnnotation({ navigation, route }) {
   const { setAnnCoords } = route.params;
+  const { setPhotoUri } = route.params;
   const { photo_uri } = route.params;
+
   // const [annCoords, setAnnCoords] = useState([]);
   // // const [xCoord, setXCoord] = useState(0);
 
@@ -87,7 +89,8 @@ export default function QuestionAnnotation({ navigation, route }) {
           onPress={
             () => {
               setAnnCoords([pan.x, pan.y]);
-              navigation.setParams({ xy: [pan.x, pan.y] });
+              setPhotoUri(photo_uri);
+              navigation.setParams({ xy: [pan.x, pan.y]});
               navigation.navigate("Root", {
                 route: route,
                 navigation: navigation,
