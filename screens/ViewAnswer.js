@@ -15,7 +15,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
-export default function ViewAnswer() {
+export default function ViewAnswer({ navigation, route }) {
+  const { question } = route.params;
   return (
     <View
       style={{ padding: 10, alignItems: "center", justifyContent: "center" }}
@@ -39,8 +40,7 @@ export default function ViewAnswer() {
         }}
       >
         <Text style={{ lineHeight: 20, fontSize: 15 }}>
-          <Text style={{ fontSize: 20 }}>Q:</Text> Can someone explain what make
-          up the flagella and what is its connection to microtubules?
+          <Text style={{ fontSize: 20 }}>Q:</Text> {question}
         </Text>
       </View>
       <View

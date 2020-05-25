@@ -15,7 +15,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 
-export default function QuestionSubmitted({ navigation }) {
+export default function QuestionSubmitted({ navigation, route }) {
+  const { question } = route.params;
+  console.log(question);
   const ShowAlertWithDelay = () => {
     setTimeout(function () {
       Alert.alert(
@@ -30,7 +32,11 @@ export default function QuestionSubmitted({ navigation }) {
           {
             text: "View",
             onPress: () =>
-              navigation.navigate("Answer", { navigation: navigation }),
+              navigation.navigate("Answer", {
+                navigation: navigation,
+                route: route,
+                question: question,
+              }),
           },
         ],
         { cancelable: false }

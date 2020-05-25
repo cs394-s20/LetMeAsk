@@ -63,18 +63,21 @@ export default function LinksScreen({ navigation, route }) {
 
   const uploadQuestion = async () => {
     try {
-      await db.collection("Questions").add({
-        title: "try",
-        question: question,
-        author: "yo",
-        isbn: ISBN,
-        page: pageNumber,
-        image: photouri,
-        loc: coords, // Example!
-        status: "open",
-      }).then(() => {
-        console.log('question added!');
-      });
+      await db
+        .collection("Questions")
+        .add({
+          title: "try",
+          question: question,
+          author: "test",
+          isbn: ISBN,
+          page: pageNumber,
+          image: photouri,
+          loc: coords, // Example!
+          status: "open",
+        })
+        .then(() => {
+          console.log("question added!");
+        });
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -129,7 +132,7 @@ export default function LinksScreen({ navigation, route }) {
             underlineColor="orange"
             selectionColor="orange"
             theme={theme}
-            keyboardType = {'numeric'}
+            // keyboardType={"numeric"}
           />
         </View>
         {annCoords.length === 0 && (
@@ -178,20 +181,25 @@ export default function LinksScreen({ navigation, route }) {
         {photouri.length !== 0 && (
           <ScrollView>
             <Image
-               style={{ width: 200, height: 300, borderRadius: 20, marginLeft: 90}}
-               source={{ uri: photouri }}
-             ></Image>
+              style={{
+                marginTop: 10,
+                width: 200,
+                height: 300,
+                borderRadius: 20,
+                marginLeft: 90,
+              }}
+              source={{ uri: photouri }}
+            ></Image>
           </ScrollView>
-               
         )}
-        
+
         {annCoords.length !== 0 && (
           <View style={{ margin: 10, borderWidth: 0.5 }}>
             <Text>Points: {JSON.stringify(annCoords)}</Text>
-          </View>  
+          </View>
         )}
 
-        {annCoords.length !== 0 && photouri.length !== 0 &&(
+        {annCoords.length !== 0 && photouri.length !== 0 && (
           <Button
             title="Submit Question"
             onPress={() => {
@@ -200,7 +208,10 @@ export default function LinksScreen({ navigation, route }) {
               console.log("hahaha   " + photouri);
 
               uploadQuestion();
-              navigation.navigate("Submitted");
+              navigation.navigate("Submitted", {
+                route: route,
+                question: question,
+              });
               // navigation.navigate("PDF");
             }}
           ></Button>
