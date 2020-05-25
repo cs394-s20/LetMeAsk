@@ -24,7 +24,7 @@ export default function ViewAnswer({ navigation, route }) {
       <View
         style={{
           borderRadius: 5,
-          backgroundColor: "orange",
+          backgroundColor: "#378BE5",
           padding: 10,
           width: "92%",
           shadowColor: "#000",
@@ -39,14 +39,14 @@ export default function ViewAnswer({ navigation, route }) {
           marginTop: 10,
         }}
       >
-        <Text style={{ lineHeight: 20, fontSize: 15 }}>
+        <Text style={{ color: "white", lineHeight: 20, fontSize: 15 }}>
           <Text style={{ fontSize: 20 }}>Q:</Text> {question}
         </Text>
       </View>
       <View
         style={{
           borderRadius: 5,
-          backgroundColor: "#6767FF",
+          backgroundColor: "#E57359",
           padding: 10,
           width: "92%",
           shadowColor: "#000",

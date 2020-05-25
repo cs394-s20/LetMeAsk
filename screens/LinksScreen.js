@@ -32,15 +32,6 @@ export default function LinksScreen({ navigation, route }) {
   const db = firebase.firestore();
   console.log("CONSOLLEEEINNG", route.params?.x);
 
-  // useEffect(() => {
-  //   if (route.params?.x) {
-  //     console.log("x yay");
-  //   }
-  //   else {
-  //     console.log("this sucks");
-  //   }
-  // }, [route.params?.x]);
-
   const [annCoords, setAnnCoords] = useState([]);
   const [photouri, setPhotoUri] = useState([]);
   console.log(photouri);
@@ -56,8 +47,6 @@ export default function LinksScreen({ navigation, route }) {
   const [ISBN, setISBN] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [viewAnswer, setViewAnswer] = useState(false);
-
-  // const [xCoord, setXCoord] = useState(0);
 
   const pan = useRef(new Animated.ValueXY()).current;
 
@@ -88,7 +77,7 @@ export default function LinksScreen({ navigation, route }) {
     roundness: 2,
     colors: {
       ...DefaultTheme.colors,
-      primary: "orange",
+      primary: "#378BE5",
       accent: "#f1c40f",
     },
   };
@@ -109,8 +98,8 @@ export default function LinksScreen({ navigation, route }) {
             onChangeText={(text) => setQuestion(text)}
             value={question}
             placeholder=""
-            underlineColor="orange"
-            selectionColor="orange"
+            underlineColor="#378BE5"
+            selectionColor="#378BE5"
             theme={theme}
           />
           <TextInput
@@ -119,8 +108,8 @@ export default function LinksScreen({ navigation, route }) {
             onChangeText={(text) => setISBN(text)}
             value={ISBN}
             placeholder=""
-            underlineColor="orange"
-            selectionColor="orange"
+            underlineColor="#378BE5"
+            selectionColor="#378BE5"
             theme={theme}
           />
           <TextInput
@@ -129,8 +118,8 @@ export default function LinksScreen({ navigation, route }) {
             onChangeText={(text) => setPageNumber(text)}
             value={pageNumber}
             placeholder=""
-            underlineColor="orange"
-            selectionColor="orange"
+            underlineColor="#378BE5"
+            selectionColor="#378BE5"
             theme={theme}
             // keyboardType={"numeric"}
           />
@@ -145,7 +134,7 @@ export default function LinksScreen({ navigation, route }) {
               marginTop: 20,
               marginLeft: 21,
               width: "27%",
-              borderColor: "orange",
+              borderColor: "#378BE5",
               borderWidth: 2,
               borderStyle: "dashed",
             }}
@@ -170,51 +159,88 @@ export default function LinksScreen({ navigation, route }) {
               <MaterialCommunityIcons
                 name="camera-plus"
                 size={50}
-                color="orange"
+                color="#378BE5"
               />
-              <Text style={{ fontSize: 12, marginTop: 5, color: "orange" }}>
+              <Text style={{ fontSize: 12, marginTop: 5, color: "#378BE5" }}>
                 Add Photo
               </Text>
             </View>
           </TouchableOpacity>
         )}
         {photouri.length !== 0 && (
-          <ScrollView>
-            <Image
-              style={{
-                marginTop: 10,
-                width: 200,
-                height: 300,
-                borderRadius: 20,
-                marginLeft: 90,
-              }}
-              source={{ uri: photouri }}
-            ></Image>
-          </ScrollView>
-        )}
-
-        {annCoords.length !== 0 && (
-          <View style={{ margin: 10, borderWidth: 0.5 }}>
-            <Text>Points: {JSON.stringify(annCoords)}</Text>
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <ScrollView>
+              <Image
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: 20,
+                  width: 200,
+                  height: 300,
+                  borderRadius: 20,
+                  // marginLeft: 90,
+                }}
+                source={{ uri: photouri }}
+              ></Image>
+            </ScrollView>
           </View>
         )}
 
-        {annCoords.length !== 0 && photouri.length !== 0 && (
-          <Button
-            title="Submit Question"
-            onPress={() => {
-              console.log("uploaded question pressed");
-              console.log(annCoords);
-              console.log("hahaha   " + photouri);
+        {/* {annCoords.length !== 0 && (
+          <View style={{ margin: 10, borderWidth: 0.5 }}>
+            <Text>Points: {JSON.stringify(annCoords)}</Text>
+          </View>
+        )} */}
 
-              uploadQuestion();
-              navigation.navigate("Submitted", {
-                route: route,
-                question: question,
-              });
-              // navigation.navigate("PDF");
+        {annCoords.length !== 0 && photouri.length !== 0 && (
+          <View
+            style={{
+              marginTop: 15,
+              alignItems: "center",
+              justifyContent: "center",
             }}
-          ></Button>
+          >
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#378BE5",
+                alignItems: "center",
+                justifyContent: "center",
+
+                height: 60,
+                width: "50%",
+                borderRadius: 7,
+                marginTop: 25,
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.2,
+                shadowRadius: 3.84,
+                elevation: 5,
+              }}
+              title="Submit Question"
+              accessibilityLabel="Submit Question"
+              onPress={() => {
+                console.log("uploaded question pressed");
+                console.log(annCoords);
+                console.log("hahaha   " + photouri);
+
+                uploadQuestion();
+                navigation.navigate("Submitted", {
+                  route: route,
+                  question: question,
+                });
+                // navigation.navigate("PDF");
+              }}
+            >
+              <View>
+                <Text style={{ color: "white", fontSize: 20 }}>
+                  Submit Question
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     </View>
@@ -226,7 +252,7 @@ const Pin = ({ coords }) => {
     <MaterialCommunityIcons
       name="map-marker-question"
       size={50}
-      color="orange"
+      color="#378BE5"
     />
   );
 };
@@ -256,7 +282,7 @@ const styles = StyleSheet.create({
   submitInput: {
     height: 56,
     fontSize: 18,
-    borderColor: "orange",
+    borderColor: "#378BE5",
     borderWidth: 1,
     borderRadius: 5,
     padding: 1,

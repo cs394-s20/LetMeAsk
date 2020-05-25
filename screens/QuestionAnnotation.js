@@ -55,7 +55,7 @@ export default function QuestionAnnotation({ navigation, route }) {
       <MaterialCommunityIcons
         name="map-marker-question"
         size={50}
-        color="orange"
+        color="#378BE5"
       />
     );
   };
@@ -86,28 +86,20 @@ export default function QuestionAnnotation({ navigation, route }) {
       </View>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
-          onPress={
-            () => {
-              setAnnCoords([pan.x, pan.y]);
-              setPhotoUri(photo_uri);
-              navigation.setParams({ xy: [pan.x, pan.y]});
-              navigation.navigate("Root", {
-                route: route,
-                navigation: navigation,
-                xy: [pan.x, pan.y],
-              });
-            }
-            // navigation.navigate("Root", { x: xCoord });
-          }
-          //   () => {
-          //   handleOnPress;
-          //   console.log(xCoord);
-          //   navigation.navigate("Root", { x: pan.x });
-          // }}
+          onPress={() => {
+            setAnnCoords([pan.x, pan.y]);
+            setPhotoUri(photo_uri);
+            navigation.setParams({ xy: [pan.x, pan.y] });
+            navigation.navigate("Root", {
+              route: route,
+              navigation: navigation,
+              xy: [pan.x, pan.y],
+            });
+          }}
           title="Submit Question"
           accessibilityLabel="Submit Question"
           style={{
-            backgroundColor: "orange",
+            backgroundColor: "#378BE5",
             alignItems: "center",
             justifyContent: "center",
             height: 60,
@@ -158,7 +150,7 @@ const styles = StyleSheet.create({
   submitInput: {
     height: 56,
     fontSize: 18,
-    borderColor: "orange",
+    borderColor: "#378BE5",
     borderWidth: 1,
     borderRadius: 5,
     padding: 1,

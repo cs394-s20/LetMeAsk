@@ -49,7 +49,7 @@ export default function QuestionSubmitted({ navigation, route }) {
     <View style={{ alignItems: "center", justifyContent: "center" }}>
       <View
         style={{
-          backgroundColor: "orange",
+          backgroundColor: "#378BE5",
           width: "55%",
           alignItems: "center",
           justifyContent: "center",
