@@ -1,6 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState, useEffect, useRef } from "react";
+import axios from 'axios'
+
 import {
   AppRegistry,
   Button,
@@ -20,6 +22,8 @@ import {
   Provider as PaperProvider,
 } from "react-native-paper";
 import firebase from "../shared/firebase";
+const admin = require('firebase-admin');
+
 
 // import uuid from "react-native-uuid";
 
@@ -50,6 +54,26 @@ export default function LinksScreen({ navigation, route }) {
 
   const pan = useRef(new Animated.ValueXY()).current;
 
+  const updateBook = async() => {
+    try {
+      let bookRef = db.collection('Books').doc(ISBN);
+      if (!bookRef) {
+        let bookInfo = await axios
+          .get(`https://www.googleapis.com/books/v1/volumes?q=isbn%3D${ISBN}&key=${AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0}`)
+        db.collection('Books').doc(ISBN).set({
+          title: bookInfo.title,
+          subtitle: bookInfo.subtitle,
+          authors: bookInfo.authors
+        })
+      }
+      await bookRef.update({
+        questions: admin.firestore.FieldValue.arrayUnion(docref.id)
+      });
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const uploadQuestion = async () => {
     try {
       await db
@@ -63,10 +87,7 @@ export default function LinksScreen({ navigation, route }) {
           image: photouri,
           loc: coords, // Example!
           status: "open",
-        })
-        .then(() => {
-          console.log("question added!");
-        });
+        }).then(docref => updateBook(docref.id))
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -169,20 +190,18 @@ export default function LinksScreen({ navigation, route }) {
         )}
         {photouri.length !== 0 && (
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <ScrollView>
               <Image
                 style={{
                   alignItems: "center",
                   justifyContent: "center",
-                  marginTop: 20,
+                  marginTop: 10,
                   width: 200,
-                  height: 300,
+                  height: 200,
                   borderRadius: 20,
                   // marginLeft: 90,
                 }}
                 source={{ uri: photouri }}
               ></Image>
-            </ScrollView>
           </View>
         )}
 
@@ -192,7 +211,7 @@ export default function LinksScreen({ navigation, route }) {
           </View>
         )} */}
 
-        {annCoords.length !== 0 && photouri.length !== 0 && (
+        {/* {annCoords.length !== 0 && photouri.length !== 0 && ( */}
           <View
             style={{
               marginTop: 15,
@@ -241,7 +260,7 @@ export default function LinksScreen({ navigation, route }) {
               </View>
             </TouchableOpacity>
           </View>
-        )}
+        {/* )} */}
       </View>
     </View>
   );
