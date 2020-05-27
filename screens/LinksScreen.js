@@ -30,7 +30,7 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function LinksScreen({ navigation, route }) {
   const db = firebase.firestore();
-  console.log("CONSOLLEEEINNG", route.params?.x);
+  // console.log("CONSOLLEEEINNG", route.params?.x);
 
   const [annCoords, setAnnCoords] = useState([]);
   const [photouri, setPhotoUri] = useState([]);

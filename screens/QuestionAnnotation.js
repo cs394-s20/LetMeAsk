@@ -11,9 +11,16 @@ import {
   Animated,
   PanResponder,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  PinchGestureHandler,
+  PanGestureHandler,
+  State,
+} from "react-native-gesture-handler";
+// import ZoomSlider from "react-instagram-zoom-slider";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
@@ -22,9 +29,50 @@ export default function QuestionAnnotation({ navigation, route }) {
   const { setAnnCoords } = route.params;
   const { setPhotoUri } = route.params;
   const { photo_uri } = route.params;
+  const [isZoom, setIsZoom] = useState(false);
 
-  // const [annCoords, setAnnCoords] = useState([]);
-  // // const [xCoord, setXCoord] = useState(0);
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const screen = Dimensions.get("window");
+
+  const onPinchEvent = Animated.event(
+    [
+      {
+        nativeEvent: { scale: scale },
+      },
+    ],
+    {
+      useNativeDriver: true,
+    }
+  );
+  const onTranslateXEvent = Animated.event(
+    [
+      {
+        nativeEvent: { translationX: translateX },
+      },
+    ],
+    {
+      useNativeDriver: true,
+    }
+  );
+
+  const onPinchStateChange = (event) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  const onTranslateXStateChange = (event) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      Animated.spring(translateX, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
 
   const pan = useRef(new Animated.ValueXY()).current;
   // const photo_uri = this.props.navigation.state.params.photo_uri;
@@ -47,9 +95,7 @@ export default function QuestionAnnotation({ navigation, route }) {
       },
     })
   ).current;
-  // console.log(pan.x);
-  // console.log(pan.y);
-  // console.log(photo_uri);
+
   const Pin = ({ coords }) => {
     return (
       <MaterialCommunityIcons
@@ -60,6 +106,36 @@ export default function QuestionAnnotation({ navigation, route }) {
     );
   };
 
+  console.log(pan.x);
+  console.log(pan.y);
+
+  const slides = [
+    <Image
+      style={styles.photo}
+      resizeMode="contain"
+      source={{
+        uri: photo_uri,
+      }}
+    />,
+  ];
+
+  const handleResetZoomScale = (e) => {
+    scrollResponserRef.scrollResponderZoomTo({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      animated: true,
+    });
+  };
+
+  const setZoomRef = (node) => {
+    if (node) {
+      const zoomRef = node;
+      scrollResponderRef = zoomRef.getScrollResponder();
+    }
+  };
+
   return (
     <View>
       <Text style={{ padding: 25, fontSize: 18 }}>
@@ -67,23 +143,63 @@ export default function QuestionAnnotation({ navigation, route }) {
         corresponds.
       </Text>
 
-      <View style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}>
-        <Image
-          style={styles.photo}
-          source={{
-            uri: photo_uri,
-          }}
-        />
-        {/* <Text>My photo uri:{photo_uri}</Text> */}
-        <Animated.View
-          style={{
-            transform: [{ translateX: pan.x }, { translateY: pan.y }],
-          }}
-          {...panResponder.panHandlers}
+      <ScrollView
+        maximumZoomScale={1.5}
+        scrollEnabled={true}
+        minimumZoomScale={1}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        // ref={setZoomRef}
+      >
+        <View
+          style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
         >
-          <Pin></Pin>
-        </Animated.View>
-      </View>
+          <Image
+            style={styles.photo}
+            resizeMode="contain"
+            source={{
+              uri: photo_uri,
+            }}
+          />
+        </View>
+      </ScrollView>
+
+      {/* <PanGestureHandler
+          onGestureEvent={onTranslateXEvent}
+          onHandlerStateChange={onTranslateXStateChange}
+        >
+          <Animated.View
+            style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
+          >
+            <PinchGestureHandler
+              onGestureEvent={onPinchEvent}
+              onHandlerStateChange={onPinchStateChange}
+            >
+              <Animated.Image
+                style={[
+                  styles.photo,
+                  { transform: [{ scale: scale }, { translateX: translateX }] },
+                ]}
+                resizeMode="contain"
+                source={{
+                  uri: photo_uri,
+                }}
+              />
+            </PinchGestureHandler>
+          </Animated.View>
+        </PanGestureHandler> */}
+
+      <Animated.View
+        style={{
+          transform: [{ translateX: pan.x }, { translateY: pan.y }],
+        }}
+        {...panResponder.panHandlers}
+      >
+        <Pin></Pin>
+      </Animated.View>
+
+      {/* </PanGestureHandler> */}
+
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
           onPress={() => {
