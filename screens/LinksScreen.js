@@ -22,7 +22,6 @@ import {
   Provider as PaperProvider,
 } from "react-native-paper";
 import firebase from "../shared/firebase";
-const admin = require('firebase-admin');
 
 
 // import uuid from "react-native-uuid";
@@ -54,21 +53,39 @@ export default function LinksScreen({ navigation, route }) {
 
   const pan = useRef(new Animated.ValueXY()).current;
 
-  const updateBook = async() => {
+  const updateBook = async (id) => {
     try {
+      console.log(ISBN)
       let bookRef = db.collection('Books').doc(ISBN);
-      if (!bookRef) {
-        let bookInfo = await axios
-          .get(`https://www.googleapis.com/books/v1/volumes?q=isbn%3D${ISBN}&key=${AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0}`)
-        db.collection('Books').doc(ISBN).set({
-          title: bookInfo.title,
-          subtitle: bookInfo.subtitle,
-          authors: bookInfo.authors
-        })
-      }
-      await bookRef.update({
-        questions: admin.firestore.FieldValue.arrayUnion(docref.id)
-      });
+      //console.log(bookRef);
+      bookRef.get()
+        .then(async (docSnapshot) => {
+          if (docSnapshot.exists) {
+            console.log('==================docSnapshot EXISTS!')
+          }
+          
+          else{
+            console.log("=================!bookref");
+            let bookInfo = await axios
+              .get(`https://www.googleapis.com/books/v1/volumes?q=isbn%3D${ISBN}&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0`)
+            console.log(bookInfo);
+            db.collection('Books').doc(ISBN).set({
+              title: bookInfo.title,
+              subtitle: bookInfo.subtitle,
+              authors: bookInfo.authors
+            })
+            
+          }
+        });
+        
+      // await bookRef.set({
+      //   questions: firebase.firestore.FieldValue.arrayUnion(id)
+
+
+        
+      // }, {merge:true});
+
+
     } catch (e) {
       console.error(e)
     }
