@@ -1,6 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+
 import {
   AppRegistry,
   Button,
@@ -50,6 +52,43 @@ export default function LinksScreen({ navigation, route }) {
 
   const pan = useRef(new Animated.ValueXY()).current;
 
+  const updateBook = async (id) => {
+    try {
+      console.log(ISBN);
+      let bookRef = db.collection("Books").doc(ISBN);
+      //console.log(bookRef);
+
+      bookRef.get().then(async (docSnapshot) => {
+        if (docSnapshot.exists) {
+          console.log("==================docSnapshot EXISTS!");
+          await bookRef.set(
+            {
+              questions: firebase.firestore.FieldValue.arrayUnion(id),
+            },
+            { merge: true }
+          );
+        } else {
+          let bookInfo = await axios.get(
+            "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
+              ISBN +
+              "&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0"
+          );
+
+          db.collection("Books")
+            .doc(ISBN)
+            .set({
+              title: bookInfo.data.items[0].volumeInfo.title,
+              subtitle: bookInfo.data.items[0].volumeInfo.subtitle,
+              authors: bookInfo.data.items[0].volumeInfo.authors,
+              questions: firebase.firestore.FieldValue.arrayUnion(id),
+            });
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const uploadQuestion = async () => {
     try {
       await db
@@ -64,9 +103,7 @@ export default function LinksScreen({ navigation, route }) {
           loc: coords, // Example!
           status: "open",
         })
-        .then(() => {
-          console.log("question added!");
-        });
+        .then((docref) => updateBook(docref.id));
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -169,20 +206,18 @@ export default function LinksScreen({ navigation, route }) {
         )}
         {photouri.length !== 0 && (
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <ScrollView>
-              <Image
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: 20,
-                  width: 200,
-                  height: 300,
-                  borderRadius: 20,
-                  // marginLeft: 90,
-                }}
-                source={{ uri: photouri }}
-              ></Image>
-            </ScrollView>
+            <Image
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 10,
+                width: 200,
+                height: 200,
+                borderRadius: 20,
+                // marginLeft: 90,
+              }}
+              source={{ uri: photouri }}
+            ></Image>
           </View>
         )}
 
