@@ -82,34 +82,8 @@ export default function LinksScreen({ navigation, route }) {
               authors: bookInfo.data.items[0].volumeInfo.authors,
               questions: firebase.firestore.FieldValue.arrayUnion(id),
             });
-
-          // axios
-          //   .get(
-          //     "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
-          //       ISBN +
-          //       "&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0"
-          //   )
-          //   .then((data) => {
-          //     console.log(data.data.items[0].volumeInfo);
-          //   });
-
-          // let bookInfo = await axios.get(
-          //   `https://www.googleapis.com/books/v1/volumes?q=isbn%3D${ISBN}&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0`
-
-          // );
-          // //console.log(bookInfo);
-          // db.collection("Books").doc(ISBN).set({
-          //   title: bookInfo.title,
-          //   subtitle: bookInfo.subtitle,
-          //   authors: bookInfo.authors,
-          // });
         }
       });
-
-      // await bookRef.set({
-      //   questions: firebase.firestore.FieldValue.arrayUnion(id)
-
-      // }, {merge:true});
     } catch (e) {
       console.error(e);
     }
@@ -253,56 +227,56 @@ export default function LinksScreen({ navigation, route }) {
           </View>
         )} */}
 
-        {/* {annCoords.length !== 0 && photouri.length !== 0 && ( */}
-        <View
-          style={{
-            marginTop: 15,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <TouchableOpacity
+        {annCoords.length !== 0 && photouri.length !== 0 && (
+          <View
             style={{
-              backgroundColor: "#378BE5",
+              marginTop: 15,
               alignItems: "center",
               justifyContent: "center",
-
-              height: 60,
-              width: "50%",
-              borderRadius: 7,
-              marginTop: 25,
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.2,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}
-            title="Submit Question"
-            accessibilityLabel="Submit Question"
-            onPress={() => {
-              console.log("uploaded question pressed");
-              console.log(annCoords);
-              console.log("hahaha   " + photouri);
-
-              uploadQuestion();
-              navigation.navigate("Submitted", {
-                route: route,
-                question: question,
-              });
-              // navigation.navigate("PDF");
             }}
           >
-            <View>
-              <Text style={{ color: "white", fontSize: 20 }}>
-                Submit Question
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        {/* )} */}
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#378BE5",
+                alignItems: "center",
+                justifyContent: "center",
+
+                height: 60,
+                width: "50%",
+                borderRadius: 7,
+                marginTop: 25,
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.2,
+                shadowRadius: 3.84,
+                elevation: 5,
+              }}
+              title="Submit Question"
+              accessibilityLabel="Submit Question"
+              onPress={() => {
+                console.log("uploaded question pressed");
+                console.log(annCoords);
+                console.log("hahaha   " + photouri);
+
+                uploadQuestion();
+                navigation.navigate("Submitted", {
+                  route: route,
+                  question: question,
+                });
+                // navigation.navigate("PDF");
+              }}
+            >
+              <View>
+                <Text style={{ color: "white", fontSize: 20 }}>
+                  Submit Question
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
