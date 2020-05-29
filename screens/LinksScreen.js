@@ -74,11 +74,14 @@ export default function LinksScreen({ navigation, route }) {
               "&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0"
           );
 
-          db.collection("Books").doc(ISBN).set({
-            title: bookInfo.data.items[0].volumeInfo.title,
-            subtitle: bookInfo.data.items[0].volumeInfo.subtitle,
-            authors: bookInfo.data.items[0].volumeInfo.authors,
-          });
+          db.collection("Books")
+            .doc(ISBN)
+            .set({
+              title: bookInfo.data.items[0].volumeInfo.title,
+              subtitle: bookInfo.data.items[0].volumeInfo.subtitle,
+              authors: bookInfo.data.items[0].volumeInfo.authors,
+              questions: firebase.firestore.FieldValue.arrayUnion(id),
+            });
 
           // axios
           //   .get(
