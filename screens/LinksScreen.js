@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState, useEffect, useRef } from "react";
-import axios from 'axios'
+import axios from "axios";
 
 import {
   AppRegistry,
@@ -22,7 +22,6 @@ import {
   Provider as PaperProvider,
 } from "react-native-paper";
 import firebase from "../shared/firebase";
-
 
 // import uuid from "react-native-uuid";
 
@@ -55,41 +54,63 @@ export default function LinksScreen({ navigation, route }) {
 
   const updateBook = async (id) => {
     try {
-      console.log(ISBN)
-      let bookRef = db.collection('Books').doc(ISBN);
+      console.log(ISBN);
+      let bookRef = db.collection("Books").doc(ISBN);
       //console.log(bookRef);
-      bookRef.get()
-        .then(async (docSnapshot) => {
-          if (docSnapshot.exists) {
-            console.log('==================docSnapshot EXISTS!')
-          }
-          
-          else{
-            console.log("=================!bookref");
-            let bookInfo = await axios
-              .get(`https://www.googleapis.com/books/v1/volumes?q=isbn%3D${ISBN}&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0`)
-            console.log(bookInfo);
-            db.collection('Books').doc(ISBN).set({
-              title: bookInfo.title,
-              subtitle: bookInfo.subtitle,
-              authors: bookInfo.authors
-            })
-            
-          }
-        });
-        
+
+      bookRef.get().then(async (docSnapshot) => {
+        if (docSnapshot.exists) {
+          console.log("==================docSnapshot EXISTS!");
+          await bookRef.set(
+            {
+              questions: firebase.firestore.FieldValue.arrayUnion(id),
+            },
+            { merge: true }
+          );
+        } else {
+          let bookInfo = await axios.get(
+            "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
+              ISBN +
+              "&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0"
+          );
+
+          db.collection("Books").doc(ISBN).set({
+            title: bookInfo.data.items[0].volumeInfo.title,
+            subtitle: bookInfo.data.items[0].volumeInfo.subtitle,
+            authors: bookInfo.data.items[0].volumeInfo.authors,
+          });
+
+          // axios
+          //   .get(
+          //     "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
+          //       ISBN +
+          //       "&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0"
+          //   )
+          //   .then((data) => {
+          //     console.log(data.data.items[0].volumeInfo);
+          //   });
+
+          // let bookInfo = await axios.get(
+          //   `https://www.googleapis.com/books/v1/volumes?q=isbn%3D${ISBN}&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0`
+
+          // );
+          // //console.log(bookInfo);
+          // db.collection("Books").doc(ISBN).set({
+          //   title: bookInfo.title,
+          //   subtitle: bookInfo.subtitle,
+          //   authors: bookInfo.authors,
+          // });
+        }
+      });
+
       // await bookRef.set({
       //   questions: firebase.firestore.FieldValue.arrayUnion(id)
 
-
-        
       // }, {merge:true});
-
-
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
-  }
+  };
 
   const uploadQuestion = async () => {
     try {
@@ -104,7 +125,8 @@ export default function LinksScreen({ navigation, route }) {
           image: photouri,
           loc: coords, // Example!
           status: "open",
-        }).then(docref => updateBook(docref.id))
+        })
+        .then((docref) => updateBook(docref.id));
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -207,18 +229,18 @@ export default function LinksScreen({ navigation, route }) {
         )}
         {photouri.length !== 0 && (
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-              <Image
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: 10,
-                  width: 200,
-                  height: 200,
-                  borderRadius: 20,
-                  // marginLeft: 90,
-                }}
-                source={{ uri: photouri }}
-              ></Image>
+            <Image
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 10,
+                width: 200,
+                height: 200,
+                borderRadius: 20,
+                // marginLeft: 90,
+              }}
+              source={{ uri: photouri }}
+            ></Image>
           </View>
         )}
 
@@ -229,54 +251,54 @@ export default function LinksScreen({ navigation, route }) {
         )} */}
 
         {/* {annCoords.length !== 0 && photouri.length !== 0 && ( */}
-          <View
+        <View
+          style={{
+            marginTop: 15,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <TouchableOpacity
             style={{
-              marginTop: 15,
+              backgroundColor: "#378BE5",
               alignItems: "center",
               justifyContent: "center",
+
+              height: 60,
+              width: "50%",
+              borderRadius: 7,
+              marginTop: 25,
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.2,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+            title="Submit Question"
+            accessibilityLabel="Submit Question"
+            onPress={() => {
+              console.log("uploaded question pressed");
+              console.log(annCoords);
+              console.log("hahaha   " + photouri);
+
+              uploadQuestion();
+              navigation.navigate("Submitted", {
+                route: route,
+                question: question,
+              });
+              // navigation.navigate("PDF");
             }}
           >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#378BE5",
-                alignItems: "center",
-                justifyContent: "center",
-
-                height: 60,
-                width: "50%",
-                borderRadius: 7,
-                marginTop: 25,
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.2,
-                shadowRadius: 3.84,
-                elevation: 5,
-              }}
-              title="Submit Question"
-              accessibilityLabel="Submit Question"
-              onPress={() => {
-                console.log("uploaded question pressed");
-                console.log(annCoords);
-                console.log("hahaha   " + photouri);
-
-                uploadQuestion();
-                navigation.navigate("Submitted", {
-                  route: route,
-                  question: question,
-                });
-                // navigation.navigate("PDF");
-              }}
-            >
-              <View>
-                <Text style={{ color: "white", fontSize: 20 }}>
-                  Submit Question
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+            <View>
+              <Text style={{ color: "white", fontSize: 20 }}>
+                Submit Question
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
         {/* )} */}
       </View>
     </View>
