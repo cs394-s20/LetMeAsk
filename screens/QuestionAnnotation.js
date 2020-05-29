@@ -12,6 +12,7 @@ import {
   PanResponder,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,7 +21,7 @@ import {
   PanGestureHandler,
   State,
 } from "react-native-gesture-handler";
-// import ZoomSlider from "react-instagram-zoom-slider";
+import ViewShot from "react-native-view-shot";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
@@ -30,6 +31,8 @@ export default function QuestionAnnotation({ navigation, route }) {
   const { setPhotoUri } = route.params;
   const { photo_uri } = route.params;
   const [isZoom, setIsZoom] = useState(false);
+  const viewShotRef = useRef(null);
+  // const [uri, setURI] = useState("");
 
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
@@ -75,15 +78,11 @@ export default function QuestionAnnotation({ navigation, route }) {
   };
 
   const pan = useRef(new Animated.ValueXY()).current;
-  // const photo_uri = this.props.navigation.state.params.photo_uri;
-  // console.log("qaaaa     " + photo_uri);
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: () => {
         setAnnCoords([pan.x._value, pan.y._value]);
-        // console.log(pan.x._value)
-        // console.log(annCoords.toString())
         pan.setOffset({
           x: pan.x._value,
           y: pan.y._value,
@@ -142,28 +141,47 @@ export default function QuestionAnnotation({ navigation, route }) {
         Drag the Pin to the location on the page to which your question
         corresponds.
       </Text>
-
-      <ScrollView
-        maximumZoomScale={1.5}
-        scrollEnabled={true}
-        minimumZoomScale={1}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        // ref={setZoomRef}
+      <ViewShot
+        // style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
+        ref={viewShotRef}
+        options={{ format: "jpg", quality: 0.9 }}
       >
-        <View
-          style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
+        <ScrollView
+          maximumZoomScale={1.5}
+          scrollEnabled={true}
+          minimumZoomScale={1}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
         >
-          <Image
-            style={styles.photo}
-            resizeMode="contain"
-            source={{
-              uri: photo_uri,
+          <View
+            style={{
+              // borderWidth: 2,
+              // borderColor: "black",
+              width: deviceWidth,
+              height: deviceHeight,
+              marginTop: 5,
             }}
-          />
-        </View>
-      </ScrollView>
-
+          >
+            <Image
+              style={styles.photo}
+              resizeMode="contain"
+              source={{
+                uri: photo_uri,
+              }}
+            />
+          </View>
+        </ScrollView>
+        <Animated.View
+          style={{
+            // borderWidth: 2,
+            // borderColor: "black",
+            transform: [{ translateX: pan.x }, { translateY: pan.y }],
+          }}
+          {...panResponder.panHandlers}
+        >
+          <Pin></Pin>
+        </Animated.View>
+      </ViewShot>
       {/* <PanGestureHandler
           onGestureEvent={onTranslateXEvent}
           onHandlerStateChange={onTranslateXStateChange}
@@ -189,22 +207,23 @@ export default function QuestionAnnotation({ navigation, route }) {
           </Animated.View>
         </PanGestureHandler> */}
 
-      <Animated.View
+      {/* <Animated.View
         style={{
           transform: [{ translateX: pan.x }, { translateY: pan.y }],
         }}
         {...panResponder.panHandlers}
       >
         <Pin></Pin>
-      </Animated.View>
+      </Animated.View> */}
 
       {/* </PanGestureHandler> */}
 
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
-          onPress={() => {
+          onPress={async () => {
             setAnnCoords([pan.x, pan.y]);
-            setPhotoUri(photo_uri);
+            const uri = await viewShotRef.current.capture();
+            setPhotoUri(uri);
             navigation.setParams({ xy: [pan.x, pan.y] });
             navigation.navigate("Root", {
               route: route,
@@ -237,6 +256,10 @@ export default function QuestionAnnotation({ navigation, route }) {
           </View>
         </TouchableOpacity>
       </View>
+      <Image
+        style={{ marginLeft: 90, height: 125, width: 125 }}
+        source={{ uri: photo_uri }}
+      ></Image>
     </View>
   );
 }

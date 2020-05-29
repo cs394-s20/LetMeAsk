@@ -56,14 +56,13 @@ export default function LinksScreen({ navigation, route }) {
     try {
       console.log(ISBN);
       let bookRef = db.collection("Books").doc(ISBN);
-      //console.log(bookRef);
-
       bookRef.get().then(async (docSnapshot) => {
         if (docSnapshot.exists) {
           console.log("==================docSnapshot EXISTS!");
           await bookRef.set(
             {
               questions: firebase.firestore.FieldValue.arrayUnion(id),
+              pages: firebase.firestore.FieldValue.arrayUnion(pageNumber),
             },
             { merge: true }
           );
@@ -78,9 +77,11 @@ export default function LinksScreen({ navigation, route }) {
             .doc(ISBN)
             .set({
               title: bookInfo.data.items[0].volumeInfo.title,
-              subtitle: bookInfo.data.items[0].volumeInfo.subtitle,
+              // subtitle: bookInfo.data.items[0].volumeInfo.subtitle,
               authors: bookInfo.data.items[0].volumeInfo.authors,
               questions: firebase.firestore.FieldValue.arrayUnion(id),
+              pages: firebase.firestore.FieldValue.arrayUnion(pageNumber),
+              random: "not random",
             });
         }
       });
@@ -100,7 +101,7 @@ export default function LinksScreen({ navigation, route }) {
           isbn: ISBN,
           page: pageNumber,
           image: photouri,
-          loc: coords, // Example!
+          loc: coords,
           status: "open",
         })
         .then((docref) => updateBook(docref.id));
@@ -210,10 +211,10 @@ export default function LinksScreen({ navigation, route }) {
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                marginTop: 10,
-                width: 200,
-                height: 200,
-                borderRadius: 20,
+                marginTop: 20,
+                width: deviceWidth * 0.55,
+                height: deviceHeight * 0.7,
+                borderRadius: 5,
                 // marginLeft: 90,
               }}
               source={{ uri: photouri }}
@@ -257,16 +258,15 @@ export default function LinksScreen({ navigation, route }) {
               title="Submit Question"
               accessibilityLabel="Submit Question"
               onPress={() => {
-                console.log("uploaded question pressed");
-                console.log(annCoords);
-                console.log("hahaha   " + photouri);
+                // console.log("uploaded question pressed");
+                // console.log(annCoords);
+                // console.log("hahaha   " + photouri);
 
                 uploadQuestion();
                 navigation.navigate("Submitted", {
                   route: route,
                   question: question,
                 });
-                // navigation.navigate("PDF");
               }}
             >
               <View>
