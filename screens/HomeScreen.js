@@ -50,7 +50,7 @@ const TopicChip = ({ topic }) => {
   )
 }
 
-export default function HomeScreen() {
+export default function HomeScreen({username}) {
   const [search, onChangeSearch] = useState('')
   const [topic, setTopic] = useState('astronomy')
   const [currentbook, setCurrentbook] = useState(null)
@@ -60,8 +60,10 @@ export default function HomeScreen() {
   }
 
   if (currentbook === null){
+  console.log("hey" + username);
   return (
     <View style={styles.container}>
+      <Text>{username}</Text>
       <View style={styles.containeritems} >
           <Searchbar
             onChangeText={text => onChangeSearch(text)}
@@ -122,7 +124,6 @@ export default function HomeScreen() {
 }
 
 HomeScreen.navigationOptions = {
-  header: null,
 };
 
 
