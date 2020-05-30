@@ -108,16 +108,6 @@ export default function QuestionAnnotation({ navigation, route }) {
   console.log(pan.x);
   console.log(pan.y);
 
-  const slides = [
-    <Image
-      style={styles.photo}
-      resizeMode="contain"
-      source={{
-        uri: photo_uri,
-      }}
-    />,
-  ];
-
   const handleResetZoomScale = (e) => {
     scrollResponserRef.scrollResponderZoomTo({
       x: 0,
@@ -256,10 +246,10 @@ export default function QuestionAnnotation({ navigation, route }) {
           </View>
         </TouchableOpacity>
       </View>
-      <Image
+      {/* <Image
         style={{ marginLeft: 90, height: 125, width: 125 }}
         source={{ uri: photo_uri }}
-      ></Image>
+      ></Image> */}
     </View>
   );
 }

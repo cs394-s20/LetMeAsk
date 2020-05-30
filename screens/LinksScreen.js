@@ -35,7 +35,8 @@ export default function LinksScreen({ navigation, route }) {
   // console.log("CONSOLLEEEINNG", route.params?.x);
 
   const [annCoords, setAnnCoords] = useState([]);
-  const [photouri, setPhotoUri] = useState([]);
+  const [photouri, setPhotoUri] = useState("");
+  const [annotateURI, setAnnotateURI] = useState("");
   console.log(photouri);
 
   const [cameraOpen, setCameraOpen] = useState(false);
@@ -51,6 +52,73 @@ export default function LinksScreen({ navigation, route }) {
   const [viewAnswer, setViewAnswer] = useState(false);
 
   const pan = useRef(new Animated.ValueXY()).current;
+
+  const toGoAfterPhotoUpload = async (id, callback) => {
+    let booksRef = db.collection("Books");
+    let questionsRef = db.collection("Questions");
+    var uri;
+
+    let query = booksRef
+      .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
+      .where("pages", "array-contains", pageNumber)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          navigation.navigate("Camera", {
+            navigation: navigation,
+            route: route,
+            setAnnCoords: setAnnCoords,
+            setPhotoUri: setPhotoUri,
+          });
+          return;
+        }
+        snapshot.forEach((doc) => {
+          doc.data().questions.forEach((question) =>
+            questionsRef
+              .where(firebase.firestore.FieldPath.documentId(), "==", question)
+              .get()
+              .then((snapshot) => {
+                if (snapshot.empty) {
+                  console.log("SNAPSHOT EMPTY");
+                  return;
+                } else {
+                  snapshot.forEach((doc) => {
+                    uri = doc.data().image;
+                    console.log(uri);
+                    // setAnnotateURI(doc.data().image);
+                    // console.log("!!!!!!" + annotateURI);
+                  });
+                  navigation.setParams({ photo_uri: uri });
+                  console.log("=========" + uri);
+                  navigation.navigate("Annotate", {
+                    route: route,
+                    navigation: navigation,
+                    photo_uri: uri,
+                    setPhotoUri: setPhotoUri,
+                    setAnnCoords: setAnnCoords,
+                  });
+                }
+              })
+          );
+        });
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  };
+
+  const handlePhotoUpload = async () => {
+    try {
+      await db
+        .collection("Books")
+        .add({
+          random: "random",
+        })
+        .then((docref) => toGoAfterPhotoUpload(docref.id));
+    } catch (e) {
+      console.error("Error writing document: ", e);
+    }
+  };
 
   const updateBook = async (id) => {
     try {
@@ -176,13 +244,15 @@ export default function LinksScreen({ navigation, route }) {
               borderWidth: 2,
               borderStyle: "dashed",
             }}
-            onPress={() =>
-              navigation.navigate("Camera", {
-                navigation: navigation,
-                route: route,
-                setAnnCoords: setAnnCoords,
-                setPhotoUri: setPhotoUri,
-              })
+            onPress={
+              () => handlePhotoUpload()
+              // () =>
+              // navigation.navigate("Camera", {
+              //   navigation: navigation,
+              //   route: route,
+              //   setAnnCoords: setAnnCoords,
+              //   setPhotoUri: setPhotoUri,
+              // })
             }
             title="Upload Photo of Page"
             accessibilityLabel="Take Photo of Page"
