@@ -76,6 +76,7 @@ export default function LinksScreen({ navigation, route }) {
           doc.data().questions.forEach((question) =>
             questionsRef
               .where(firebase.firestore.FieldPath.documentId(), "==", question)
+              .where("page", "==", pageNumber)
               .get()
               .then((snapshot) => {
                 if (snapshot.empty) {

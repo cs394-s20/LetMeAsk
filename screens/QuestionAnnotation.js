@@ -137,11 +137,14 @@ export default function QuestionAnnotation({ navigation, route }) {
         options={{ format: "jpg", quality: 0.9 }}
       >
         <ScrollView
-          maximumZoomScale={1.5}
+          maximumZoomScale={2}
           scrollEnabled={true}
           minimumZoomScale={1}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
+          onTouchStart={(e) => {
+            console.log("touchMove", e.nativeEvent);
+          }}
         >
           <View
             style={{
