@@ -32,6 +32,7 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function LinksScreen({ navigation, route }) {
   const db = firebase.firestore();
+
   // console.log("CONSOLLEEEINNG", route.params?.x);
 
   const [annCoords, setAnnCoords] = useState([]);
@@ -57,66 +58,96 @@ export default function LinksScreen({ navigation, route }) {
     let booksRef = db.collection("Books");
     let questionsRef = db.collection("Questions");
     var uri;
-
-    let query = booksRef
-      .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
-      .where("pages", "array-contains", pageNumber)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.empty) {
+    const ref2 = firebase.storage().ref(ISBN + "/" + pageNumber);
+    // const url = await ref2.getDownloadURL();
+    // console.log("+++++++++++++" + url);
+    ref2
+      .getDownloadURL()
+      .then((url) => {
+        // console.log("url", url.status);
+        // return url;
+        let query = booksRef
+          .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
+          .where("pages", "array-contains", pageNumber)
+          .get()
+          .then((snapshot) => {
+            if (snapshot.empty) {
+              navigation.navigate("Camera", {
+                navigation: navigation,
+                route: route,
+                setAnnCoords: setAnnCoords,
+                setPhotoUri: setPhotoUri,
+              });
+              return;
+            }
+            snapshot.forEach((doc) => {
+              doc.data().questions.forEach((question) =>
+                questionsRef
+                  .where(
+                    firebase.firestore.FieldPath.documentId(),
+                    "==",
+                    question
+                  )
+                  .where("page", "==", pageNumber)
+                  .get()
+                  .then((snapshot) => {
+                    if (snapshot.empty) {
+                      console.log("SNAPSHOT EMPTY");
+                      return;
+                    } else {
+                      snapshot.forEach((doc) => {
+                        console.log(doc.data().image);
+                        uri = url;
+                      });
+                      navigation.setParams({ photo_uri: uri });
+                      console.log("=========" + uri);
+                      navigation.navigate("Annotate", {
+                        route: route,
+                        navigation: navigation,
+                        photo_uri: uri,
+                        setPhotoUri: setPhotoUri,
+                        setAnnCoords: setAnnCoords,
+                      });
+                    }
+                  })
+              );
+            });
+          })
+          .catch((err) => {
+            console.log("Error getting documents", err);
+          });
+      })
+      .catch((e) => {
+        var errorObj = JSON.parse(e.serverResponse);
+        console.log("imageError", errorObj.error.code);
+        if (errorObj.error.code === 404) {
           navigation.navigate("Camera", {
             navigation: navigation,
             route: route,
             setAnnCoords: setAnnCoords,
             setPhotoUri: setPhotoUri,
           });
-          return;
         }
-        snapshot.forEach((doc) => {
-          doc.data().questions.forEach((question) =>
-            questionsRef
-              .where(firebase.firestore.FieldPath.documentId(), "==", question)
-              .where("page", "==", pageNumber)
-              .get()
-              .then((snapshot) => {
-                if (snapshot.empty) {
-                  console.log("SNAPSHOT EMPTY");
-                  return;
-                } else {
-                  snapshot.forEach((doc) => {
-                    uri = doc.data().image;
-                    console.log(uri);
-                    // setAnnotateURI(doc.data().image);
-                    // console.log("!!!!!!" + annotateURI);
-                  });
-                  navigation.setParams({ photo_uri: uri });
-                  console.log("=========" + uri);
-                  navigation.navigate("Annotate", {
-                    route: route,
-                    navigation: navigation,
-                    photo_uri: uri,
-                    setPhotoUri: setPhotoUri,
-                    setAnnCoords: setAnnCoords,
-                  });
-                }
-              })
-          );
-        });
-      })
-      .catch((err) => {
-        console.log("Error getting documents", err);
+        return null;
       });
   };
 
   const uploadPhoto = async (photouri) => {
     if (!photouri) console.log("No image found");
-    try { 
+    try {
       const response = await fetch(photouri);
       const blob = await response.blob();
       var ref = firebase.storage().ref();
-      ref.child(String(ISBN) + '/' + String(pageNumber)).put(blob).then((snapshot) => {
-        console.log('Uploaded a blob or file!');
-      });     
+      ref
+        .child(String(ISBN) + "/" + String(pageNumber))
+        .put(blob)
+        .then((snapshot) => {
+          console.log("Uploaded a blob or file!");
+          console.log("+++++++++++___________" + String(snapshot));
+        });
+      // const ref2 = firebase.storage().ref(ISBN + "/" + pageNumber);
+      // const url = await ref2.getDownloadURL();
+      // console.log("+++++++++++++" + url);
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -161,7 +192,7 @@ export default function LinksScreen({ navigation, route }) {
 
   const uploadQuestion = async () => {
     try {
-      await uploadPhoto(photouri)
+      await uploadPhoto(photouri);
       await db
         .collection("Questions")
         .add({
@@ -170,7 +201,7 @@ export default function LinksScreen({ navigation, route }) {
           author: "test",
           isbn: ISBN,
           page: pageNumber,
-          image: String(ISBN) + '/' + String(pageNumber),
+          image: String(ISBN) + "/" + String(pageNumber),
           loc: coords,
           status: "open",
         })
