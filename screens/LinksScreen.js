@@ -53,7 +53,7 @@ export default function LinksScreen({ navigation, route }) {
 
   const pan = useRef(new Animated.ValueXY()).current;
 
-  const toGoAfterPhotoUpload = async (id, callback) => {
+  const toGoAfterPhotoUpload = async (id) => {
     let booksRef = db.collection("Books");
     let questionsRef = db.collection("Questions");
     var uri;
@@ -245,16 +245,7 @@ export default function LinksScreen({ navigation, route }) {
               borderWidth: 2,
               borderStyle: "dashed",
             }}
-            onPress={
-              () => handlePhotoUpload()
-              // () =>
-              // navigation.navigate("Camera", {
-              //   navigation: navigation,
-              //   route: route,
-              //   setAnnCoords: setAnnCoords,
-              //   setPhotoUri: setPhotoUri,
-              // })
-            }
+            onPress={() => toGoAfterPhotoUpload()}
             title="Upload Photo of Page"
             accessibilityLabel="Take Photo of Page"
           >
@@ -329,10 +320,6 @@ export default function LinksScreen({ navigation, route }) {
               title="Submit Question"
               accessibilityLabel="Submit Question"
               onPress={() => {
-                // console.log("uploaded question pressed");
-                // console.log(annCoords);
-                // console.log("hahaha   " + photouri);
-
                 uploadQuestion();
                 navigation.navigate("Submitted", {
                   route: route,

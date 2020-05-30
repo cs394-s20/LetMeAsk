@@ -12,6 +12,7 @@ import {
   PanResponder,
   TouchableOpacity,
   ScrollView,
+  Button,
   SafeAreaView,
 } from "react-native";
 
@@ -22,9 +23,14 @@ import {
   State,
 } from "react-native-gesture-handler";
 import ViewShot from "react-native-view-shot";
+import firebase from "../shared/firebase";
+
+const ISBN = "9781938168130";
+const pageNumber = "188";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
+const db = firebase.firestore();
 
 export default function QuestionAnnotation({ navigation, route }) {
   const { setAnnCoords } = route.params;
@@ -125,12 +131,38 @@ export default function QuestionAnnotation({ navigation, route }) {
     }
   };
 
+  const returnQuestionsOnPage = async () => {
+    let questionsRef = db.collection("Questions");
+    let query = questionsRef
+      .where("isbn", "==", ISBN)
+      .where("page", "==", pageNumber)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          console.log("No matching documents.");
+          return;
+        }
+
+        snapshot.forEach((doc) => {
+          console.log(doc.id, "=>", doc.data());
+        });
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  };
+
   return (
-    <View>
+    <View
+      onTouchStart={(e) => {
+        console.log([pan.x, pan.y]);
+      }}
+    >
       <Text style={{ padding: 25, fontSize: 18 }}>
         Drag the Pin to the location on the page to which your question
         corresponds.
       </Text>
+      {/* <Button title="hello" onPress={() => returnQuestionsOnPage()}></Button> */}
       <ViewShot
         // style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
         ref={viewShotRef}
@@ -142,20 +174,21 @@ export default function QuestionAnnotation({ navigation, route }) {
           minimumZoomScale={1}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          onTouchStart={(e) => {
-            console.log("touchMove", e.nativeEvent);
-          }}
         >
           <View
             style={{
               // borderWidth: 2,
               // borderColor: "black",
+              alignItems: "center",
+              // width: 300,
+              // height: 500,
               width: deviceWidth,
               height: deviceHeight,
               marginTop: 5,
             }}
           >
             <Image
+              // style={{ height: 500, width: 300 }}
               style={styles.photo}
               resizeMode="contain"
               source={{
@@ -270,7 +303,7 @@ const styles = StyleSheet.create({
     // position: "absolute",
     // borderColor: "red",
     // borderWidth: 2,
-    resizeMode: "contain",
+    // resizeMode: "contain",
     ...StyleSheet.absoluteFillObject,
   },
   pin: {
