@@ -205,45 +205,12 @@ export default function QuestionAnnotation({ navigation, route }) {
           }}
           {...panResponder.panHandlers}
         >
-          <Pin></Pin>
+          <Pin onClick={console.log("clicked")}></Pin>
+
+
         </Animated.View>
+        
       </ViewShot>
-      {/* <PanGestureHandler
-          onGestureEvent={onTranslateXEvent}
-          onHandlerStateChange={onTranslateXStateChange}
-        >
-          <Animated.View
-            style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
-          >
-            <PinchGestureHandler
-              onGestureEvent={onPinchEvent}
-              onHandlerStateChange={onPinchStateChange}
-            >
-              <Animated.Image
-                style={[
-                  styles.photo,
-                  { transform: [{ scale: scale }, { translateX: translateX }] },
-                ]}
-                resizeMode="contain"
-                source={{
-                  uri: photo_uri,
-                }}
-              />
-            </PinchGestureHandler>
-          </Animated.View>
-        </PanGestureHandler> */}
-
-      {/* <Animated.View
-        style={{
-          transform: [{ translateX: pan.x }, { translateY: pan.y }],
-        }}
-        {...panResponder.panHandlers}
-      >
-        <Pin></Pin>
-      </Animated.View> */}
-
-      {/* </PanGestureHandler> */}
-
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
           onPress={async () => {
@@ -282,10 +249,7 @@ export default function QuestionAnnotation({ navigation, route }) {
           </View>
         </TouchableOpacity>
       </View>
-      {/* <Image
-        style={{ marginLeft: 90, height: 125, width: 125 }}
-        source={{ uri: photo_uri }}
-      ></Image> */}
+
     </View>
   );
 }

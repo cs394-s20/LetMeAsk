@@ -108,14 +108,15 @@ export default function LinksScreen({ navigation, route }) {
       });
   };
 
-  const handlePhotoUpload = async () => {
-    try {
-      await db
-        .collection("Books")
-        .add({
-          random: "random",
-        })
-        .then((docref) => toGoAfterPhotoUpload(docref.id));
+  const uploadPhoto = async (photouri) => {
+    if (!photouri) console.log("No image found");
+    try { 
+      const response = await fetch(photouri);
+      const blob = await response.blob();
+      var ref = firebase.storage().ref();
+      ref.child(String(ISBN) + '/' + String(pageNumber)).put(blob).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });     
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -150,7 +151,6 @@ export default function LinksScreen({ navigation, route }) {
               authors: bookInfo.data.items[0].volumeInfo.authors,
               questions: firebase.firestore.FieldValue.arrayUnion(id),
               pages: firebase.firestore.FieldValue.arrayUnion(pageNumber),
-              random: "not random",
             });
         }
       });
@@ -161,6 +161,7 @@ export default function LinksScreen({ navigation, route }) {
 
   const uploadQuestion = async () => {
     try {
+      await uploadPhoto(photouri)
       await db
         .collection("Questions")
         .add({
@@ -169,7 +170,7 @@ export default function LinksScreen({ navigation, route }) {
           author: "test",
           isbn: ISBN,
           page: pageNumber,
-          image: photouri,
+          image: String(ISBN) + '/' + String(pageNumber),
           loc: coords,
           status: "open",
         })
@@ -359,10 +360,6 @@ const styles = StyleSheet.create({
     width: undefined,
     height: undefined,
     alignSelf: "center",
-    // marginTop: 10,
-    // position: "absolute",
-    // borderColor: "red",
-    // borderWidth: 2,
     resizeMode: "contain",
     ...StyleSheet.absoluteFillObject,
   },
