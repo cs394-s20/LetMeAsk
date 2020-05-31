@@ -19,81 +19,35 @@ export default function Textbook({book, setCurrentBook}) {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                <View style={styles.containeritems} >
-                    <TouchableWithoutFeedback
-                    onPress={() => setCurrentBook(null)}
-                    >
-                        <AntDesign
-                            name="leftcircleo"
-                            style={{ color: "black", fontSize: 40 }}
-                        />
-                    </TouchableWithoutFeedback>
-                    <TextInput
-                        style={{ height: 40, width: '85%', borderColor: 'gray', borderWidth: 1, marginLeft: 10 }}
-                        onChangeText={text => onChangeSearch(text)}
-                        value={search}
-                        placeholder="Search for Questions"
+            <View style={styles.containeritems} >
+                <TouchableWithoutFeedback
+                onPress={() => setCurrentBook(null)}
+                >
+                    <AntDesign
+                        name="leftcircleo"
+                        style={{ color: "gray", fontSize: 40 }}
                     />
+                </TouchableWithoutFeedback>
+                <TextInput
+                    style={{ height: 40, width: '85%', borderColor: 'gray', borderRadius: 10, borderWidth: 1, marginLeft: 10, paddingLeft: 10 }}
+                    onChangeText={text => onChangeSearch(text)}
+                    value={search}
+                    placeholder="Search for Questions"
+                />
+            </View>
+            <ScrollView style={{maxHeight: '90%'}}>
+                <View style={{ alignItems: "left", justifyContent: "top", flex: 1, padding: 30}}>
+                    <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight:'bold' }}>Page 1</Text>
+                    <Image style={styles.textbookImage} source={{ uri: book.image }} />
                 </View>
-
-            </ScrollView>
-            <View>
-                <Text style={styles.collectiontitle}>Answered Questions</Text>
-            </View>
-
-            <ScrollView style={styles.horzscroll} horizontal={true} decelerationRate={0} snapToInterval={200} snapToAlignment={"center"}>
-                <Card style={styles.answeredQ}>
-                    <Card.Content>
-                        <Title>Do jellyfish sleep?</Title>
-                        <Paragraph>If so, how do they sleep? Are they able to close their eyes?</Paragraph>
-                        <Ionicons
-                            name="ios-heart"
-                            style={{ color: "#fff", fontSize: 40 }}
-                        />
-                    </Card.Content>
-                </Card>
-                <Card style={styles.answeredQ}>
-                    <Card.Content>
-                        <Title>Do jellyfish sleep?</Title>
-                        <Paragraph>If so, how do they sleep?</Paragraph>
-                    </Card.Content>
-                </Card>
-            </ScrollView>
-            <View>
-                <Text style={styles.collectiontitle}>Unanswered Questions</Text>
-            </View>
-            <ScrollView
-                horizontal={true}
-                decelerationRate={0}
-                snapToInterval={200}
-                snapToAlignment={"center"}
-                style={styles.horzscroll}
-            >
-                <Card style={styles.unansweredQ}>
-                    <Card.Content>
-                        <Title>Do jellyfish sleep?</Title>
-                        <Paragraph>If so, how do they sleep?</Paragraph>
-                        <Ionicons
-                            name="ios-chatboxes"
-                            style={{ color: "#fff", fontSize: 40 }}
-                        />
-                    </Card.Content>
-                </Card>
-                <Card style={styles.unansweredQ}>
-                    <Card.Content>
-                        <Title>Do jellyfish sleep?</Title>
-                        <Paragraph>If so, how do they sleep?</Paragraph>
-                    </Card.Content>
-                </Card>
+                <View style={{ alignItems: "left", justifyContent: "top", flex: 1, paddingLeft: 30 }}>
+                    <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight: 'bold' }}>Page 2</Text>
+                    <Image style={styles.textbookImage} source={{ uri: book.image }} />
+                </View>
             </ScrollView>
         </View>
     );
 }
-
-// HomeScreen.navigationOptions = {
-//     header: null,
-// };
 
 
 const styles = StyleSheet.create({
@@ -108,6 +62,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#e57359',
         margin: 10
     },
+    allQuestions: {
+        alignItems: 'center'
+    },
     horzscroll: {
         height: 125,
     },
@@ -120,6 +77,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         paddingRight: 10,
+        paddingTop: 20
     },
     collectiontitle: {
         fontWeight: 'bold',
@@ -127,5 +85,9 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         paddingTop: 20,
+    },
+    textbookImage: {
+        width: 330,
+        height: 400
     },
 });
