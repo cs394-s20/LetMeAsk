@@ -49,6 +49,8 @@ export default function Textbook({book, setCurrentBook, prevQuestions}) {
         });
     };
 
+    returnQuestionsOnPage()
+
     return (
         <View style={styles.container}>
             <View style={styles.containeritems} >
@@ -67,25 +69,39 @@ export default function Textbook({book, setCurrentBook, prevQuestions}) {
                     placeholder="Search for Questions"
                 />
             </View>
-            <ScrollView style={{maxHeight: '90%'}}>
-                <TouchableOpacity onPress={returnQuestionsOnPage}>
-                    <View style={{ alignItems: "left", justifyContent: "top", flex: 1, padding: 30 }}>
-                        <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight: 'bold' }}>Page 1</Text>
-                        <Image style={styles.textbookImage} source={{ uri: book.image }} />
-                    </View>
-                </TouchableOpacity>
-                <View style={{ alignItems: "left", justifyContent: "center" }}>
-                    {Object.keys(askedQuestions).map((key, index) => (
-                        <View>
-                            <Text style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}>{askedQuestions[key].question}</Text>
-                            <Text style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}>This is the answer to this questoin</Text>
+            <ScrollView style={styles.horzscroll} horizontal={true} decelerationRate={0} snapToInterval={200} snapToAlignment={"center"}>
+                <ScrollView style={{maxHeight: '100%'}}>
+                    <TouchableOpacity onPress={returnQuestionsOnPage}>
+                        <View style={{ alignItems: "left", justifyContent: "top", flex: 1, padding: 30 }}>
+                            <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight: 'bold' }}>Page 1</Text>
+                            <Image style={styles.textbookImage} source={{ uri: book.image }} />
                         </View>
-                    ))}
-                </View>
-                <View style={{ alignItems: "left", justifyContent: "top", flex: 1, paddingLeft: 30 }}>
-                    <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight: 'bold' }}>Page 2</Text>
-                    <Image style={styles.textbookImage} source={{ uri: book.image }} />
-                </View>
+                    </TouchableOpacity>
+                    <View style={{ alignItems: "left", justifyContent: "center" }}>
+                        {Object.keys(askedQuestions).map((key, index) => (
+                            <View>
+                                <Text style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}>{askedQuestions[key].question}</Text>
+                                <Text style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}>This is the answer to this questoin</Text>
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
+                <ScrollView style={{ maxHeight: '100%' }}>
+                    <TouchableOpacity>
+                        <View style={{ alignItems: "left", justifyContent: "top", flex: 1, padding: 30 }}>
+                            <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight: 'bold' }}>Page 2</Text>
+                            <Image style={styles.textbookImage} source={{ uri: book.image }} />
+                        </View>
+                    </TouchableOpacity>
+                    <View style={{ alignItems: "left", justifyContent: "center" }}>
+                        {Object.keys(askedQuestions).map((key, index) => (
+                            <View>
+                                <Text style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}>{askedQuestions[key].question}</Text>
+                                <Text style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}>This is the answer to this questoin</Text>
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
             </ScrollView>
         </View>
     );
@@ -100,15 +116,12 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     unansweredQ: {
-        height: '80%',
+        height: '90%',
         backgroundColor: '#e57359',
         margin: 10
     },
     allQuestions: {
         alignItems: 'center'
-    },
-    horzscroll: {
-        height: 125,
     },
     container: {
         flex: 1,
@@ -121,6 +134,9 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 20
     },
+    horzscroll: {
+        height: 600
+    },
     collectiontitle: {
         fontWeight: 'bold',
         fontSize: 19
@@ -129,7 +145,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     textbookImage: {
-        width: 330,
-        height: 400
+        width: 250,
+        height: 325
     },
 });
