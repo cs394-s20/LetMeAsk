@@ -58,9 +58,10 @@ export default function LinksScreen({ navigation, route }) {
     let booksRef = db.collection("Books");
     let questionsRef = db.collection("Questions");
     var uri;
+    //--------- added logic to handle case where ISBN + / + pageNumber doesn't exist in firebase storage ----------
     const ref2 = firebase.storage().ref(ISBN + "/" + pageNumber);
-    // const url = await ref2.getDownloadURL();
-    // console.log("+++++++++++++" + url);
+
+    //----- CASE 1: where there ISBN + / + pageNumber already exists in storage ------
     ref2
       .getDownloadURL()
       .then((url) => {
@@ -117,6 +118,7 @@ export default function LinksScreen({ navigation, route }) {
             console.log("Error getting documents", err);
           });
       })
+      //----- CASE 2: where there ISBN + / + pageNumber doesn't exist in storage ------
       .catch((e) => {
         var errorObj = JSON.parse(e.serverResponse);
         console.log("imageError", errorObj.error.code);
