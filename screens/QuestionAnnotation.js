@@ -37,6 +37,7 @@ export default function QuestionAnnotation({ navigation, route }) {
   const { setPhotoUri } = route.params;
   const { photo_uri } = route.params;
   const [isZoom, setIsZoom] = useState(false);
+  const [prevQuestions, setPrevQuestions] = useState({});
   const viewShotRef = useRef(null);
   // const [uri, setURI] = useState("");
 
@@ -132,6 +133,7 @@ export default function QuestionAnnotation({ navigation, route }) {
   };
 
   const returnQuestionsOnPage = async () => {
+    let questionsArray = {};
     let questionsRef = db.collection("Questions");
     let query = questionsRef
       .where("isbn", "==", ISBN)
@@ -145,14 +147,24 @@ export default function QuestionAnnotation({ navigation, route }) {
 
         snapshot.forEach((doc) => {
           console.log(doc.id, "=>", doc.data());
+          console.log(doc)
+          questionsArray[doc.id] = doc.data();
         });
+        console.log(questionsArray)
+        console.log('--------------------------------------')
+        setPrevQuestions(questionsArray);
+        console.log('-----------!!!!!!!!!!!!!!!!!!!---------------------------')
+        console.log(prevQuestions)
       })
       .catch((err) => {
         console.log("Error getting documents", err);
       });
+
+    
   };
 
   return (
+    <ScrollView>
     <View
       onTouchStart={(e) => {
         console.log([pan.x, pan.y]);
@@ -249,8 +261,25 @@ export default function QuestionAnnotation({ navigation, route }) {
           </View>
         </TouchableOpacity>
       </View>
+      <View style={{ alignItems: "left", justifyContent: "center" }}>
+        <TouchableOpacity onPress={returnQuestionsOnPage}>
+            <Text style={{ paddingLeft: 30, paddingBottom: 10, paddingTop: 30, fontSize: 18, fontWeight: 'bold' }}>
+              On this page already:
+          </Text>
+        </TouchableOpacity>
+        <View style={{ alignItems: "left", justifyContent: "center" }}>
+            {Object.keys(prevQuestions).map((key, index) => (
+              <View>
+                <Text style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}>{prevQuestions[key].question}</Text>
+                <Text style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}>This is the answer to this questoin</Text>
+              </View>
+            ))}
+        </View>
+
+      </View>
 
     </View>
+    </ScrollView>
   );
 }
 
