@@ -8,6 +8,7 @@ import {
   View,
   Dimensions,
   Alert,
+  TouchableOpacity
 } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -83,6 +84,41 @@ export default function QuestionSubmitted({ navigation, route }) {
         color="#00B300"
         style={{ marginTop: 20 }}
       />
+      <View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#378BE5",
+            alignItems: "center",
+            justifyContent: "center",
+
+            height: 60,
+            width: "50%",
+            borderRadius: 7,
+            marginTop: 25,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+          title="Go Home"
+          accessibilityLabel="Go Home"
+          onPress={() => {
+            navigation.navigate('Home', {
+              route: route
+            });
+          }}
+        >
+          <View>
+            <Text style={{ color: "white", fontSize: 20 }}>
+              Go Home
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

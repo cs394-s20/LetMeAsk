@@ -200,6 +200,7 @@ export default function LinksScreen({ navigation, route }) {
         .add({
           title: "try",
           question: question,
+          answer: '',
           author: "test",
           isbn: ISBN,
           page: pageNumber,
