@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, Title, Paragraph } from 'react-native-paper';
+import firebase from "../shared/firebase";
 
 //Expo Icon
 import {
@@ -12,10 +13,41 @@ import {
     AntDesign
 } from "@expo/vector-icons";
 
+const ISBN = "9781938168130";
+const pageNumber = "188";
 
-export default function Textbook({book, setCurrentBook}) {
+const db = firebase.firestore();
+
+
+export default function Textbook({book, setCurrentBook, prevQuestions}) {
     const [search, onChangeSearch] = useState('')
+    const [askedQuestions, setAskedQuestions] = useState({});
     console.log(book)
+
+    const returnQuestionsOnPage = async () => {
+        let questionsArray = {};
+        let questionsRef = db.collection("Questions");
+        let query = questionsRef
+            .where("isbn", "==", ISBN)
+            .where("page", "==", pageNumber)
+            .get()
+            .then((snapshot) => {
+                if (snapshot.empty) {
+                    console.log("No matching documents.");
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    console.log(doc.id, "=>", doc.data());
+                    console.log(doc)
+                    questionsArray[doc.id] = doc.data();
+                });
+                setAskedQuestions(questionsArray);
+            })
+            .catch((err) => {
+                console.log("Error getting documents", err);
+        });
+    };
 
     return (
         <View style={styles.container}>
@@ -36,9 +68,19 @@ export default function Textbook({book, setCurrentBook}) {
                 />
             </View>
             <ScrollView style={{maxHeight: '90%'}}>
-                <View style={{ alignItems: "left", justifyContent: "top", flex: 1, padding: 30}}>
-                    <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight:'bold' }}>Page 1</Text>
-                    <Image style={styles.textbookImage} source={{ uri: book.image }} />
+                <TouchableOpacity onPress={returnQuestionsOnPage}>
+                    <View style={{ alignItems: "left", justifyContent: "top", flex: 1, padding: 30 }}>
+                        <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight: 'bold' }}>Page 1</Text>
+                        <Image style={styles.textbookImage} source={{ uri: book.image }} />
+                    </View>
+                </TouchableOpacity>
+                <View style={{ alignItems: "left", justifyContent: "center" }}>
+                    {Object.keys(askedQuestions).map((key, index) => (
+                        <View>
+                            <Text style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}>{askedQuestions[key].question}</Text>
+                            <Text style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}>This is the answer to this questoin</Text>
+                        </View>
+                    ))}
                 </View>
                 <View style={{ alignItems: "left", justifyContent: "top", flex: 1, paddingLeft: 30 }}>
                     <Text style={{ paddingBottom: 10, fontSize: 18, fontWeight: 'bold' }}>Page 2</Text>
