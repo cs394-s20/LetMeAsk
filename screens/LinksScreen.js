@@ -118,7 +118,7 @@ export default function LinksScreen({ navigation, route }) {
             console.log("Error getting documents", err);
           });
       })
-      //----- CASE 2: where there ISBN + / + pageNumber already exists in storage ------
+      //----- CASE 2: where there ISBN + / + pageNumber DO NOT already exists in storage ------
       .catch((e) => {
         var errorObj = JSON.parse(e.serverResponse);
         console.log("imageError", errorObj.error.code);
@@ -230,16 +230,18 @@ export default function LinksScreen({ navigation, route }) {
     <View>
       <View>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <TextInput
-            label="Question"
-            style={styles.submitInput}
-            onChangeText={(text) => setQuestion(text)}
-            value={question}
-            placeholder=""
-            underlineColor="#378BE5"
-            selectionColor="#378BE5"
-            theme={theme}
-          />
+          {annCoords.length !== 0 && (
+            <TextInput
+              label="Question"
+              style={styles.submitInput}
+              onChangeText={(text) => setQuestion(text)}
+              value={question}
+              placeholder=""
+              underlineColor="#378BE5"
+              selectionColor="#378BE5"
+              theme={theme}
+            />
+          )}
           <TextInput
             label="ISBN"
             style={styles.submitInput}
@@ -288,12 +290,12 @@ export default function LinksScreen({ navigation, route }) {
               }}
             >
               <MaterialCommunityIcons
-                name="camera-plus"
+                name="book-open-outline"
                 size={50}
                 color="#378BE5"
               />
               <Text style={{ fontSize: 12, marginTop: 5, color: "#378BE5" }}>
-                Add Photo
+                Search
               </Text>
             </View>
           </TouchableOpacity>
@@ -337,7 +339,7 @@ export default function LinksScreen({ navigation, route }) {
 
                 height: 60,
                 width: "50%",
-                borderRadius: 7,
+                borderRadius: 30,
                 marginTop: 25,
                 shadowColor: "#000",
                 shadowOffset: {

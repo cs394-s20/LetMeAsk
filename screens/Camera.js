@@ -143,41 +143,41 @@ export default function CameraApp({ navigation, route }) {
                     margin: 20,
                   }}
                 >
-                  <TouchableOpacity
-                    style={{ margin: 10 }}
-                    onPress={() => {
-                      setImageOpen(false);
-                    }}
-                  >
-                    <FontAwesome
-                      name="window-close"
-                      style={{ color: "#ff0000", fontSize: 40 }}
-                    />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{ margin: 10 }}
-                    onPress={() => {
-                      // navigation.navigate("AnnotateQuestion");
-
-                      uploadImage(pickPhoto)
-                        .then(() => {
-                          console.log("pickPhoto Uploaded");
-                        })
-                        .catch((error) => {
-                          console.log(error);
-                        });
-                    }}
-                  >
-                    <FontAwesome
-                      name="arrow-up"
-                      style={{ color: "#1ec929", fontSize: 40 }}
-                    />
-                  </TouchableOpacity>
                   <Image
                     style={{ width: "100%", height: 500, borderRadius: 20 }}
                     source={{ uri: pickPhoto }}
                   ></Image>
+                  <View style={{ flexDirection: "row" }}>
+                    <TouchableOpacity
+                      style={{ margin: 10, marginRight: 50 }}
+                      onPress={() => {
+                        setImageOpen(false);
+                      }}
+                    >
+                      <FontAwesome
+                        name="window-close"
+                        style={{ color: "#ff0000", fontSize: 50 }}
+                      />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={{ margin: 10, marginLeft: 50 }}
+                      onPress={() => {
+                        uploadImage(pickPhoto)
+                          .then(() => {
+                            console.log("pickPhoto Uploaded");
+                          })
+                          .catch((error) => {
+                            console.log(error);
+                          });
+                      }}
+                    >
+                      <FontAwesome
+                        name="arrow-up"
+                        style={{ color: "#1ec929", fontSize: 50 }}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </Modal>
             )}
@@ -205,38 +205,39 @@ export default function CameraApp({ navigation, route }) {
                     margin: 20,
                   }}
                 >
-                  <TouchableOpacity
-                    style={{ margin: 10 }}
-                    onPress={() => setOpen(false)}
-                  >
-                    <FontAwesome
-                      name="window-close"
-                      style={{ color: "#ff0000", fontSize: 40 }}
-                    />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={{ margin: 10 }}
-                    onPress={() => {
-                      uploadImage(capturedPhoto)
-                        .then(() => {
-                          console.log("Photo Uploaded");
-                        })
-                        .catch((error) => {
-                          console.log(error);
-                        });
-                    }}
-                  >
-                    <FontAwesome
-                      name="arrow-up"
-                      style={{ color: "#1ec929", fontSize: 40 }}
-                    />
-                  </TouchableOpacity>
-
                   <Image
                     style={{ width: "100%", height: 500, borderRadius: 20 }}
                     source={{ uri: capturedPhoto }}
                   ></Image>
+                  <View style={{ flexDirection: "row" }}>
+                    <TouchableOpacity
+                      style={{ margin: 10, marginTop: 50, marginRight: 50 }}
+                      onPress={() => setOpen(false)}
+                    >
+                      <FontAwesome
+                        name="window-close"
+                        style={{ color: "#ff0000", fontSize: 50 }}
+                      />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={{ margin: 10, marginTop: 50, marginLeft: 50 }}
+                      onPress={() => {
+                        uploadImage(capturedPhoto)
+                          .then(() => {
+                            console.log("Photo Uploaded");
+                          })
+                          .catch((error) => {
+                            console.log(error);
+                          });
+                      }}
+                    >
+                      <FontAwesome
+                        name="arrow-up"
+                        style={{ color: "#1ec929", fontSize: 50 }}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </Modal>
             )}

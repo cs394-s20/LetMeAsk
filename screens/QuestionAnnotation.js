@@ -14,9 +14,11 @@ import {
   ScrollView,
   Button,
   TouchableHighlight,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 import Modal from "react-native-modal";
+import Onboarding from "react-native-onboarding-swiper";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -42,6 +44,8 @@ export default function QuestionAnnotation({ navigation, route }) {
   const viewShotRef = useRef(null);
   const [myQuestion, setMyQuestion] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [viewInstruct, setViewInstruct] = useState(false);
+  const [pinColor, setPinColor] = useState("#378BE5");
 
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
@@ -142,18 +146,106 @@ export default function QuestionAnnotation({ navigation, route }) {
     })
   ).current;
 
-  const Pin = ({ coords }) => {
+  const OnboardingExp = () => {
     return (
-      <MaterialCommunityIcons
-        name="map-marker-question"
-        size={50}
-        color="#378BE5"
+      <Onboarding
+        showSkip={false}
+        onDone={() => setViewInstruct(false)}
+        pages={[
+          {
+            backgroundColor: "#2196F3",
+            image: (
+              <MaterialCommunityIcons
+                name="map-marker-question"
+                size={150}
+                color={"#e57359"}
+              />
+            ),
+            title: "View Questions",
+
+            subtitle:
+              "Click on any red-colored question mark to view questions asked by other users",
+          },
+          {
+            backgroundColor: "#e57359",
+            image: (
+              <MaterialCommunityIcons
+                name="map-marker-question"
+                size={150}
+                color={"#2196F3"}
+              />
+            ),
+            title: "Ask a Question",
+            subtitle:
+              "If you have a question that others haven't asked, drag the blue question mark to the place on the image that corresponds to your question",
+          },
+          {
+            backgroundColor: "#fff",
+            image: (
+              <MaterialCommunityIcons
+                name="gesture-tap"
+                size={150}
+                color={"#111"}
+              />
+            ),
+            title: "Before you submit...",
+            subtitle:
+              "Once you place your question mark, tap it to make sure it turns red ",
+          },
+        ]}
       />
     );
   };
 
-  console.log(pan.x);
-  console.log(pan.y);
+  const QuestionModal = () => {
+    return (
+      <Modal
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(!modalVisible)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={{ fontSize: 20 }}>QUESTION:</Text>
+            <Text style={styles.modalText}>{myQuestion}</Text>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>View Answer</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+  const InstructionsModal = () => {
+    return (
+      <Modal
+        isVisible={viewInstruct}
+        onBackdropPress={() => setViewInstruct(!viewInstruct)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={{ fontSize: 20 }}>INSTRUCTIONS:</Text>
+            <Text style={styles.modalText}>These are the instructions</Text>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setViewInstruct(!viewInstruct);
+              }}
+            >
+              <Text style={styles.textStyle}>OK!</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
 
   const returnQuestionsOnPage = async () => {
     let questionsArray = {};
@@ -186,27 +278,46 @@ export default function QuestionAnnotation({ navigation, route }) {
       });
   };
 
+  if (viewInstruct) {
+    return <OnboardingExp />;
+  }
+
   return (
     <View
       onTouchStart={(e) => {
         showQuestion(e.nativeEvent.pageX, e.nativeEvent.pageY);
       }}
     >
-      <Text style={{ padding: 25, fontSize: 18 }}>
-        Drag the Pin to the location on the page to which your question
-        corresponds.
-      </Text>
-      {/* <Button title="hello" onPress={showQuestion}></Button> */}
+      <TouchableOpacity
+        title="How to annotate a photo?"
+        onPress={() => setViewInstruct(true)}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 25,
+          }}
+        >
+          <MaterialCommunityIcons
+            name="information"
+            size={24}
+            color="#2196F3"
+          />
+          <Text style={{ marginLeft: 5, fontSize: 24 }}>
+            How to annotate a photo?
+          </Text>
+        </View>
+      </TouchableOpacity>
+
       <ViewShot
         style={{
-          // borderWidth: 2,
-          // borderColor: "red",
           width: deviceWidth,
           height: deviceHeight + 55,
         }}
         ref={viewShotRef}
         options={{ format: "jpg", quality: 0.9 }}
-        // style={{ borderWidth: 2, borderColor: "red" }}
       >
         <Animated.View
           style={{
@@ -239,40 +350,33 @@ export default function QuestionAnnotation({ navigation, route }) {
                 }}
                 {...panResponder.panHandlers}
               >
-                <Pin onClick={() => console.log("PIN CLICKED")}></Pin>
+                <TouchableWithoutFeedback
+                  onPressIn={() => setPinColor("#378BE5")}
+                  onPress={() => setPinColor("#e57359")}
+                >
+                  <MaterialCommunityIcons
+                    name="map-marker-question"
+                    size={50}
+                    color={pinColor}
+                  />
+                </TouchableWithoutFeedback>
               </Animated.View>
             </Animated.View>
           </PinchGestureHandler>
         </Animated.View>
       </ViewShot>
-      {/* <Text>{myQuestion}</Text> */}
 
-      <Modal
-        isVisible={modalVisible}
-        onBackdropPress={() => setModalVisible(!modalVisible)}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>QUESTION:</Text>
-            <Text style={styles.modalText}>{myQuestion}</Text>
+      <QuestionModal />
 
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <Text style={styles.textStyle}>View Answer</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </Modal>
+      {/* <InstructionsModal /> */}
+
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
           onPress={async () => {
             setAnnCoords([pan.x, pan.y]);
             const uri = await viewShotRef.current.capture();
             setPhotoUri(uri);
+
             navigation.setParams({ xy: [pan.x, pan.y] });
             navigation.navigate("Root", {
               route: route,
@@ -288,8 +392,8 @@ export default function QuestionAnnotation({ navigation, route }) {
             justifyContent: "center",
             height: 60,
             width: "50%",
-            borderRadius: 7,
-            marginTop: 25,
+            borderRadius: 30,
+            marginTop: 30,
             shadowColor: "#000",
             shadowOffset: {
               width: 0,
@@ -301,24 +405,11 @@ export default function QuestionAnnotation({ navigation, route }) {
           }}
         >
           <View style={{}}>
-            <Text style={{ color: "white", fontSize: 20 }}>Confirm</Text>
+            <Text style={{ color: "white", fontSize: 20 }}>Ask a Question</Text>
           </View>
         </TouchableOpacity>
       </View>
       <View style={{ alignItems: "left", justifyContent: "center" }}>
-        <TouchableOpacity onPress={returnQuestionsOnPage}>
-          <Text
-            style={{
-              paddingLeft: 30,
-              paddingBottom: 10,
-              paddingTop: 30,
-              fontSize: 18,
-              fontWeight: "bold",
-            }}
-          >
-            On this page already:
-          </Text>
-        </TouchableOpacity>
         <View style={{ alignItems: "left", justifyContent: "center" }}>
           {Object.keys(prevQuestions).map((key, index) => (
             <View>
