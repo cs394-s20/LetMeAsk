@@ -52,8 +52,6 @@ export default function LinksScreen({ navigation, route }) {
   const [submitted, setSubmitted] = useState(false);
   const [viewAnswer, setViewAnswer] = useState(false);
 
-  const pan = useRef(new Animated.ValueXY()).current;
-
   const toGoAfterPhotoUpload = async (id) => {
     let booksRef = db.collection("Books");
     let questionsRef = db.collection("Questions");
@@ -108,6 +106,8 @@ export default function LinksScreen({ navigation, route }) {
                         photo_uri: uri,
                         setPhotoUri: setPhotoUri,
                         setAnnCoords: setAnnCoords,
+                        ISBN: ISBN,
+                        pageNumber: pageNumber,
                       });
                     }
                   })

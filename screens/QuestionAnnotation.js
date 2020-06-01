@@ -13,8 +13,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Button,
-  SafeAreaView,
+  TouchableHighlight,
 } from "react-native";
+
+import Modal from "react-native-modal";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -25,9 +27,6 @@ import {
 import ViewShot from "react-native-view-shot";
 import firebase from "../shared/firebase";
 
-const ISBN = "9781938168130";
-const pageNumber = "188";
-
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 const db = firebase.firestore();
@@ -36,14 +35,55 @@ export default function QuestionAnnotation({ navigation, route }) {
   const { setAnnCoords } = route.params;
   const { setPhotoUri } = route.params;
   const { photo_uri } = route.params;
+  const { ISBN } = route.params;
+  const { pageNumber } = route.params;
   const [isZoom, setIsZoom] = useState(false);
   const [prevQuestions, setPrevQuestions] = useState({});
   const viewShotRef = useRef(null);
-  // const [uri, setURI] = useState("");
+  const [myQuestion, setMyQuestion] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
-  const screen = Dimensions.get("window");
+
+  const showQuestion = async (pageX, pageY) => {
+    let questionsRef = db.collection("Questions");
+    let query = questionsRef
+      .where("isbn", "==", ISBN)
+      .where("page", "==", pageNumber)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          console.log("No matching documents.");
+          return;
+        }
+        snapshot.forEach((doc) => {
+          if (
+            Math.abs(pageX - doc.data().loc[0]) >= 6 &&
+            Math.abs(pageX - doc.data().loc[0]) <= 39 &&
+            Math.abs(pageY - doc.data().loc[1]) >= 180 &&
+            Math.abs(pageY - doc.data().loc[1]) <= 230
+          ) {
+            setMyQuestion(doc.data().question);
+            setModalVisible(true);
+            // console.log("X diff " + pageX - doc.data().loc[0]);
+            // console.log("Y diff " + pageY - doc.data().loc[1]);
+
+            console.log(doc.data().question);
+            // console.log("pageY " + pageY);
+            // console.log("panY " + doc.data().loc[1]);
+            // console.log("pageX " + pageX);
+            // console.log("panX " + doc.data().loc[0]);
+          } else {
+            // console.log("OHHHHHH NOOOOOOOOOOO");
+          }
+        });
+        // console.log(panX, panY);
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  };
 
   const onPinchEvent = Animated.event(
     [
@@ -115,23 +155,6 @@ export default function QuestionAnnotation({ navigation, route }) {
   console.log(pan.x);
   console.log(pan.y);
 
-  const handleResetZoomScale = (e) => {
-    scrollResponserRef.scrollResponderZoomTo({
-      x: 0,
-      y: 0,
-      width: 100,
-      height: 100,
-      animated: true,
-    });
-  };
-
-  const setZoomRef = (node) => {
-    if (node) {
-      const zoomRef = node;
-      scrollResponderRef = zoomRef.getScrollResponder();
-    }
-  };
-
   const returnQuestionsOnPage = async () => {
     let questionsArray = {};
     let questionsRef = db.collection("Questions");
@@ -164,17 +187,16 @@ export default function QuestionAnnotation({ navigation, route }) {
   };
 
   return (
-    // <ScrollView>
     <View
       onTouchStart={(e) => {
-        console.log([e.nativeEvent.pageX, e.nativeEvent.pageY]);
+        showQuestion(e.nativeEvent.pageX, e.nativeEvent.pageY);
       }}
     >
       <Text style={{ padding: 25, fontSize: 18 }}>
         Drag the Pin to the location on the page to which your question
         corresponds.
       </Text>
-      {/* <Button title="hello" onPress={() => returnQuestionsOnPage()}></Button> */}
+      {/* <Button title="hello" onPress={showQuestion}></Button> */}
       <ViewShot
         style={{
           // borderWidth: 2,
@@ -223,7 +245,28 @@ export default function QuestionAnnotation({ navigation, route }) {
           </PinchGestureHandler>
         </Animated.View>
       </ViewShot>
+      {/* <Text>{myQuestion}</Text> */}
 
+      <Modal
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(!modalVisible)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>QUESTION:</Text>
+            <Text style={styles.modalText}>{myQuestion}</Text>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>View Answer</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
           onPress={async () => {
@@ -294,7 +337,6 @@ export default function QuestionAnnotation({ navigation, route }) {
         </View>
       </View>
     </View>
-    // </ScrollView>
   );
 }
 
@@ -330,5 +372,36 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "white",
     width: deviceWidth * 0.9,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
