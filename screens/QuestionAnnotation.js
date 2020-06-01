@@ -147,27 +147,27 @@ export default function QuestionAnnotation({ navigation, route }) {
 
         snapshot.forEach((doc) => {
           console.log(doc.id, "=>", doc.data());
-          console.log(doc)
+          console.log(doc);
           questionsArray[doc.id] = doc.data();
         });
-        console.log(questionsArray)
-        console.log('--------------------------------------')
+        console.log(questionsArray);
+        console.log("--------------------------------------");
         setPrevQuestions(questionsArray);
-        console.log('-----------!!!!!!!!!!!!!!!!!!!---------------------------')
-        console.log(prevQuestions)
+        console.log(
+          "-----------!!!!!!!!!!!!!!!!!!!---------------------------"
+        );
+        console.log(prevQuestions);
       })
       .catch((err) => {
         console.log("Error getting documents", err);
       });
-
-    
   };
 
   return (
-    <ScrollView>
+    // <ScrollView>
     <View
       onTouchStart={(e) => {
-        console.log([pan.x, pan.y]);
+        console.log([e.nativeEvent.pageX, e.nativeEvent.pageY]);
       }}
     >
       <Text style={{ padding: 25, fontSize: 18 }}>
@@ -176,53 +176,54 @@ export default function QuestionAnnotation({ navigation, route }) {
       </Text>
       {/* <Button title="hello" onPress={() => returnQuestionsOnPage()}></Button> */}
       <ViewShot
-        // style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
+        style={{
+          // borderWidth: 2,
+          // borderColor: "red",
+          width: deviceWidth,
+          height: deviceHeight + 55,
+        }}
         ref={viewShotRef}
         options={{ format: "jpg", quality: 0.9 }}
+        // style={{ borderWidth: 2, borderColor: "red" }}
       >
-        <ScrollView
-          maximumZoomScale={2}
-          scrollEnabled={true}
-          minimumZoomScale={1}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-        >
-          <View
-            style={{
-              // borderWidth: 2,
-              // borderColor: "black",
-              alignItems: "center",
-              // width: 300,
-              // height: 500,
-              width: deviceWidth,
-              height: deviceHeight,
-              marginTop: 5,
-            }}
-          >
-            <Image
-              // style={{ height: 500, width: 300 }}
-              style={styles.photo}
-              resizeMode="contain"
-              source={{
-                uri: photo_uri,
-              }}
-            />
-          </View>
-        </ScrollView>
         <Animated.View
           style={{
-            // borderWidth: 2,
-            // borderColor: "black",
-            transform: [{ translateX: pan.x }, { translateY: pan.y }],
+            alignItems: "center",
+            width: deviceWidth,
+            height: deviceHeight,
           }}
-          {...panResponder.panHandlers}
         >
-          <Pin onClick={console.log("clicked")}></Pin>
-
-
+          <PinchGestureHandler
+            onGestureEvent={onPinchEvent}
+            onHandlerStateChange={onPinchStateChange}
+          >
+            <Animated.View
+              style={{
+                width: deviceWidth,
+                height: deviceHeight + 55,
+                transform: [{ scale: scale }],
+              }}
+            >
+              <Animated.Image
+                style={styles.photo}
+                resizeMode="stretch"
+                source={{
+                  uri: photo_uri,
+                }}
+              />
+              <Animated.View
+                style={{
+                  transform: [{ translateX: pan.x }, { translateY: pan.y }],
+                }}
+                {...panResponder.panHandlers}
+              >
+                <Pin onClick={() => console.log("PIN CLICKED")}></Pin>
+              </Animated.View>
+            </Animated.View>
+          </PinchGestureHandler>
         </Animated.View>
-        
       </ViewShot>
+
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
           onPress={async () => {
@@ -263,23 +264,37 @@ export default function QuestionAnnotation({ navigation, route }) {
       </View>
       <View style={{ alignItems: "left", justifyContent: "center" }}>
         <TouchableOpacity onPress={returnQuestionsOnPage}>
-            <Text style={{ paddingLeft: 30, paddingBottom: 10, paddingTop: 30, fontSize: 18, fontWeight: 'bold' }}>
-              On this page already:
+          <Text
+            style={{
+              paddingLeft: 30,
+              paddingBottom: 10,
+              paddingTop: 30,
+              fontSize: 18,
+              fontWeight: "bold",
+            }}
+          >
+            On this page already:
           </Text>
         </TouchableOpacity>
         <View style={{ alignItems: "left", justifyContent: "center" }}>
-            {Object.keys(prevQuestions).map((key, index) => (
-              <View>
-                <Text style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}>{prevQuestions[key].question}</Text>
-                <Text style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}>This is the answer to this questoin</Text>
-              </View>
-            ))}
+          {Object.keys(prevQuestions).map((key, index) => (
+            <View>
+              <Text
+                style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}
+              >
+                {prevQuestions[key].question}
+              </Text>
+              <Text
+                style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}
+              >
+                This is the answer to this question
+              </Text>
+            </View>
+          ))}
         </View>
-
       </View>
-
     </View>
-    </ScrollView>
+    // </ScrollView>
   );
 }
 

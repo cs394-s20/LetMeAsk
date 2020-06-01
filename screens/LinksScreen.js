@@ -118,7 +118,7 @@ export default function LinksScreen({ navigation, route }) {
             console.log("Error getting documents", err);
           });
       })
-      //----- CASE 2: where there ISBN + / + pageNumber doesn't exist in storage ------
+      //----- CASE 2: where there ISBN + / + pageNumber already exists in storage ------
       .catch((e) => {
         var errorObj = JSON.parse(e.serverResponse);
         console.log("imageError", errorObj.error.code);
@@ -147,9 +147,6 @@ export default function LinksScreen({ navigation, route }) {
           console.log("Uploaded a blob or file!");
           console.log("+++++++++++___________" + String(snapshot));
         });
-      // const ref2 = firebase.storage().ref(ISBN + "/" + pageNumber);
-      // const url = await ref2.getDownloadURL();
-      // console.log("+++++++++++++" + url);
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -200,7 +197,6 @@ export default function LinksScreen({ navigation, route }) {
         .add({
           title: "try",
           question: question,
-          answer: '',
           author: "test",
           isbn: ISBN,
           page: pageNumber,

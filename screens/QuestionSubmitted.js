@@ -8,10 +8,11 @@ import {
   View,
   Dimensions,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { NavigationActions, StackActions } from "react-navigation";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
@@ -44,6 +45,11 @@ export default function QuestionSubmitted({ navigation, route }) {
       );
     }, 2000);
   };
+
+  const resetAction = StackActions.reset({
+    index: 0,
+    actions: [NavigationActions.navigate({ routeName: "Answer" })],
+  });
 
   ShowAlertWithDelay();
   return (
@@ -107,15 +113,14 @@ export default function QuestionSubmitted({ navigation, route }) {
           title="Go Home"
           accessibilityLabel="Go Home"
           onPress={() => {
-            navigation.navigate('Home', {
-              route: route
-            });
+            // navigation.navigate("Home", {
+            //   route: route,
+            // });
+            navigation.dispatch(resetAction);
           }}
         >
           <View>
-            <Text style={{ color: "white", fontSize: 20 }}>
-              Go Home
-            </Text>
+            <Text style={{ color: "white", fontSize: 20 }}>Go Home</Text>
           </View>
         </TouchableOpacity>
       </View>
