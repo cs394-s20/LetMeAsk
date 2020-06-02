@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { SplashScreen } from "expo";
 import * as Font from "expo-font";
-import * as React from "react";
+import React, { useState } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
@@ -13,6 +13,8 @@ import QuestionAnnotation from "./screens/QuestionAnnotation";
 import QuestionSubmitted from "./screens/QuestionSubmitted";
 import ViewAnswer from "./screens/ViewAnswer";
 import PDFDoc from "./screens/PDF";
+import Login from './screens/Login';
+import HomeScreen from './screens/HomeScreen';
 
 import { decode, encode } from "base-64";
 global.crypto = require("@firebase/firestore");
@@ -65,8 +67,10 @@ export default function App(props) {
       <View style={styles.container}>
         {Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}
         <NavigationContainer linking={LinkingConfiguration}>
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName="Login">
             <Stack.Screen name="Root" component={BottomTabNavigator} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Camera" component={CameraApp} />
             <Stack.Screen name="Annotate" component={QuestionAnnotation} />
             <Stack.Screen name="Submitted" component={QuestionSubmitted} />
