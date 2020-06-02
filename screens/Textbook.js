@@ -19,10 +19,10 @@ const pageNumber = "188";
 const db = firebase.firestore();
 
 
-export default function Textbook({book, setCurrentBook, prevQuestions}) {
+export default function Textbook({navigation, route, prevQuestions}) {
+    const book = route.params
     const [search, onChangeSearch] = useState('')
     const [askedQuestions, setAskedQuestions] = useState({});
-    (book)
 
     const returnQuestionsOnPage = async () => {
         let questionsArray = {};
@@ -52,14 +52,14 @@ export default function Textbook({book, setCurrentBook, prevQuestions}) {
     return (
         <View style={styles.container}>
             <View style={styles.containeritems} >
-                <TouchableWithoutFeedback
+                {/* <TouchableWithoutFeedback
                 onPress={() => setCurrentBook(null)}
                 >
                     <AntDesign
                         name="leftcircleo"
                         style={{ color: "gray", fontSize: 40 }}
                     />
-                </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback> */}
                 <TextInput
                     style={{ height: 40, width: '85%', borderColor: 'gray', borderRadius: 10, borderWidth: 1, marginLeft: 10, paddingLeft: 10 }}
                     onChangeText={text => onChangeSearch(text)}
