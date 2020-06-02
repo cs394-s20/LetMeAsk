@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 
 import {
@@ -23,7 +23,7 @@ import {
 } from "react-native-paper";
 import firebase from "../shared/firebase";
 
-// import uuid from "react-native-uuid";
+import { UserContext } from "../components/UserContext";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -33,7 +33,6 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 export default function LinksScreen({ navigation, route }) {
   const db = firebase.firestore();
 
-  // console.log("CONSOLLEEEINNG", route.params?.x);
 
   const [annCoords, setAnnCoords] = useState([]);
   const [photouri, setPhotoUri] = useState("");
@@ -52,7 +51,14 @@ export default function LinksScreen({ navigation, route }) {
   const [submitted, setSubmitted] = useState(false);
   const [viewAnswer, setViewAnswer] = useState(false);
 
+  const [myUser, setMyUser] = useContext(UserContext);
+
+  const pan = useRef(new Animated.ValueXY()).current;
+
+  const toGoAfterPhotoUpload = async (id, callback) => {
+
   const toGoAfterPhotoUpload = async (id) => {
+
     let booksRef = db.collection("Books");
     let questionsRef = db.collection("Questions");
     var uri;
@@ -130,7 +136,40 @@ export default function LinksScreen({ navigation, route }) {
             setPhotoUri: setPhotoUri,
           });
         }
+
+        snapshot.forEach((doc) => {
+          doc.data().questions.forEach((question) =>
+            questionsRef
+              .where(firebase.firestore.FieldPath.documentId(), "==", question)
+              .where("page", "==", pageNumber)
+              .get()
+              .then((snapshot) => {
+                if (snapshot.empty) {
+                  console.log("SNAPSHOT EMPTY");
+                  return;
+                } else {
+                  snapshot.forEach((doc) => {
+                    uri = doc.data().image;
+                    console.log(uri);
+                  });
+                  navigation.setParams({ photo_uri: uri });
+                  console.log("=========" + uri);
+                  navigation.navigate("Annotate", {
+                    route: route,
+                    navigation: navigation,
+                    photo_uri: uri,
+                    setPhotoUri: setPhotoUri,
+                    setAnnCoords: setAnnCoords,
+                  });
+                }
+              })
+          );
+        });
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
         return null;
+
       });
   };
 
@@ -197,7 +236,7 @@ export default function LinksScreen({ navigation, route }) {
         .add({
           title: "try",
           question: question,
-          author: "test",
+          author: myUser,
           isbn: ISBN,
           page: pageNumber,
           image: String(ISBN) + "/" + String(pageNumber),

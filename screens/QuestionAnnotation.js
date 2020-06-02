@@ -409,6 +409,7 @@ export default function QuestionAnnotation({ navigation, route }) {
           </View>
         </TouchableOpacity>
       </View>
+
       <View style={{ alignItems: "left", justifyContent: "center" }}>
         <View style={{ alignItems: "left", justifyContent: "center" }}>
           {Object.keys(prevQuestions).map((key, index) => (
@@ -427,6 +428,7 @@ export default function QuestionAnnotation({ navigation, route }) {
           ))}
         </View>
       </View>
+
     </View>
   );
 }
