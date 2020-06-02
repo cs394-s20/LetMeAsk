@@ -109,18 +109,18 @@ export default function LinksScreen({ navigation, route }) {
       });
   };
 
-  const handlePhotoUpload = async () => {
-    try {
-      await db
-        .collection("Books")
-        .add({
-          random: "random",
-        })
-        .then((docref) => toGoAfterPhotoUpload(docref.id));
-    } catch (e) {
-      console.error("Error writing document: ", e);
-    }
-  };
+  // const handlePhotoUpload = async () => {
+  //   try {
+  //     await db
+  //       .collection("Books")
+  //       .add({
+  //         random: "random",
+  //       })
+  //       .then((docref) => toGoAfterPhotoUpload(docref.id));
+  //   } catch (e) {
+  //     console.error("Error writing document: ", e);
+  //   }
+  // };
 
   const updateBook = async (id) => {
     try {
@@ -246,7 +246,7 @@ export default function LinksScreen({ navigation, route }) {
               borderWidth: 2,
               borderStyle: "dashed",
             }}
-            onPress={() => handlePhotoUpload()}
+            onPress={() => toGoAfterPhotoUpload()}
             title="Upload Photo of Page"
             accessibilityLabel="Take Photo of Page"
           >
