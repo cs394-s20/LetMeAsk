@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 
 import {
@@ -23,7 +23,7 @@ import {
 } from "react-native-paper";
 import firebase from "../shared/firebase";
 
-// import uuid from "react-native-uuid";
+import { UserContext } from "../components/UserContext";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -32,8 +32,6 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function LinksScreen({ navigation, route }) {
   const db = firebase.firestore();
-
-  // console.log("CONSOLLEEEINNG", route.params?.x);
 
   const [annCoords, setAnnCoords] = useState([]);
   const [photouri, setPhotoUri] = useState("");
@@ -52,101 +50,73 @@ export default function LinksScreen({ navigation, route }) {
   const [submitted, setSubmitted] = useState(false);
   const [viewAnswer, setViewAnswer] = useState(false);
 
-  const toGoAfterPhotoUpload = async (id) => {
+  const [myUser, setMyUser] = useContext(UserContext);
+
+  const pan = useRef(new Animated.ValueXY()).current;
+
+  const toGoAfterPhotoUpload = async (id, callback) => {
     let booksRef = db.collection("Books");
     let questionsRef = db.collection("Questions");
     var uri;
-    //--------- added logic to handle case where ISBN + / + pageNumber doesn't exist in firebase storage ----------
-    const ref2 = firebase.storage().ref(ISBN + "/" + pageNumber);
 
-    //----- CASE 1: where there ISBN + / + pageNumber already exists in storage ------
-    ref2
-      .getDownloadURL()
-      .then((url) => {
-        // console.log("url", url.status);
-        // return url;
-        let query = booksRef
-          .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
-          .where("pages", "array-contains", pageNumber)
-          .get()
-          .then((snapshot) => {
-            if (snapshot.empty) {
-              navigation.navigate("Camera", {
-                navigation: navigation,
-                route: route,
-                setAnnCoords: setAnnCoords,
-                setPhotoUri: setPhotoUri,
-              });
-              return;
-            }
-            snapshot.forEach((doc) => {
-              doc.data().questions.forEach((question) =>
-                questionsRef
-                  .where(
-                    firebase.firestore.FieldPath.documentId(),
-                    "==",
-                    question
-                  )
-                  .where("page", "==", pageNumber)
-                  .get()
-                  .then((snapshot) => {
-                    if (snapshot.empty) {
-                      console.log("SNAPSHOT EMPTY");
-                      return;
-                    } else {
-                      snapshot.forEach((doc) => {
-                        console.log(doc.data().image);
-                        uri = url;
-                      });
-                      navigation.setParams({ photo_uri: uri });
-                      console.log("=========" + uri);
-                      navigation.navigate("Annotate", {
-                        route: route,
-                        navigation: navigation,
-                        photo_uri: uri,
-                        setPhotoUri: setPhotoUri,
-                        setAnnCoords: setAnnCoords,
-                        ISBN: ISBN,
-                        pageNumber: pageNumber,
-                      });
-                    }
-                  })
-              );
-            });
-          })
-          .catch((err) => {
-            console.log("Error getting documents", err);
-          });
-      })
-      //----- CASE 2: where there ISBN + / + pageNumber DO NOT already exists in storage ------
-      .catch((e) => {
-        var errorObj = JSON.parse(e.serverResponse);
-        console.log("imageError", errorObj.error.code);
-        if (errorObj.error.code === 404) {
+    let query = booksRef
+      .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
+      .where("pages", "array-contains", pageNumber)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
           navigation.navigate("Camera", {
             navigation: navigation,
             route: route,
             setAnnCoords: setAnnCoords,
             setPhotoUri: setPhotoUri,
           });
+          return;
         }
-        return null;
+        snapshot.forEach((doc) => {
+          doc.data().questions.forEach((question) =>
+            questionsRef
+              .where(firebase.firestore.FieldPath.documentId(), "==", question)
+              .where("page", "==", pageNumber)
+              .get()
+              .then((snapshot) => {
+                if (snapshot.empty) {
+                  console.log("SNAPSHOT EMPTY");
+                  return;
+                } else {
+                  snapshot.forEach((doc) => {
+                    uri = doc.data().image;
+                    console.log(uri);
+                  });
+                  navigation.setParams({ photo_uri: uri });
+                  console.log("=========" + uri);
+                  navigation.navigate("Annotate", {
+                    route: route,
+                    navigation: navigation,
+                    photo_uri: uri,
+                    setPhotoUri: setPhotoUri,
+                    setAnnCoords: setAnnCoords,
+                    ISBN: ISBN,
+                    pageNumber: pageNumber,
+                  });
+                }
+              })
+          );
+        });
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
       });
   };
 
-  const uploadPhoto = async (photouri) => {
-    if (!photouri) console.log("No image found");
+  const handlePhotoUpload = async () => {
     try {
-      const response = await fetch(photouri);
-      const blob = await response.blob();
-      var ref = firebase.storage().ref();
-      ref
-        .child(String(ISBN) + "/" + String(pageNumber))
-        .put(blob)
-        .then((snapshot) => {
-          console.log("Uploaded a blob or file!");
-          console.log("+++++++++++___________" + String(snapshot));
-        });
+      await db
+        .collection("Books")
+        .add({
+          random: "random",
+        })
+        .then((docref) => toGoAfterPhotoUpload(docref.id));
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -181,6 +151,7 @@ export default function LinksScreen({ navigation, route }) {
               authors: bookInfo.data.items[0].volumeInfo.authors,
               questions: firebase.firestore.FieldValue.arrayUnion(id),
               pages: firebase.firestore.FieldValue.arrayUnion(pageNumber),
+              random: "not random",
             });
         }
       });
@@ -191,16 +162,15 @@ export default function LinksScreen({ navigation, route }) {
 
   const uploadQuestion = async () => {
     try {
-      await uploadPhoto(photouri);
       await db
         .collection("Questions")
         .add({
           title: "try",
           question: question,
-          author: "test",
+          author: myUser,
           isbn: ISBN,
           page: pageNumber,
-          image: String(ISBN) + "/" + String(pageNumber),
+          image: photouri,
           loc: coords,
           status: "open",
         })
@@ -267,8 +237,6 @@ export default function LinksScreen({ navigation, route }) {
         {annCoords.length === 0 && (
           <TouchableOpacity
             style={{
-              // borderColor: "red",
-              // borderWidth: 2,
               alignItems: "center",
               justifyContent: "center",
               marginTop: 20,
@@ -278,7 +246,7 @@ export default function LinksScreen({ navigation, route }) {
               borderWidth: 2,
               borderStyle: "dashed",
             }}
-            onPress={() => toGoAfterPhotoUpload()}
+            onPress={() => handlePhotoUpload()}
             title="Upload Photo of Page"
             accessibilityLabel="Take Photo of Page"
           >
@@ -317,12 +285,6 @@ export default function LinksScreen({ navigation, route }) {
           </View>
         )}
 
-        {/* {annCoords.length !== 0 && (
-          <View style={{ margin: 10, borderWidth: 0.5 }}>
-            <Text>Points: {JSON.stringify(annCoords)}</Text>
-          </View>
-        )} */}
-
         {annCoords.length !== 0 && photouri.length !== 0 && (
           <View
             style={{
@@ -339,7 +301,7 @@ export default function LinksScreen({ navigation, route }) {
 
                 height: 60,
                 width: "50%",
-                borderRadius: 30,
+                borderRadius: 7,
                 marginTop: 25,
                 shadowColor: "#000",
                 shadowOffset: {
@@ -353,6 +315,10 @@ export default function LinksScreen({ navigation, route }) {
               title="Submit Question"
               accessibilityLabel="Submit Question"
               onPress={() => {
+                // console.log("uploaded question pressed");
+                // console.log(annCoords);
+                // console.log("hahaha   " + photouri);
+
                 uploadQuestion();
                 navigation.navigate("Submitted", {
                   route: route,
@@ -392,6 +358,10 @@ const styles = StyleSheet.create({
     width: undefined,
     height: undefined,
     alignSelf: "center",
+    // marginTop: 10,
+    // position: "absolute",
+    // borderColor: "red",
+    // borderWidth: 2,
     resizeMode: "contain",
     ...StyleSheet.absoluteFillObject,
   },

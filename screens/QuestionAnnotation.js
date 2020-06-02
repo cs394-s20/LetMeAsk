@@ -47,6 +47,9 @@ export default function QuestionAnnotation({ navigation, route }) {
   const [viewInstruct, setViewInstruct] = useState(false);
   const [pinColor, setPinColor] = useState("#378BE5");
 
+  console.log(pageNumber);
+  console.log(ISBN);
+
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
 
@@ -54,7 +57,7 @@ export default function QuestionAnnotation({ navigation, route }) {
     let questionsRef = db.collection("Questions");
     let query = questionsRef
       .where("isbn", "==", ISBN)
-      .where("page", "==", pageNumber)
+      // .where("page", "==", pageNumber)
       .get()
       .then((snapshot) => {
         if (snapshot.empty) {
@@ -62,24 +65,25 @@ export default function QuestionAnnotation({ navigation, route }) {
           return;
         }
         snapshot.forEach((doc) => {
+          console.log(doc.data());
           if (
             Math.abs(pageX - doc.data().loc[0]) >= 6 &&
             Math.abs(pageX - doc.data().loc[0]) <= 39 &&
             Math.abs(pageY - doc.data().loc[1]) >= 180 &&
             Math.abs(pageY - doc.data().loc[1]) <= 230
           ) {
+            //   console.log(doc.data());
             setMyQuestion(doc.data().question);
             setModalVisible(true);
             // console.log("X diff " + pageX - doc.data().loc[0]);
             // console.log("Y diff " + pageY - doc.data().loc[1]);
 
-            console.log(doc.data().question);
             // console.log("pageY " + pageY);
             // console.log("panY " + doc.data().loc[1]);
             // console.log("pageX " + pageX);
             // console.log("panX " + doc.data().loc[0]);
           } else {
-            // console.log("OHHHHHH NOOOOOOOOOOO");
+            console.log("OHHHHHH NOOOOOOOOOOO");
           }
         });
         // console.log(panX, panY);
@@ -215,31 +219,6 @@ export default function QuestionAnnotation({ navigation, route }) {
               }}
             >
               <Text style={styles.textStyle}>View Answer</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
-  const InstructionsModal = () => {
-    return (
-      <Modal
-        isVisible={viewInstruct}
-        onBackdropPress={() => setViewInstruct(!viewInstruct)}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={{ fontSize: 20 }}>INSTRUCTIONS:</Text>
-            <Text style={styles.modalText}>These are the instructions</Text>
-
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                setViewInstruct(!viewInstruct);
-              }}
-            >
-              <Text style={styles.textStyle}>OK!</Text>
             </TouchableHighlight>
           </View>
         </View>
