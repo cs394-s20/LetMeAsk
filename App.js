@@ -14,6 +14,7 @@ import QuestionSubmitted from "./screens/QuestionSubmitted";
 import ViewAnswer from "./screens/ViewAnswer";
 import PDFDoc from "./screens/PDF";
 import Login from './screens/Login';
+import LoginInfo from './screens/LoginInfo';
 import HomeScreen from './screens/HomeScreen';
 
 import { decode, encode } from "base-64";
@@ -36,7 +37,6 @@ const Stack = createStackNavigator();
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
-
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
@@ -70,6 +70,7 @@ export default function App(props) {
           <Stack.Navigator initialRouteName="Login">
             <Stack.Screen name="Root" component={BottomTabNavigator} />
             <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="LoginInfo" component={LoginInfo} />
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Camera" component={CameraApp} />
             <Stack.Screen name="Annotate" component={QuestionAnnotation} />

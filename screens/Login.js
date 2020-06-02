@@ -26,36 +26,32 @@ export default function Login({navigation, route})
 
   const signIn = async () => {
     console.log(value);
+    console.log("username" + db.collection("Users").doc(value));
     if (value != '') {
+        db.collection("Users").doc(value).get()
+            .then((docSnapshot) => {
+                if (docSnapshot.exists) {
+                    navigation.navigate("Root", {
+                        navigation: navigation,
+                        route: route
+                    });
+                } else {
+                    navigation.navigate("LoginInfo", {
+                        navigation: navigation,
+                        route: route,
+                        username: value
+                    });
+                }
+            });
 
-      // add user information to system
-      try {
-        navigation.navigate("Root", {
-          navigation: navigation,
-          route: route
-        });
-
-        await db
-          .collection("Users")
-          .doc(roll)
-          .set({
-            username: value,
-            roll: roll
-          })
-          .then(console.log("successfully upload user information")   
-          );
-      } catch (e) {
-        console.error("Error uploading user information: ", e);
-      }
     }
   }
   const [value, onChangeText] = useState('');
-  const [roll, setRoll] = useState('');
-  console.log(roll);
+  const [role, setRole] = useState('');
+  console.log(role);
 
   return (
     <View>
-      <Text>Username</Text>
       <TextInput
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         onChangeText={text => {console.log(value); onChangeText(text)}}
@@ -63,8 +59,8 @@ export default function Login({navigation, route})
         value={value}
       />
 
-
-      <RadioGroup onSelect = {(index, value) => setRoll(value)}>
+    {/**
+      <RadioGroup onSelect = {(index, value) => setRole(value)}>
         <RadioButton value={'Student'} >
             <Text>Student</Text>
             </RadioButton>
@@ -72,7 +68,7 @@ export default function Login({navigation, route})
             <RadioButton value={'Professor'}>
             <Text>Professor</Text>
              </RadioButton>
-      </RadioGroup>
+    </RadioGroup>*/}
 
       <Button title="Log In" onPress={() => signIn()}/>
     </View>
