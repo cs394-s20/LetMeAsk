@@ -1,5 +1,5 @@
 import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,11 +11,13 @@ import {
   PanResponder,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   Button,
 } from "react-native";
 import firebase from "../shared/firebase";
 import AuthForm from "../components/AuthForm";
+import { UserContext } from "../components/UserContext";
+const deviceWidth = Dimensions.get("window").width;
+const deviceHeight = Dimensions.get("window").height;
 
 export function signout(onSignedOut) {
   firebase
@@ -29,6 +31,7 @@ export function signout(onSignedOut) {
 
 export default function Login({ navigation, route }) {
   const [authMode, setAuthMode] = useState("signup");
+  const [myUser, setMyUser] = useContext(UserContext);
 
   useEffect(() => {
     subscribeToAuthChanges(onAuthStateChanged);
@@ -37,10 +40,12 @@ export default function Login({ navigation, route }) {
   const onAuthStateChanged = (user) => {
     if (user !== null) {
       if (user.displayName === "Student") {
+        setMyUser(user.uid);
         navigation.navigate("Root");
         console.log(user);
       }
       if (user.displayName === "Expert") {
+        setMyUser(user.uid);
         navigation.navigate("Root");
       }
     }
@@ -77,43 +82,14 @@ export default function Login({ navigation, route }) {
   };
 
   return (
-    <AuthForm
-      login={login}
-      signup={signup}
-      authMode={authMode}
-      switchAuthMode={switchAuthMode}
-    />
+    <View style={{ width: deviceWidth, height: deviceHeight }}>
+      <Text>BLAHHHH: {myUser}</Text>
+      <AuthForm
+        login={login}
+        signup={signup}
+        authMode={authMode}
+        switchAuthMode={switchAuthMode}
+      />
+    </View>
   );
 }
-
-// export default function Login({navigation, route})
-// {
-//   const signIn = () => {
-//     console.log(value);
-//     if (value != '') {
-//       navigation.navigate("Root", {
-//         navigation: navigation,
-//         route: route
-//       });
-//     }
-//   }
-//   const [value, onChangeText] = useState('');
-//   return (
-//     <View>
-//       <Text>Username</Text>
-//       <TextInput
-//         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-//         onChangeText={text => {console.log(value); onChangeText(text)}}
-//         placeholder="Username"
-//         value={value}
-//       />
-//       <Button title="Log In" onPress={() => signIn()}/>
-//     </View>
-//   );
-// }
-
-// Login.navigationOptions = {
-//     headerLeft: null,
-//   };
-
-// onSubmitEditing

@@ -1,5 +1,5 @@
 import * as WebBrowser from "expo-web-browser";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Image,
   Platform,
@@ -15,6 +15,7 @@ import { Card, Title, Paragraph, Chip, Searchbar } from "react-native-paper";
 import RNPickerSelect from "react-native-picker-select";
 import Textbook from "../components/Textbook";
 import { signout } from "./Login";
+import { UserContext } from "../components/UserContext";
 
 //Expo Icon
 import {
@@ -63,10 +64,11 @@ const TopicChip = ({ topic }) => {
   );
 };
 
-export default function HomeScreen({ username, navigation }) {
+export default function HomeScreen({ username, navigation, route }) {
   const [search, onChangeSearch] = useState("");
   const [topic, setTopic] = useState("astronomy");
   const [currentbook, setCurrentbook] = useState(null);
+  // const contextValue = useContext(UserContext);
 
   const onSignedOut = () => {
     console.log("signed out");
@@ -81,6 +83,7 @@ export default function HomeScreen({ username, navigation }) {
     console.log("hey" + username);
     return (
       <View style={styles.container}>
+        {/* <Text>asdfasdfa: {contextValue}</Text> */}
         <Button title="Sign Out" onPress={() => signout(onSignedOut)}></Button>
         <Text>{username}</Text>
         <View style={styles.containeritems}>

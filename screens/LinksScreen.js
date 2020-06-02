@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 
 import {
@@ -23,7 +23,7 @@ import {
 } from "react-native-paper";
 import firebase from "../shared/firebase";
 
-// import uuid from "react-native-uuid";
+import { UserContext } from "../components/UserContext";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -32,7 +32,6 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function LinksScreen({ navigation, route }) {
   const db = firebase.firestore();
-  // console.log("CONSOLLEEEINNG", route.params?.x);
 
   const [annCoords, setAnnCoords] = useState([]);
   const [photouri, setPhotoUri] = useState("");
@@ -50,6 +49,8 @@ export default function LinksScreen({ navigation, route }) {
   const [ISBN, setISBN] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [viewAnswer, setViewAnswer] = useState(false);
+
+  const [myUser, setMyUser] = useContext(UserContext);
 
   const pan = useRef(new Animated.ValueXY()).current;
 
@@ -86,8 +87,6 @@ export default function LinksScreen({ navigation, route }) {
                   snapshot.forEach((doc) => {
                     uri = doc.data().image;
                     console.log(uri);
-                    // setAnnotateURI(doc.data().image);
-                    // console.log("!!!!!!" + annotateURI);
                   });
                   navigation.setParams({ photo_uri: uri });
                   console.log("=========" + uri);
@@ -166,7 +165,7 @@ export default function LinksScreen({ navigation, route }) {
         .add({
           title: "try",
           question: question,
-          author: "test",
+          author: myUser,
           isbn: ISBN,
           page: pageNumber,
           image: photouri,

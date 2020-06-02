@@ -249,10 +249,6 @@ export default function QuestionAnnotation({ navigation, route }) {
           </View>
         </TouchableOpacity>
       </View>
-      {/* <Image
-        style={{ marginLeft: 90, height: 125, width: 125 }}
-        source={{ uri: photo_uri }}
-      ></Image> */}
     </View>
   );
 }
