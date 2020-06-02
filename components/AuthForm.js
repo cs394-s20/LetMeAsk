@@ -3,11 +3,11 @@ import { StyleSheet, View, TextInput, Button, Text } from "react-native";
 
 import { withFormik } from "formik";
 import * as yup from "yup";
-import { RadioButton } from "react-native-paper";
+import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button';
 
 const AuthForm = (props) => {
   const [checked, setChecked] = useState("student");
-
+  const [radio, setRadio] = useState('');
   const displayNameInput = (
     <View>
       <TextInput
@@ -25,7 +25,7 @@ const AuthForm = (props) => {
         LetMeAsk
       </Text>
 
-      {props.authMode.authMode === "signup" && (
+      {/* {props.authMode.authMode === "signup" && (
         <View>
           <TextInput
             style={styles.formInput}
@@ -66,7 +66,7 @@ const AuthForm = (props) => {
         //     </View>
         //   </RadioButton.Group>
         // </View>
-      )}
+      )} */}
       <TextInput
         style={styles.formInput}
         onChangeText={(text) => props.setFieldValue("email", text)}
@@ -80,6 +80,16 @@ const AuthForm = (props) => {
         placeholder="Password"
       />
       <Text style={styles.validationText}> {props.errors.password}</Text>
+      {props.authMode.authMode === "signup" && (
+        <RadioGroup style={styles.radioInput} onSelect = {(index, value) => props.setFieldValue("displayName", value)}>
+          <RadioButton value={'Student'} >
+            <Text>Student</Text>
+          </RadioButton>
+          <RadioButton value={'Professor'}>
+            <Text>Professor</Text>
+          </RadioButton>
+        </RadioGroup>)}
+      <Text style={styles.validationText}>{props.errors.displayName}</Text>
       <Button
         onPress={() => props.handleSubmit()}
         buttonStyle={styles.loginButton}
@@ -129,6 +139,13 @@ const styles = StyleSheet.create({
     borderColor: "#B5B4BC",
     borderWidth: 1,
     marginBottom: 16,
+    padding: 8,
+  },
+  radioInput: {
+    width: 300,
+    height: 50,
+    marginBottom: 16,
+    marginTop: -30,
     padding: 8,
   },
   loginButton: {
