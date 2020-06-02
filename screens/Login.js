@@ -20,9 +20,6 @@ import {
   Button,
 } from "react-native";
 
-
-
-
 export default function Login({navigation, route})
 {
   const db = firebase.firestore();
@@ -32,26 +29,24 @@ export default function Login({navigation, route})
     if (value != '') {
 
       // add user information to system
-      //try {
-
-        
+      try {
         navigation.navigate("Root", {
           navigation: navigation,
           route: route
         });
 
-        // await db
-        //   .collection("Users")
-        //   .add({
-        //     username: value,
-        //   })
-        //   .then(console.log("successfully upload user information")   
-        //   );
-      // } catch (e) {
-      //   console.error("Error uploading user information: ", e);
-      // }
-
-      
+        await db
+          .collection("Users")
+          .doc(roll)
+          .set({
+            username: value,
+            roll: roll
+          })
+          .then(console.log("successfully upload user information")   
+          );
+      } catch (e) {
+        console.error("Error uploading user information: ", e);
+      }
     }
   }
   const [value, onChangeText] = useState('');
