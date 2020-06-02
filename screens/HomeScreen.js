@@ -32,12 +32,6 @@ const textbooks = [
     image: 'https://images-na.ssl-images-amazon.com/images/I/41AoUQujOCL._SX387_BO1,204,203,200_.jpg',
     topic: ['computer science']
   },
-  {
-    title: 'Introduction to Networks',
-    author: '',
-    image: '',
-    topic: ['computer science']
-  },
 ]
 
 const TopicChip = ({ topic }) => {
@@ -155,9 +149,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 10
   },
-  horzscroll: {
-    height: 125,
-  },
   // container: {
   //   flex: 1,
   //   backgroundColor: '#fff',
@@ -170,7 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   textbooksContainer: {
-    maxHeight: '80%',
+    maxHeight: '100%',
   },
   textbookInfo: {
     paddingLeft: 30,
