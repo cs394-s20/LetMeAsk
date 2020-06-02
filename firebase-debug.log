@@ -1,0 +1,17 @@
+[debug] [2020-05-28T14:06:02.987Z] ----------------------------------------------------------------------
+[debug] [2020-05-28T14:06:02.989Z] Command:       /usr/local/bin/node /usr/local/bin/firebase login
+[debug] [2020-05-28T14:06:02.989Z] CLI Version:   8.3.0
+[debug] [2020-05-28T14:06:02.989Z] Platform:      darwin
+[debug] [2020-05-28T14:06:02.989Z] Node Version:  v14.2.0
+[debug] [2020-05-28T14:06:02.990Z] Time:          Thu May 28 2020 22:06:02 GMT+0800 (中国标准时间)
+[debug] [2020-05-28T14:06:02.990Z] ----------------------------------------------------------------------
+[debug] [2020-05-28T14:06:02.990Z] 
+[info] i  Firebase optionally collects CLI usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you.
+ 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=754878828&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] 
+[info] Waiting for authentication...
+[debug] [2020-05-28T14:07:05.976Z] >>> HTTP REQUEST POST https://accounts.google.com/o/oauth2/token  
+ {"code":"4/0AGgFNPNFB9j7ovEJf6AsYnpFhfD5PVYhrLFW9QXJ_sU9Lhy2PVV997A2d5KLmn8BO-jk7p6vHhrjupyYoPp4tc","client_id":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com","client_secret":"j9iVZfS8kkCEFUPaAeJV0sAi","redirect_uri":"http://localhost:9005","grant_type":"authorization_code"}

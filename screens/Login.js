@@ -1,5 +1,10 @@
 import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
+//use yarn add react-native-flexi-radio-button
+import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button'
+//firebase thing
+import firebase from "../shared/firebase";
+
 import {
   StyleSheet,
   Text,
@@ -16,18 +21,43 @@ import {
 } from "react-native";
 
 
+
+
 export default function Login({navigation, route})
 {
-  const signIn = () => {
+  const db = firebase.firestore();
+
+  const signIn = async () => {
     console.log(value);
     if (value != '') {
-      navigation.navigate("Root", {
-        navigation: navigation,
-        route: route
-      });
+
+      // add user information to system
+      //try {
+
+        
+        navigation.navigate("Root", {
+          navigation: navigation,
+          route: route
+        });
+
+        // await db
+        //   .collection("Users")
+        //   .add({
+        //     username: value,
+        //   })
+        //   .then(console.log("successfully upload user information")   
+        //   );
+      // } catch (e) {
+      //   console.error("Error uploading user information: ", e);
+      // }
+
+      
     }
   }
   const [value, onChangeText] = useState('');
+  const [roll, setRoll] = useState('');
+  console.log(roll);
+
   return (
     <View>
       <Text>Username</Text>
@@ -37,6 +67,18 @@ export default function Login({navigation, route})
         placeholder="Username"
         value={value}
       />
+
+
+      <RadioGroup onSelect = {(index, value) => setRoll(value)}>
+        <RadioButton value={'Student'} >
+            <Text>Student</Text>
+            </RadioButton>
+ 
+            <RadioButton value={'Professor'}>
+            <Text>Professor</Text>
+             </RadioButton>
+      </RadioGroup>
+
       <Button title="Log In" onPress={() => signIn()}/>
     </View>
   );
