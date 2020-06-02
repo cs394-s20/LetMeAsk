@@ -33,6 +33,7 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 export default function LinksScreen({ navigation, route }) {
   const db = firebase.firestore();
 
+
   const [annCoords, setAnnCoords] = useState([]);
   const [photouri, setPhotoUri] = useState("");
   const [annotateURI, setAnnotateURI] = useState("");
@@ -55,24 +56,87 @@ export default function LinksScreen({ navigation, route }) {
   const pan = useRef(new Animated.ValueXY()).current;
 
   const toGoAfterPhotoUpload = async (id, callback) => {
+
+  const toGoAfterPhotoUpload = async (id) => {
+
     let booksRef = db.collection("Books");
     let questionsRef = db.collection("Questions");
     var uri;
+    //--------- added logic to handle case where ISBN + / + pageNumber doesn't exist in firebase storage ----------
+    const ref2 = firebase.storage().ref(ISBN + "/" + pageNumber);
 
-    let query = booksRef
-      .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
-      .where("pages", "array-contains", pageNumber)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.empty) {
+    //----- CASE 1: where there ISBN + / + pageNumber already exists in storage ------
+    ref2
+      .getDownloadURL()
+      .then((url) => {
+        // console.log("url", url.status);
+        // return url;
+        let query = booksRef
+          .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
+          .where("pages", "array-contains", pageNumber)
+          .get()
+          .then((snapshot) => {
+            if (snapshot.empty) {
+              navigation.navigate("Camera", {
+                navigation: navigation,
+                route: route,
+                setAnnCoords: setAnnCoords,
+                setPhotoUri: setPhotoUri,
+              });
+              return;
+            }
+            snapshot.forEach((doc) => {
+              doc.data().questions.forEach((question) =>
+                questionsRef
+                  .where(
+                    firebase.firestore.FieldPath.documentId(),
+                    "==",
+                    question
+                  )
+                  .where("page", "==", pageNumber)
+                  .get()
+                  .then((snapshot) => {
+                    if (snapshot.empty) {
+                      console.log("SNAPSHOT EMPTY");
+                      return;
+                    } else {
+                      snapshot.forEach((doc) => {
+                        console.log(doc.data().image);
+                        uri = url;
+                      });
+                      navigation.setParams({ photo_uri: uri });
+                      console.log("=========" + uri);
+                      navigation.navigate("Annotate", {
+                        route: route,
+                        navigation: navigation,
+                        photo_uri: uri,
+                        setPhotoUri: setPhotoUri,
+                        setAnnCoords: setAnnCoords,
+                        ISBN: ISBN,
+                        pageNumber: pageNumber,
+                      });
+                    }
+                  })
+              );
+            });
+          })
+          .catch((err) => {
+            console.log("Error getting documents", err);
+          });
+      })
+      //----- CASE 2: where there ISBN + / + pageNumber DO NOT already exists in storage ------
+      .catch((e) => {
+        var errorObj = JSON.parse(e.serverResponse);
+        console.log("imageError", errorObj.error.code);
+        if (errorObj.error.code === 404) {
           navigation.navigate("Camera", {
             navigation: navigation,
             route: route,
             setAnnCoords: setAnnCoords,
             setPhotoUri: setPhotoUri,
           });
-          return;
         }
+
         snapshot.forEach((doc) => {
           doc.data().questions.forEach((question) =>
             questionsRef
@@ -104,17 +168,24 @@ export default function LinksScreen({ navigation, route }) {
       })
       .catch((err) => {
         console.log("Error getting documents", err);
+        return null;
+
       });
   };
 
-  const handlePhotoUpload = async () => {
+  const uploadPhoto = async (photouri) => {
+    if (!photouri) console.log("No image found");
     try {
-      await db
-        .collection("Books")
-        .add({
-          random: "random",
-        })
-        .then((docref) => toGoAfterPhotoUpload(docref.id));
+      const response = await fetch(photouri);
+      const blob = await response.blob();
+      var ref = firebase.storage().ref();
+      ref
+        .child(String(ISBN) + "/" + String(pageNumber))
+        .put(blob)
+        .then((snapshot) => {
+          console.log("Uploaded a blob or file!");
+          console.log("+++++++++++___________" + String(snapshot));
+        });
     } catch (e) {
       console.error("Error writing document: ", e);
     }
@@ -149,7 +220,6 @@ export default function LinksScreen({ navigation, route }) {
               authors: bookInfo.data.items[0].volumeInfo.authors,
               questions: firebase.firestore.FieldValue.arrayUnion(id),
               pages: firebase.firestore.FieldValue.arrayUnion(pageNumber),
-              random: "not random",
             });
         }
       });
@@ -160,6 +230,7 @@ export default function LinksScreen({ navigation, route }) {
 
   const uploadQuestion = async () => {
     try {
+      await uploadPhoto(photouri);
       await db
         .collection("Questions")
         .add({
@@ -168,7 +239,7 @@ export default function LinksScreen({ navigation, route }) {
           author: myUser,
           isbn: ISBN,
           page: pageNumber,
-          image: photouri,
+          image: String(ISBN) + "/" + String(pageNumber),
           loc: coords,
           status: "open",
         })
@@ -198,16 +269,18 @@ export default function LinksScreen({ navigation, route }) {
     <View>
       <View>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <TextInput
-            label="Question"
-            style={styles.submitInput}
-            onChangeText={(text) => setQuestion(text)}
-            value={question}
-            placeholder=""
-            underlineColor="#378BE5"
-            selectionColor="#378BE5"
-            theme={theme}
-          />
+          {annCoords.length !== 0 && (
+            <TextInput
+              label="Question"
+              style={styles.submitInput}
+              onChangeText={(text) => setQuestion(text)}
+              value={question}
+              placeholder=""
+              underlineColor="#378BE5"
+              selectionColor="#378BE5"
+              theme={theme}
+            />
+          )}
           <TextInput
             label="ISBN"
             style={styles.submitInput}
@@ -244,16 +317,7 @@ export default function LinksScreen({ navigation, route }) {
               borderWidth: 2,
               borderStyle: "dashed",
             }}
-            onPress={
-              () => handlePhotoUpload()
-              // () =>
-              // navigation.navigate("Camera", {
-              //   navigation: navigation,
-              //   route: route,
-              //   setAnnCoords: setAnnCoords,
-              //   setPhotoUri: setPhotoUri,
-              // })
-            }
+            onPress={() => toGoAfterPhotoUpload()}
             title="Upload Photo of Page"
             accessibilityLabel="Take Photo of Page"
           >
@@ -265,12 +329,12 @@ export default function LinksScreen({ navigation, route }) {
               }}
             >
               <MaterialCommunityIcons
-                name="camera-plus"
+                name="book-open-outline"
                 size={50}
                 color="#378BE5"
               />
               <Text style={{ fontSize: 12, marginTop: 5, color: "#378BE5" }}>
-                Add Photo
+                Search
               </Text>
             </View>
           </TouchableOpacity>
@@ -314,7 +378,7 @@ export default function LinksScreen({ navigation, route }) {
 
                 height: 60,
                 width: "50%",
-                borderRadius: 7,
+                borderRadius: 30,
                 marginTop: 25,
                 shadowColor: "#000",
                 shadowOffset: {
@@ -328,10 +392,6 @@ export default function LinksScreen({ navigation, route }) {
               title="Submit Question"
               accessibilityLabel="Submit Question"
               onPress={() => {
-                // console.log("uploaded question pressed");
-                // console.log(annCoords);
-                // console.log("hahaha   " + photouri);
-
                 uploadQuestion();
                 navigation.navigate("Submitted", {
                   route: route,
@@ -371,10 +431,6 @@ const styles = StyleSheet.create({
     width: undefined,
     height: undefined,
     alignSelf: "center",
-    // marginTop: 10,
-    // position: "absolute",
-    // borderColor: "red",
-    // borderWidth: 2,
     resizeMode: "contain",
     ...StyleSheet.absoluteFillObject,
   },

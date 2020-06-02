@@ -45,6 +45,7 @@ const textbooks = [
       "https://images-na.ssl-images-amazon.com/images/I/41AoUQujOCL._SX387_BO1,204,203,200_.jpg",
     topic: ["computer science"],
   },
+
   {
     title: "Introduction to Networks",
     author: "",
@@ -52,6 +53,9 @@ const textbooks = [
     topic: ["computer science"],
   },
 ];
+
+]
+
 
 const TopicChip = ({ topic }) => {
   const truncate = (input) =>
@@ -70,10 +74,18 @@ export default function HomeScreen({ username, navigation, route }) {
   const [currentbook, setCurrentbook] = useState(null);
   // const contextValue = useContext(UserContext);
 
+
   const onSignedOut = () => {
     console.log("signed out");
     navigation.navigate("Login");
   };
+
+export default function HomeScreen() {
+  const [search, onChangeSearch] = useState('')
+  const [topic, setTopic] = useState('astronomy')
+  const [currentbook, setCurrentbook] = useState(null)
+
+
   const handleBook = (book) => {
     setCurrentbook(book);
     return null;
@@ -177,9 +189,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 10,
   },
-  horzscroll: {
-    height: 125,
-  },
   // container: {
   //   flex: 1,
   //   backgroundColor: '#fff',
@@ -192,7 +201,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   textbooksContainer: {
+
     maxHeight: "80%",
+
+    maxHeight: '100%',
+
   },
   textbookInfo: {
     paddingLeft: 30,

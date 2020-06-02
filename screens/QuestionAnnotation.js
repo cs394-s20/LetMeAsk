@@ -12,8 +12,13 @@ import {
   PanResponder,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
+  Button,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
 } from "react-native";
+
+import Modal from "react-native-modal";
+import Onboarding from "react-native-onboarding-swiper";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -22,21 +27,67 @@ import {
   State,
 } from "react-native-gesture-handler";
 import ViewShot from "react-native-view-shot";
+import firebase from "../shared/firebase";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
+const db = firebase.firestore();
 
 export default function QuestionAnnotation({ navigation, route }) {
   const { setAnnCoords } = route.params;
   const { setPhotoUri } = route.params;
   const { photo_uri } = route.params;
+  const { ISBN } = route.params;
+  const { pageNumber } = route.params;
   const [isZoom, setIsZoom] = useState(false);
+  const [prevQuestions, setPrevQuestions] = useState({});
   const viewShotRef = useRef(null);
-  // const [uri, setURI] = useState("");
+  const [myQuestion, setMyQuestion] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [viewInstruct, setViewInstruct] = useState(false);
+  const [pinColor, setPinColor] = useState("#378BE5");
 
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
-  const screen = Dimensions.get("window");
+
+  const showQuestion = async (pageX, pageY) => {
+    let questionsRef = db.collection("Questions");
+    let query = questionsRef
+      .where("isbn", "==", ISBN)
+      .where("page", "==", pageNumber)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          console.log("No matching documents.");
+          return;
+        }
+        snapshot.forEach((doc) => {
+          if (
+            Math.abs(pageX - doc.data().loc[0]) >= 6 &&
+            Math.abs(pageX - doc.data().loc[0]) <= 39 &&
+            Math.abs(pageY - doc.data().loc[1]) >= 180 &&
+            Math.abs(pageY - doc.data().loc[1]) <= 230
+          ) {
+            setMyQuestion(doc.data().question);
+            setModalVisible(true);
+            // console.log("X diff " + pageX - doc.data().loc[0]);
+            // console.log("Y diff " + pageY - doc.data().loc[1]);
+
+            console.log(doc.data().question);
+            // console.log("pageY " + pageY);
+            // console.log("panY " + doc.data().loc[1]);
+            // console.log("pageX " + pageX);
+            // console.log("panX " + doc.data().loc[0]);
+          } else {
+            // console.log("OHHHHHH NOOOOOOOOOOO");
+          }
+        });
+        // console.log(panX, panY);
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  };
 
   const onPinchEvent = Animated.event(
     [
@@ -95,121 +146,229 @@ export default function QuestionAnnotation({ navigation, route }) {
     })
   ).current;
 
-  const Pin = ({ coords }) => {
+  const OnboardingExp = () => {
     return (
-      <MaterialCommunityIcons
-        name="map-marker-question"
-        size={50}
-        color="#378BE5"
+      <Onboarding
+        showSkip={false}
+        onDone={() => setViewInstruct(false)}
+        pages={[
+          {
+            backgroundColor: "#2196F3",
+            image: (
+              <MaterialCommunityIcons
+                name="map-marker-question"
+                size={150}
+                color={"#e57359"}
+              />
+            ),
+            title: "View Questions",
+
+            subtitle:
+              "Click on any red-colored question mark to view questions asked by other users",
+          },
+          {
+            backgroundColor: "#e57359",
+            image: (
+              <MaterialCommunityIcons
+                name="map-marker-question"
+                size={150}
+                color={"#2196F3"}
+              />
+            ),
+            title: "Ask a Question",
+            subtitle:
+              "If you have a question that others haven't asked, drag the blue question mark to the place on the image that corresponds to your question",
+          },
+          {
+            backgroundColor: "#fff",
+            image: (
+              <MaterialCommunityIcons
+                name="gesture-tap"
+                size={150}
+                color={"#111"}
+              />
+            ),
+            title: "Before you submit...",
+            subtitle:
+              "Once you place your question mark, tap it to make sure it turns red ",
+          },
+        ]}
       />
     );
   };
 
-  console.log(pan.x);
-  console.log(pan.y);
+  const QuestionModal = () => {
+    return (
+      <Modal
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(!modalVisible)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={{ fontSize: 20 }}>QUESTION:</Text>
+            <Text style={styles.modalText}>{myQuestion}</Text>
 
-  const handleResetZoomScale = (e) => {
-    scrollResponserRef.scrollResponderZoomTo({
-      x: 0,
-      y: 0,
-      width: 100,
-      height: 100,
-      animated: true,
-    });
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>View Answer</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+    );
   };
 
-  const setZoomRef = (node) => {
-    if (node) {
-      const zoomRef = node;
-      scrollResponderRef = zoomRef.getScrollResponder();
-    }
+  const InstructionsModal = () => {
+    return (
+      <Modal
+        isVisible={viewInstruct}
+        onBackdropPress={() => setViewInstruct(!viewInstruct)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={{ fontSize: 20 }}>INSTRUCTIONS:</Text>
+            <Text style={styles.modalText}>These are the instructions</Text>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setViewInstruct(!viewInstruct);
+              }}
+            >
+              <Text style={styles.textStyle}>OK!</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+    );
   };
+
+  const returnQuestionsOnPage = async () => {
+    let questionsArray = {};
+    let questionsRef = db.collection("Questions");
+    let query = questionsRef
+      .where("isbn", "==", ISBN)
+      .where("page", "==", pageNumber)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          console.log("No matching documents.");
+          return;
+        }
+
+        snapshot.forEach((doc) => {
+          console.log(doc.id, "=>", doc.data());
+          console.log(doc);
+          questionsArray[doc.id] = doc.data();
+        });
+        console.log(questionsArray);
+        console.log("--------------------------------------");
+        setPrevQuestions(questionsArray);
+        console.log(
+          "-----------!!!!!!!!!!!!!!!!!!!---------------------------"
+        );
+        console.log(prevQuestions);
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  };
+
+  if (viewInstruct) {
+    return <OnboardingExp />;
+  }
 
   return (
-    <View>
-      <Text style={{ padding: 25, fontSize: 18 }}>
-        Drag the Pin to the location on the page to which your question
-        corresponds.
-      </Text>
+    <View
+      onTouchStart={(e) => {
+        showQuestion(e.nativeEvent.pageX, e.nativeEvent.pageY);
+      }}
+    >
+      <TouchableOpacity
+        title="How to annotate a photo?"
+        onPress={() => setViewInstruct(true)}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 25,
+          }}
+        >
+          <MaterialCommunityIcons
+            name="information"
+            size={24}
+            color="#2196F3"
+          />
+          <Text style={{ marginLeft: 5, fontSize: 24 }}>
+            How to annotate a photo?
+          </Text>
+        </View>
+      </TouchableOpacity>
+
       <ViewShot
-        // style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
+        style={{
+          width: deviceWidth,
+          height: deviceHeight + 55,
+        }}
         ref={viewShotRef}
         options={{ format: "jpg", quality: 0.9 }}
       >
-        <ScrollView
-          maximumZoomScale={2}
-          scrollEnabled={true}
-          minimumZoomScale={1}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          onTouchStart={(e) => {
-            console.log("touchMove", e.nativeEvent);
-          }}
-        >
-          <View
-            style={{
-              // borderWidth: 2,
-              // borderColor: "black",
-              width: deviceWidth,
-              height: deviceHeight,
-              marginTop: 5,
-            }}
-          >
-            <Image
-              style={styles.photo}
-              resizeMode="contain"
-              source={{
-                uri: photo_uri,
-              }}
-            />
-          </View>
-        </ScrollView>
         <Animated.View
           style={{
-            // borderWidth: 2,
-            // borderColor: "black",
-            transform: [{ translateX: pan.x }, { translateY: pan.y }],
+            alignItems: "center",
+            width: deviceWidth,
+            height: deviceHeight,
           }}
-          {...panResponder.panHandlers}
         >
-          <Pin></Pin>
-        </Animated.View>
-      </ViewShot>
-      {/* <PanGestureHandler
-          onGestureEvent={onTranslateXEvent}
-          onHandlerStateChange={onTranslateXStateChange}
-        >
-          <Animated.View
-            style={{ width: deviceWidth, height: deviceHeight, marginTop: 5 }}
+          <PinchGestureHandler
+            onGestureEvent={onPinchEvent}
+            onHandlerStateChange={onPinchStateChange}
           >
-            <PinchGestureHandler
-              onGestureEvent={onPinchEvent}
-              onHandlerStateChange={onPinchStateChange}
+            <Animated.View
+              style={{
+                width: deviceWidth,
+                height: deviceHeight + 55,
+                transform: [{ scale: scale }],
+              }}
             >
               <Animated.Image
-                style={[
-                  styles.photo,
-                  { transform: [{ scale: scale }, { translateX: translateX }] },
-                ]}
-                resizeMode="contain"
+                style={styles.photo}
+                resizeMode="stretch"
                 source={{
                   uri: photo_uri,
                 }}
               />
-            </PinchGestureHandler>
-          </Animated.View>
-        </PanGestureHandler> */}
+              <Animated.View
+                style={{
+                  transform: [{ translateX: pan.x }, { translateY: pan.y }],
+                }}
+                {...panResponder.panHandlers}
+              >
+                <TouchableWithoutFeedback
+                  onPressIn={() => setPinColor("#378BE5")}
+                  onPress={() => setPinColor("#e57359")}
+                >
+                  <MaterialCommunityIcons
+                    name="map-marker-question"
+                    size={50}
+                    color={pinColor}
+                  />
+                </TouchableWithoutFeedback>
+              </Animated.View>
+            </Animated.View>
+          </PinchGestureHandler>
+        </Animated.View>
+      </ViewShot>
 
-      {/* <Animated.View
-        style={{
-          transform: [{ translateX: pan.x }, { translateY: pan.y }],
-        }}
-        {...panResponder.panHandlers}
-      >
-        <Pin></Pin>
-      </Animated.View> */}
+      <QuestionModal />
 
-      {/* </PanGestureHandler> */}
+      {/* <InstructionsModal /> */}
 
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
@@ -217,6 +376,7 @@ export default function QuestionAnnotation({ navigation, route }) {
             setAnnCoords([pan.x, pan.y]);
             const uri = await viewShotRef.current.capture();
             setPhotoUri(uri);
+
             navigation.setParams({ xy: [pan.x, pan.y] });
             navigation.navigate("Root", {
               route: route,
@@ -232,8 +392,8 @@ export default function QuestionAnnotation({ navigation, route }) {
             justifyContent: "center",
             height: 60,
             width: "50%",
-            borderRadius: 7,
-            marginTop: 25,
+            borderRadius: 30,
+            marginTop: 30,
             shadowColor: "#000",
             shadowOffset: {
               width: 0,
@@ -245,10 +405,30 @@ export default function QuestionAnnotation({ navigation, route }) {
           }}
         >
           <View style={{}}>
-            <Text style={{ color: "white", fontSize: 20 }}>Confirm</Text>
+            <Text style={{ color: "white", fontSize: 20 }}>Ask a Question</Text>
           </View>
         </TouchableOpacity>
       </View>
+
+      <View style={{ alignItems: "left", justifyContent: "center" }}>
+        <View style={{ alignItems: "left", justifyContent: "center" }}>
+          {Object.keys(prevQuestions).map((key, index) => (
+            <View>
+              <Text
+                style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}
+              >
+                {prevQuestions[key].question}
+              </Text>
+              <Text
+                style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}
+              >
+                This is the answer to this question
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
     </View>
   );
 }
@@ -266,7 +446,7 @@ const styles = StyleSheet.create({
     // position: "absolute",
     // borderColor: "red",
     // borderWidth: 2,
-    resizeMode: "contain",
+    // resizeMode: "contain",
     ...StyleSheet.absoluteFillObject,
   },
   pin: {
@@ -285,5 +465,36 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "white",
     width: deviceWidth * 0.9,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });

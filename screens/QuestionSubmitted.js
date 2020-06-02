@@ -8,9 +8,11 @@ import {
   View,
   Dimensions,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { NavigationActions, StackActions } from "react-navigation";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
@@ -43,6 +45,11 @@ export default function QuestionSubmitted({ navigation, route }) {
       );
     }, 2000);
   };
+
+  const resetAction = StackActions.reset({
+    index: 0,
+    actions: [NavigationActions.navigate({ routeName: "Answer" })],
+  });
 
   ShowAlertWithDelay();
   return (
@@ -83,6 +90,40 @@ export default function QuestionSubmitted({ navigation, route }) {
         color="#00B300"
         style={{ marginTop: 20 }}
       />
+      <View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#378BE5",
+            alignItems: "center",
+            justifyContent: "center",
+
+            height: 60,
+            width: "50%",
+            borderRadius: 7,
+            marginTop: 25,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+          title="Go Home"
+          accessibilityLabel="Go Home"
+          onPress={() => {
+            // navigation.navigate("Home", {
+            //   route: route,
+            // });
+            navigation.dispatch(resetAction);
+          }}
+        >
+          <View>
+            <Text style={{ color: "white", fontSize: 20 }}>Go Home</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
