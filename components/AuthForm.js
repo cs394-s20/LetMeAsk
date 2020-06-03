@@ -8,8 +8,7 @@ import {
 
 import { withFormik } from "formik";
 import * as yup from "yup";
-import { RadioButton } from "react-native-paper";
-
+import { RadioGroup, RadioButton } from "react-native-flexi-radio-button";
 const deviceWidth = Dimensions.get("window").width;
 
 const AuthForm = (props) => {
@@ -31,18 +30,17 @@ const AuthForm = (props) => {
       </Text>
 
       {props.authMode.authMode === "signup" && (
-        <View>
-          <TextInput
-            label="Student or Expert?"
-            style={styles.submitInput}
-            onChangeText={(text) => props.setFieldValue("displayName", text)}
-            placeholder=""
-            underlineColor="#378BE5"
-            selectionColor="#378BE5"
-            theme={theme}
-          />
-          <Text style={styles.validationText}>{props.errors.displayName}</Text>
-        </View>
+        <RadioGroup
+          style={styles.radioInput}
+          onSelect={(index, value) => props.setFieldValue("displayName", value)}
+        >
+          <RadioButton value={"Student"}>
+            <Text>Student</Text>
+          </RadioButton>
+          <RadioButton value={"Expert"}>
+            <Text>Expert</Text>
+          </RadioButton>
+        </RadioGroup>
       )}
       <TextInput
         label="Email"
@@ -135,6 +133,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "white",
     width: deviceWidth * 0.9,
+  },
+  radioInput: {
+    width: 300,
+    height: 50,
+    marginBottom: 16,
+    marginTop: -30,
+    padding: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
   },
 });
 

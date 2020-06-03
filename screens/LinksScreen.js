@@ -264,7 +264,6 @@ export default function LinksScreen({ navigation, route }) {
                 width: deviceWidth * 0.55,
                 height: deviceHeight * 0.7,
                 borderRadius: 5,
-                // marginLeft: 90,
               }}
               source={{ uri: photouri }}
             ></Image>

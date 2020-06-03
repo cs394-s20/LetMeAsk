@@ -60,7 +60,6 @@ export default function App(props) {
         SplashScreen.hide();
       }
     }
-    //Aaron's push needs some changes too
     loadResourcesAndDataAsync();
   }, []);
 
@@ -73,8 +72,16 @@ export default function App(props) {
           {Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}
           <NavigationContainer linking={LinkingConfiguration}>
             <Stack.Navigator initialRouteName="Login">
-              <Stack.Screen name="Root" component={BottomTabNavigator} />
-              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen
+                name="Root"
+                component={BottomTabNavigator}
+                options={{ headerLeft: null }}
+              />
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ headerShown: false }}
+              />
               <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="Camera" component={CameraApp} />
               <Stack.Screen name="Annotate" component={QuestionAnnotation} />

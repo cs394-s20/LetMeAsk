@@ -117,8 +117,12 @@ export default function QuestionSubmitted({ navigation, route }) {
           title="Go Home"
           accessibilityLabel="Go Home"
           onPress={() => {
-            navigation.navigate("Root", {
-              route: route,
+            // navigation.navigate("Root", {
+            //   route: route,
+            // });
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Root" }],
             });
           }}
         >

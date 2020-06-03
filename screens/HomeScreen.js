@@ -18,7 +18,6 @@ import { signout } from "./Login";
 import { UserContext } from "../components/UserContext";
 import firebase from "../shared/firebase";
 
-
 //Expo Icon
 import {
   FontAwesome,
@@ -30,27 +29,27 @@ const HomeScreen = ({ username, navigation, route }) => {
   const [search, onChangeSearch] = useState("");
   const [topic, setTopic] = useState("astronomy");
   const [currentbook, setCurrentbook] = useState(null);
-  const [books, setBooks] = useState([])
+  const [books, setBooks] = useState([]);
   // const contextValue = useContext(UserContext);
 
   useEffect(() => {
-    const booksRef = firebase.firestore().collection("Books")
+    const booksRef = firebase.firestore().collection("Books");
 
     booksRef
-    .get()
-    .then(function(querySnapshot) {
+      .get()
+      .then(function (querySnapshot) {
         querySnapshot.forEach((doc) => {
-            setBooks(books => books.concat({id: doc.id, ...doc.data()}))
+          setBooks((books) => books.concat({ id: doc.id, ...doc.data() }));
         });
-    })
-    .catch(function(error) {
+      })
+      .catch(function (error) {
         console.log("Error getting documents: ", error);
-    });
-  }, [])
+      });
+  }, []);
 
   useEffect(() => {
-    console.log(books)
-  })
+    console.log(books);
+  });
 
   const onSignedOut = () => {
     console.log("signed out");
@@ -103,7 +102,10 @@ const HomeScreen = ({ username, navigation, route }) => {
 
         <ScrollView style={styles.textbooksContainer}>
           {books.map((book, index) => (
-            <TouchableWithoutFeedback key={index} onPress={() => handleBook(book)}>
+            <TouchableWithoutFeedback
+              key={index}
+              onPress={() => handleBook(book)}
+            >
               <View style={styles.bookCard}>
                 <Image
                   style={styles.textbookImage}
@@ -111,10 +113,12 @@ const HomeScreen = ({ username, navigation, route }) => {
                 />
                 <View style={styles.textbookInfo}>
                   <Title>{book.title}</Title>
-                  <Text>Authors:
-                  {book.authors.map((a, i) => (
-                    <Text key={i}>{a} , </Text>
-                  ))}</Text>
+                  <Text>
+                    Authors:
+                    {book.authors.map((a, i) => (
+                      <Text key={i}>{a} , </Text>
+                    ))}
+                  </Text>
                   {/* <Paragraph>{book.author}</Paragraph> */}
                   {/* {book.topic.map((t, i) => (
                     <TopicChip topic={t}></TopicChip>
@@ -131,9 +135,9 @@ const HomeScreen = ({ username, navigation, route }) => {
       <Textbook book={currentbook} setCurrentBook={setCurrentbook}></Textbook>
     );
   }
-}
+};
 
-// HomeScreen.navigationOptions = { headeLeft: null };
+HomeScreen.navigationOptions = { headeLeft: null };
 
 const styles = StyleSheet.create({
   bookCard: {
@@ -205,6 +209,5 @@ const styles = StyleSheet.create({
   //   paddingTop: 20,
   // },
 });
-
 
 export default HomeScreen;

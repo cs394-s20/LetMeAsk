@@ -39,9 +39,9 @@ export default function Login({ navigation, route }) {
 
   useEffect(() => {
     if (myUser) {
-      navigation.push('Root')
+      navigation.push("Root");
     }
-  }, [])
+  }, []);
 
   const onAuthStateChanged = (user) => {
     if (user !== null) {
@@ -88,17 +88,11 @@ export default function Login({ navigation, route }) {
   };
 
   return (
-    <View style={{ width: deviceWidth, height: deviceHeight }}>
-      {/* <Text>BLAHHHH: {myUser}</Text> */}
-      <AuthForm
-        login={login}
-        signup={signup}
-        authMode={authMode}
-        switchAuthMode={switchAuthMode}
-      />
-    </View>
+    <AuthForm
+      login={login}
+      signup={signup}
+      authMode={authMode}
+      switchAuthMode={switchAuthMode}
+    />
   );
 }
-Login.navigationOptions = {
-  header: null,
-};
