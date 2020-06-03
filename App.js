@@ -12,9 +12,12 @@ import CameraApp from "./screens/Camera";
 import QuestionAnnotation from "./screens/QuestionAnnotation";
 import QuestionSubmitted from "./screens/QuestionSubmitted";
 import ViewAnswer from "./screens/ViewAnswer";
-import PDFDoc from "./screens/PDF";
 import Login from "./screens/Login";
 import HomeScreen from "./screens/HomeScreen";
+import ProfessorHome from "./screens/ProfessorHome";
+import Response from "./screens/Response";
+import MyQuestions from "./screens/MyQuestions";
+
 import { UserProvider } from "./components/UserContext";
 
 import { decode, encode } from "base-64";
@@ -77,6 +80,9 @@ export default function App(props) {
               <Stack.Screen name="Annotate" component={QuestionAnnotation} />
               <Stack.Screen name="Submitted" component={QuestionSubmitted} />
               <Stack.Screen name="Answer" component={ViewAnswer} />
+              <Stack.Screen name="Answer Questions" component={ProfessorHome} />
+              <Stack.Screen name="Respond" component={Response} />
+              <Stack.Screen name="My Questions" component={MyQuestions} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

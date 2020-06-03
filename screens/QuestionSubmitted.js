@@ -19,6 +19,8 @@ const deviceHeight = Dimensions.get("window").height * 0.5;
 
 export default function QuestionSubmitted({ navigation, route }) {
   const { question } = route.params;
+  const { ISBN } = route.params;
+  const { pageNumber } = route.params;
   console.log(question);
   const ShowAlertWithDelay = () => {
     setTimeout(function () {
@@ -38,6 +40,8 @@ export default function QuestionSubmitted({ navigation, route }) {
                 navigation: navigation,
                 route: route,
                 question: question,
+                ISBN: ISBN,
+                pageNumber: pageNumber,
               }),
           },
         ],

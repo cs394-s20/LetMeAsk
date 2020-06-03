@@ -361,6 +361,7 @@ export default function QuestionAnnotation({ navigation, route }) {
               route: route,
               navigation: navigation,
               xy: [pan.x, pan.y],
+              
             });
           }}
           title="Submit Question"

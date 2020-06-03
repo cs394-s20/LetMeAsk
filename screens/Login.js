@@ -46,7 +46,7 @@ export default function Login({ navigation, route }) {
       }
       if (user.displayName === "Expert") {
         setMyUser(user.uid);
-        navigation.navigate("Root");
+        navigation.navigate("Answer Questions");
       }
     }
   };
@@ -83,7 +83,7 @@ export default function Login({ navigation, route }) {
 
   return (
     <View style={{ width: deviceWidth, height: deviceHeight }}>
-      <Text>BLAHHHH: {myUser}</Text>
+      {/* <Text>BLAHHHH: {myUser}</Text> */}
       <AuthForm
         login={login}
         signup={signup}
@@ -93,3 +93,6 @@ export default function Login({ navigation, route }) {
     </View>
   );
 }
+Login.navigationOptions = {
+  header: null,
+};

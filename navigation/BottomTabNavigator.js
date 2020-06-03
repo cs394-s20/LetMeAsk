@@ -4,6 +4,7 @@ import * as React from "react";
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/LinksScreen";
+import MyQuestions from "../screens/MyQuestions";
 // import Camera from '../screens/Camera';
 
 const BottomTab = createBottomTabNavigator();
@@ -41,6 +42,17 @@ export default function BottomTabNavigator({ navigation, route }) {
           ),
         }}
       />
+
+      <BottomTab.Screen
+        name="My Questions"
+        component={MyQuestions}
+        options={{
+          title: "My Questions",
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon focused={focused} name="md-questions" />
+          ),
+        }}
+      />
     </BottomTab.Navigator>
   );
 }
@@ -50,6 +62,8 @@ function getHeaderTitle(route) {
     route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
 
   switch (routeName) {
+    case "My Questions":
+      return "My Questions";
     case "Home":
       return "Browse Questions";
     case "Ask":

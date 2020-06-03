@@ -109,19 +109,6 @@ export default function LinksScreen({ navigation, route }) {
       });
   };
 
-  // const handlePhotoUpload = async () => {
-  //   try {
-  //     await db
-  //       .collection("Books")
-  //       .add({
-  //         random: "random",
-  //       })
-  //       .then((docref) => toGoAfterPhotoUpload(docref.id));
-  //   } catch (e) {
-  //     console.error("Error writing document: ", e);
-  //   }
-  // };
-
   const updateBook = async (id) => {
     try {
       console.log(ISBN);
@@ -165,14 +152,14 @@ export default function LinksScreen({ navigation, route }) {
       await db
         .collection("Questions")
         .add({
-          title: "try",
           question: question,
           author: myUser,
           isbn: ISBN,
           page: pageNumber,
           image: photouri,
           loc: coords,
-          status: "open",
+          status: "unanswered",
+          answer: "",
         })
         .then((docref) => updateBook(docref.id));
     } catch (e) {
@@ -323,6 +310,8 @@ export default function LinksScreen({ navigation, route }) {
                 navigation.navigate("Submitted", {
                   route: route,
                   question: question,
+                  ISBN: ISBN,
+                  pageNumber: pageNumber,
                 });
               }}
             >

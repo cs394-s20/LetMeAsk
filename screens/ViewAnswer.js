@@ -7,16 +7,50 @@ import {
   Text,
   View,
   Dimensions,
+  Button,
   Alert,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import firebase from "../shared/firebase";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
+const db = firebase.firestore();
 
 export default function ViewAnswer({ navigation, route }) {
   const { question } = route.params;
+  const { questionID } = route.params;
+
+  const [answer, setAnswer] = useState("Answer Pending");
+
+  useEffect(() => {
+    getAnswer();
+  }, []);
+
+  const getAnswer = async () => {
+    let questionsRef = db.collection("Questions");
+    let query = questionsRef
+      .where(firebase.firestore.FieldPath.documentId(), "==", questionID)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.empty) {
+          console.log("SNAPSHOT IS EMPTY!!!!!!!!!!!!!!!!!!!!!");
+        }
+        snapshot.forEach((doc) => {
+          if (doc.data().answer === "") {
+            return;
+          } else {
+            const answer = doc.data().answer;
+            setAnswer(answer);
+          }
+        });
+      })
+      .catch((err) => {
+        console.log("Error getting documents", err);
+      });
+  };
+
   return (
     <View
       style={{ padding: 10, alignItems: "center", justifyContent: "center" }}
@@ -60,17 +94,10 @@ export default function ViewAnswer({ navigation, route }) {
           marginTop: 10,
         }}
       >
+        {/* <Button title="get answer " onPress={getAnswer}></Button> */}
         <Text style={{ color: "white", lineHeight: 20, fontSize: 15 }}>
-          <Text style={{ fontSize: 20 }}>A:</Text> In eukaryotic cells, flagella
-          contain the motor protein dynein and microtubules, which are composed
-          of linear polymers of globular proteins called tubulin. The core of
-          each of the structures is termed the axoneme and contains two central
-          microtubules that are surrounded by an outer ring of nine doublet
-          microtubules. One full microtubule and one partial microtubule, the
-          latter of which shares a tubule wall with the other microtubule,
-          comprise each doublet microtubule {"\n"}
-          {"\n"}
-          <Text>Responded by Christopher Deal</Text>
+          <Text style={{ fontSize: 20 }}>A:</Text>
+          {" " + answer}
         </Text>
       </View>
     </View>

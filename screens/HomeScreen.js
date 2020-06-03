@@ -74,6 +74,7 @@ export default function HomeScreen({ username, navigation, route }) {
     console.log("signed out");
     navigation.navigate("Login");
   };
+
   const handleBook = (book) => {
     setCurrentbook(book);
     return null;
@@ -147,7 +148,7 @@ export default function HomeScreen({ username, navigation, route }) {
   }
 }
 
-HomeScreen.navigationOptions = {};
+// HomeScreen.navigationOptions = { headeLeft: null };
 
 const styles = StyleSheet.create({
   bookCard: {
