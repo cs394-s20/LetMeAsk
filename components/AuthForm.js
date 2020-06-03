@@ -1,24 +1,29 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Button, Text } from "react-native";
+import { StyleSheet, View, Button, Text, Dimensions } from "react-native";
+import {
+  TextInput,
+  DefaultTheme,
+  Provider as PaperProvider,
+} from "react-native-paper";
 
 import { withFormik } from "formik";
 import * as yup from "yup";
 import { RadioButton } from "react-native-paper";
 
+const deviceWidth = Dimensions.get("window").width;
+
 const AuthForm = (props) => {
   const [checked, setChecked] = useState("student");
 
-  const displayNameInput = (
-    <View>
-      <TextInput
-        style={styles.formInput}
-        onChangeText={(text) => props.setFieldValue("displayName", text)}
-        placeholder="Student or Expert?"
-      />
-      <Text style={styles.validationText}>{props.errors.displayName}</Text>
-    </View>
-  );
-
+  const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: "#378BE5",
+      accent: "#f1c40f",
+    },
+  };
   return (
     <View style={styles.container}>
       <Text h2 style={styles.header}>
@@ -28,56 +33,36 @@ const AuthForm = (props) => {
       {props.authMode.authMode === "signup" && (
         <View>
           <TextInput
-            style={styles.formInput}
+            label="Student or Expert?"
+            style={styles.submitInput}
             onChangeText={(text) => props.setFieldValue("displayName", text)}
-            placeholder="Student or Expert?"
+            placeholder=""
+            underlineColor="#378BE5"
+            selectionColor="#378BE5"
+            theme={theme}
           />
           <Text style={styles.validationText}>{props.errors.displayName}</Text>
         </View>
-        // <View
-        //   style={{
-        //     flexDirection: "row",
-        //     marginBottom: 40,
-        //   }}
-        // >
-        //   <RadioButton.Group>
-        //     <View style={{ flexDirection: "row", alignItems: "center" }}>
-        //       <Text style={{ marginLeft: 10 }}>Student</Text>
-        //       <RadioButton
-        //         color="#378BE5"
-        //         value="student"
-        //         status={checked === "student" ? "checked" : "unchecked"}
-        //         onPress={() => {
-        //           setChecked("student");
-        //         }}
-        //       />
-        //     </View>
-        //     <View style={{ flexDirection: "row", alignItems: "center" }}>
-        //       <Text style={{ marginLeft: 10 }}>Expert</Text>
-        //       <RadioButton
-        //         color="#e57359"
-        //         value="expert"
-        //         // status="checked"
-        //         status={checked === "expert" ? "checked" : "unchecked"}
-        //         onPress={() => {
-        //           setChecked("expert");
-        //         }}
-        //       />
-        //     </View>
-        //   </RadioButton.Group>
-        // </View>
       )}
       <TextInput
-        style={styles.formInput}
+        label="Email"
+        style={styles.submitInput}
         onChangeText={(text) => props.setFieldValue("email", text)}
-        placeholder="Email"
+        placeholder=""
+        underlineColor="#378BE5"
+        selectionColor="#378BE5"
+        theme={theme}
       />
       <Text style={styles.validationText}> {props.errors.email}</Text>
       <TextInput
-        style={styles.formInput}
+        label="Password"
+        style={styles.submitInput}
         secureTextEntry={true}
         onChangeText={(text) => props.setFieldValue("password", text)}
-        placeholder="Password"
+        placeholder=""
+        underlineColor="#378BE5"
+        selectionColor="#378BE5"
+        theme={theme}
       />
       <Text style={styles.validationText}> {props.errors.password}</Text>
       <Button
@@ -139,6 +124,17 @@ const styles = StyleSheet.create({
   switchButton: {
     width: 200,
     backgroundColor: "#3f51b5",
+  },
+  submitInput: {
+    height: 56,
+    fontSize: 18,
+    borderColor: "#378BE5",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 1,
+    marginTop: 20,
+    backgroundColor: "white",
+    width: deviceWidth * 0.9,
   },
 });
 

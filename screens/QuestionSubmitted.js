@@ -55,7 +55,7 @@ export default function QuestionSubmitted({ navigation, route }) {
     actions: [NavigationActions.navigate({ routeName: "Answer" })],
   });
 
-  ShowAlertWithDelay();
+  // ShowAlertWithDelay();
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
       <View
@@ -117,14 +117,15 @@ export default function QuestionSubmitted({ navigation, route }) {
           title="Go Home"
           accessibilityLabel="Go Home"
           onPress={() => {
-            // navigation.navigate("Home", {
-            //   route: route,
-            // });
-            navigation.dispatch(resetAction);
+            navigation.navigate("Root", {
+              route: route,
+            });
           }}
         >
           <View>
-            <Text style={{ color: "white", fontSize: 20 }}>Go Home</Text>
+            <Text style={{ color: "white", fontSize: 20, margin: 12 }}>
+              Go Home
+            </Text>
           </View>
         </TouchableOpacity>
       </View>

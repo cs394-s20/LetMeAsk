@@ -46,6 +46,9 @@ export default function QuestionAnnotation({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [viewInstruct, setViewInstruct] = useState(false);
   const [pinColor, setPinColor] = useState("#378BE5");
+  const [answer, setAnswer] = useState("Pending Answer");
+  const [seeAnswer, setSeeAnswer] = useState(false);
+  const [questionID, setQuestionID] = useState("");
 
   console.log(pageNumber);
   console.log(ISBN);
@@ -53,11 +56,10 @@ export default function QuestionAnnotation({ navigation, route }) {
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
 
-  const showQuestion = async (pageX, pageY) => {
-    let questionsRef = db.collection("Questions");
-    let query = questionsRef
-      .where("isbn", "==", ISBN)
-      // .where("page", "==", pageNumber)
+  const showAnswer = async () => {
+    let questionRef = db.collection("Questions");
+    let query = questionRef
+      .where(firebase.firestore.FieldPath.documentId(), "==", questionID)
       .get()
       .then((snapshot) => {
         if (snapshot.empty) {
@@ -65,32 +67,52 @@ export default function QuestionAnnotation({ navigation, route }) {
           return;
         }
         snapshot.forEach((doc) => {
-          console.log(doc.data());
-          if (
-            Math.abs(pageX - doc.data().loc[0]) >= 6 &&
-            Math.abs(pageX - doc.data().loc[0]) <= 39 &&
-            Math.abs(pageY - doc.data().loc[1]) >= 180 &&
-            Math.abs(pageY - doc.data().loc[1]) <= 230
-          ) {
-            //   console.log(doc.data());
-            setMyQuestion(doc.data().question);
-            setModalVisible(true);
-            // console.log("X diff " + pageX - doc.data().loc[0]);
-            // console.log("Y diff " + pageY - doc.data().loc[1]);
-
-            // console.log("pageY " + pageY);
-            // console.log("panY " + doc.data().loc[1]);
-            // console.log("pageX " + pageX);
-            // console.log("panX " + doc.data().loc[0]);
+          if (doc.data().answer === "") {
+            setAnswer("Pending Answer");
           } else {
-            console.log("OHHHHHH NOOOOOOOOOOO");
+            const answer = doc.data().answer;
+            console.log(answer);
+            setAnswer(answer);
           }
         });
-        // console.log(panX, panY);
-      })
-      .catch((err) => {
-        console.log("Error getting documents", err);
       });
+  };
+
+  const showQuestion = async (pageX, pageY) => {
+    let questionsRef = db.collection("Questions");
+    if (ISBN && pageNumber) {
+      let query = questionsRef
+        .where("isbn", "==", ISBN)
+        .where("page", "==", pageNumber)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            console.log("No matching documents.");
+            return;
+          }
+          snapshot.forEach((doc) => {
+            if (
+              Math.abs(pageX - doc.data().loc[0]) >= 6 &&
+              Math.abs(pageX - doc.data().loc[0]) <= 39 &&
+              Math.abs(pageY - doc.data().loc[1]) >= 180 &&
+              Math.abs(pageY - doc.data().loc[1]) <= 230
+            ) {
+              setMyQuestion(doc.data().question);
+              setModalVisible(true);
+              setQuestionID(doc.id);
+            } else {
+              console.log("OHHHHHH NOOOOOOOOOOO");
+            }
+          });
+        })
+
+        .catch((err) => {
+          console.log("Error getting documents", err);
+        });
+    } else {
+      return;
+    }
+    // console.log("QUESTION ID QUESTION ID QUESTION ID: " + questionID);
   };
 
   const onPinchEvent = Animated.event(
@@ -205,56 +227,44 @@ export default function QuestionAnnotation({ navigation, route }) {
     return (
       <Modal
         isVisible={modalVisible}
-        onBackdropPress={() => setModalVisible(!modalVisible)}
+        onBackdropPress={() => {
+          setModalVisible(!modalVisible);
+          setSeeAnswer(false);
+        }}
       >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={{ fontSize: 20 }}>QUESTION:</Text>
-            <Text style={styles.modalText}>{myQuestion}</Text>
+          {seeAnswer == false && (
+            <View style={styles.modalView}>
+              <Text style={{ fontSize: 20 }}>QUESTION:</Text>
+              <Text style={styles.modalText}>{myQuestion}</Text>
 
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <Text style={styles.textStyle}>View Answer</Text>
-            </TouchableHighlight>
-          </View>
+              <TouchableHighlight
+                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <Text
+                  style={styles.textStyle}
+                  onPress={() => {
+                    setSeeAnswer(true);
+                    showAnswer();
+                  }}
+                >
+                  View Answer
+                </Text>
+              </TouchableHighlight>
+            </View>
+          )}
+          {seeAnswer == true && (
+            <View style={styles.modalView}>
+              <Text style={{ fontSize: 20 }}>ANSWER:</Text>
+              <Text style={styles.modalText}>{answer}</Text>
+            </View>
+          )}
         </View>
       </Modal>
     );
-  };
-
-  const returnQuestionsOnPage = async () => {
-    let questionsArray = {};
-    let questionsRef = db.collection("Questions");
-    let query = questionsRef
-      .where("isbn", "==", ISBN)
-      .where("page", "==", pageNumber)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.empty) {
-          console.log("No matching documents.");
-          return;
-        }
-
-        snapshot.forEach((doc) => {
-          console.log(doc.id, "=>", doc.data());
-          console.log(doc);
-          questionsArray[doc.id] = doc.data();
-        });
-        console.log(questionsArray);
-        console.log("--------------------------------------");
-        setPrevQuestions(questionsArray);
-        console.log(
-          "-----------!!!!!!!!!!!!!!!!!!!---------------------------"
-        );
-        console.log(prevQuestions);
-      })
-      .catch((err) => {
-        console.log("Error getting documents", err);
-      });
   };
 
   if (viewInstruct) {
@@ -264,7 +274,12 @@ export default function QuestionAnnotation({ navigation, route }) {
   return (
     <View
       onTouchStart={(e) => {
-        showQuestion(e.nativeEvent.pageX, e.nativeEvent.pageY);
+        if (modalVisible === false) {
+          showQuestion(e.nativeEvent.pageX, e.nativeEvent.pageY);
+        } else {
+          console.log("MODAL IS VISIBLE");
+          return;
+        }
       }}
     >
       <TouchableOpacity
@@ -347,8 +362,6 @@ export default function QuestionAnnotation({ navigation, route }) {
 
       <QuestionModal />
 
-      {/* <InstructionsModal /> */}
-
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <TouchableOpacity
           onPress={async () => {
@@ -361,7 +374,6 @@ export default function QuestionAnnotation({ navigation, route }) {
               route: route,
               navigation: navigation,
               xy: [pan.x, pan.y],
-              
             });
           }}
           title="Submit Question"

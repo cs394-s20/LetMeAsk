@@ -92,7 +92,7 @@ export default function ProfessorHome({ navigation, route }) {
     <View>
       <Button title="Sign Out" onPress={() => signout(onSignedOut)}></Button>
       {/* <Button title="GET QUESITONS" onPress={getAllQuestions}></Button> */}
-      <Text>STUDENT QUESTIONS</Text>
+      <Text style={{ margin: 10 }}>MY QUESTIONS</Text>
       <QuestionList />
     </View>
   );

@@ -49,7 +49,7 @@ export default function BottomTabNavigator({ navigation, route }) {
         options={{
           title: "My Questions",
           tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="md-questions" />
+            <TabBarIcon focused={focused} name="md-question" />
           ),
         }}
       />
