@@ -136,9 +136,9 @@ export default function LinksScreen({ navigation, route }) {
               title: bookInfo.data.items[0].volumeInfo.title,
               // subtitle: bookInfo.data.items[0].volumeInfo.subtitle,
               authors: bookInfo.data.items[0].volumeInfo.authors,
+              image: bookInfo.data.items[0].imageLinks.thumbnail,
               questions: firebase.firestore.FieldValue.arrayUnion(id),
               pages: firebase.firestore.FieldValue.arrayUnion(pageNumber),
-              random: "not random",
             });
         }
       });

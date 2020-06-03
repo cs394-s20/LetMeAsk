@@ -1,5 +1,5 @@
 import * as WebBrowser from "expo-web-browser";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Image,
   Platform,
@@ -16,6 +16,8 @@ import RNPickerSelect from "react-native-picker-select";
 import Textbook from "../components/Textbook";
 import { signout } from "./Login";
 import { UserContext } from "../components/UserContext";
+import firebase from "../shared/firebase";
+
 
 //Expo Icon
 import {
@@ -24,51 +26,31 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 
-const textbooks = [
-  {
-    title: "Introduction to Algorithms",
-    author: "Goldwater",
-    image:
-      "https://mitpress.mit.edu/sites/default/files/styles/large_book_cover/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262033848%26type%3D.jpg?itok=0zBreuLA",
-    topic: ["computer science", "math"],
-  },
-  {
-    title: "Hundred Page Machine Learning Book",
-    author: "Andriy Burkov",
-    image: "https://images-eu.ssl-images-amazon.com/images/I/41drCUhCzmL.jpg",
-    topic: ["computer science"],
-  },
-  {
-    title: "Computer Systems",
-    author: "",
-    image:
-      "https://images-na.ssl-images-amazon.com/images/I/41AoUQujOCL._SX387_BO1,204,203,200_.jpg",
-    topic: ["computer science"],
-  },
-  {
-    title: "Introduction to Networks",
-    author: "",
-    image: "",
-    topic: ["computer science"],
-  },
-];
-
-const TopicChip = ({ topic }) => {
-  const truncate = (input) =>
-    input.length > 10 ? `${input.substring(0, 10)}...` : input;
-
-  return (
-    <View style={styles.topicChip}>
-      <Text style={styles.topicChipText}>{topic}</Text>
-    </View>
-  );
-};
-
-export default function HomeScreen({ username, navigation, route }) {
+const HomeScreen = ({ username, navigation, route }) => {
   const [search, onChangeSearch] = useState("");
   const [topic, setTopic] = useState("astronomy");
   const [currentbook, setCurrentbook] = useState(null);
+  const [books, setBooks] = useState([])
   // const contextValue = useContext(UserContext);
+
+  useEffect(() => {
+    const booksRef = firebase.firestore().collection("Books")
+
+    booksRef
+    .get()
+    .then(function(querySnapshot) {
+        querySnapshot.forEach((doc) => {
+            setBooks(books => books.concat({id: doc.id, ...doc.data()}))
+        });
+    })
+    .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+  }, [])
+
+  useEffect(() => {
+    console.log(books)
+  })
 
   const onSignedOut = () => {
     console.log("signed out");
@@ -81,7 +63,6 @@ export default function HomeScreen({ username, navigation, route }) {
   };
 
   if (currentbook === null) {
-    console.log("hey" + username);
     return (
       <View style={styles.container}>
         {/* <Text>asdfasdfa: {contextValue}</Text> */}
@@ -121,8 +102,8 @@ export default function HomeScreen({ username, navigation, route }) {
         </View>
 
         <ScrollView style={styles.textbooksContainer}>
-          {textbooks.map((book, index) => (
-            <TouchableWithoutFeedback onPress={() => handleBook(book)}>
+          {books.map((book, index) => (
+            <TouchableWithoutFeedback key={index} onPress={() => handleBook(book)}>
               <View style={styles.bookCard}>
                 <Image
                   style={styles.textbookImage}
@@ -130,10 +111,14 @@ export default function HomeScreen({ username, navigation, route }) {
                 />
                 <View style={styles.textbookInfo}>
                   <Title>{book.title}</Title>
-                  <Paragraph>{book.author}</Paragraph>
-                  {book.topic.map((t, i) => (
+                  <Text>Authors:
+                  {book.authors.map((a, i) => (
+                    <Text key={i}>{a} , </Text>
+                  ))}</Text>
+                  {/* <Paragraph>{book.author}</Paragraph> */}
+                  {/* {book.topic.map((t, i) => (
                     <TopicChip topic={t}></TopicChip>
-                  ))}
+                  ))} */}
                 </View>
               </View>
             </TouchableWithoutFeedback>
@@ -220,3 +205,6 @@ const styles = StyleSheet.create({
   //   paddingTop: 20,
   // },
 });
+
+
+export default HomeScreen;
