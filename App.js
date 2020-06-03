@@ -87,7 +87,11 @@ export default function App(props) {
               <Stack.Screen name="Annotate" component={QuestionAnnotation} />
               <Stack.Screen name="Submitted" component={QuestionSubmitted} />
               <Stack.Screen name="Answer" component={ViewAnswer} />
-              <Stack.Screen name="Answer Questions" component={ProfessorHome} />
+              <Stack.Screen
+                name="Answer Questions"
+                component={ProfessorHome}
+                options={{ headerLeft: null }}
+              />
               <Stack.Screen name="Respond" component={Response} />
               <Stack.Screen name="My Questions" component={MyQuestions} />
             </Stack.Navigator>
