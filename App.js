@@ -17,6 +17,7 @@ import HomeScreen from "./screens/HomeScreen";
 import ProfessorHome from "./screens/ProfessorHome";
 import Response from "./screens/Response";
 import MyQuestions from "./screens/MyQuestions";
+import OnBoarding from "./screens/Onboarding";
 
 import { UserProvider } from "./components/UserContext";
 
@@ -94,6 +95,7 @@ export default function App(props) {
               />
               <Stack.Screen name="Respond" component={Response} />
               <Stack.Screen name="My Questions" component={MyQuestions} />
+              <Stack.Screen name="Onboarding" component={OnBoarding} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

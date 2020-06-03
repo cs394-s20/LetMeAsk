@@ -41,8 +41,6 @@ export default function LinksScreen({ navigation, route }) {
 
   const [cameraOpen, setCameraOpen] = useState(false);
 
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
   const [pageNumber, setPageNumber] = useState("");
@@ -51,6 +49,9 @@ export default function LinksScreen({ navigation, route }) {
   const [submitted, setSubmitted] = useState(false);
   const [viewAnswer, setViewAnswer] = useState(false);
   const [myUser, setMyUser] = useContext(UserContext);
+  const [thumbnail, setThumbnail] = useState(
+    "https://people.cs.kuleuven.be/~adhemar.bultheel/WWW/BMS/c051c.jpg"
+  );
 
   const toGoAfterPhotoUpload = async (id) => {
     let booksRef = db.collection("Books");
@@ -173,6 +174,20 @@ export default function LinksScreen({ navigation, route }) {
               "&key=AIzaSyCw9mT4kgFm5C510t88wNFViZJXxYd9Zp0"
           );
 
+          if (bookInfo.data.items[0].volumeInfo.imageLinks) {
+            setThumbnail(
+              bookInfo.data.items[0].volumeInfo.imageLinks.smallThumbnail
+            );
+          } else {
+            setThumbnail(
+              "https://people.cs.kuleuven.be/~adhemar.bultheel/WWW/BMS/c051c.jpg"
+            );
+          }
+
+          // console.log(
+          //   bookInfo.data.items[0].volumeInfo.imageLinks.smallThumbnail
+          // );
+
           db.collection("Books")
             .doc(ISBN)
             .set({
@@ -181,6 +196,7 @@ export default function LinksScreen({ navigation, route }) {
               authors: bookInfo.data.items[0].volumeInfo.authors,
               questions: firebase.firestore.FieldValue.arrayUnion(id),
               pages: firebase.firestore.FieldValue.arrayUnion(pageNumber),
+              image: thumbnail,
             });
         }
       });
@@ -261,7 +277,6 @@ export default function LinksScreen({ navigation, route }) {
             underlineColor="#378BE5"
             selectionColor="#378BE5"
             theme={theme}
-            // keyboardType={"numeric"}
           />
         </View>
         {annCoords.length === 0 && (
@@ -316,12 +331,6 @@ export default function LinksScreen({ navigation, route }) {
             ></Image>
           </View>
         )}
-
-        {/* {annCoords.length !== 0 && (
-          <View style={{ margin: 10, borderWidth: 0.5 }}>
-            <Text>Points: {JSON.stringify(annCoords)}</Text>
-          </View>
-        )} */}
 
         {annCoords.length !== 0 && photouri.length !== 0 && (
           <View

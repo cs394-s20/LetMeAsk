@@ -18,7 +18,6 @@ import {
 } from "react-native";
 
 import Modal from "react-native-modal";
-import Onboarding from "react-native-onboarding-swiper";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -125,30 +124,11 @@ export default function QuestionAnnotation({ navigation, route }) {
       useNativeDriver: true,
     }
   );
-  const onTranslateXEvent = Animated.event(
-    [
-      {
-        nativeEvent: { translationX: translateX },
-      },
-    ],
-    {
-      useNativeDriver: true,
-    }
-  );
 
   const onPinchStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       Animated.spring(scale, {
         toValue: 1,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
-  const onTranslateXStateChange = (event) => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
-      Animated.spring(translateX, {
-        toValue: 0,
         useNativeDriver: true,
       }).start();
     }
@@ -171,57 +151,6 @@ export default function QuestionAnnotation({ navigation, route }) {
       },
     })
   ).current;
-
-  const OnboardingExp = () => {
-    return (
-      <Onboarding
-        showSkip={false}
-        onDone={() => setViewInstruct(false)}
-        pages={[
-          {
-            backgroundColor: "#2196F3",
-            image: (
-              <MaterialCommunityIcons
-                name="map-marker-question"
-                size={150}
-                color={"#e57359"}
-              />
-            ),
-            title: "View Questions",
-
-            subtitle:
-              "Click on any red-colored question mark to view questions asked by other users",
-          },
-          {
-            backgroundColor: "#e57359",
-            image: (
-              <MaterialCommunityIcons
-                name="map-marker-question"
-                size={150}
-                color={"#2196F3"}
-              />
-            ),
-            title: "Ask a Question",
-            subtitle:
-              "If you have a question that others haven't asked, drag the blue question mark to the place on the image that corresponds to your question",
-          },
-          {
-            backgroundColor: "#fff",
-            image: (
-              <MaterialCommunityIcons
-                name="gesture-tap"
-                size={150}
-                color={"#111"}
-              />
-            ),
-            title: "Before you submit...",
-            subtitle:
-              "Once you place your question mark, tap it to make sure it turns red ",
-          },
-        ]}
-      />
-    );
-  };
 
   const QuestionModal = () => {
     return (
@@ -267,9 +196,9 @@ export default function QuestionAnnotation({ navigation, route }) {
     );
   };
 
-  if (viewInstruct) {
-    return <OnboardingExp />;
-  }
+  // if (viewInstruct) {
+  //   return <OnboardingExp />;
+  // }
 
   return (
     <View
@@ -284,7 +213,7 @@ export default function QuestionAnnotation({ navigation, route }) {
     >
       <TouchableOpacity
         title="How to annotate a photo?"
-        onPress={() => setViewInstruct(true)}
+        onPress={() => navigation.navigate("Onboarding")}
       >
         <View
           style={{

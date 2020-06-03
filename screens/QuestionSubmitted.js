@@ -22,40 +22,7 @@ export default function QuestionSubmitted({ navigation, route }) {
   const { ISBN } = route.params;
   const { pageNumber } = route.params;
   console.log(question);
-  const ShowAlertWithDelay = () => {
-    setTimeout(function () {
-      Alert.alert(
-        "An expert has answered your question!",
-        "",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
-          {
-            text: "View",
-            onPress: () =>
-              navigation.navigate("Answer", {
-                navigation: navigation,
-                route: route,
-                question: question,
-                ISBN: ISBN,
-                pageNumber: pageNumber,
-              }),
-          },
-        ],
-        { cancelable: false }
-      );
-    }, 2000);
-  };
 
-  const resetAction = StackActions.reset({
-    index: 0,
-    actions: [NavigationActions.navigate({ routeName: "Answer" })],
-  });
-
-  // ShowAlertWithDelay();
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
       <View
@@ -117,9 +84,6 @@ export default function QuestionSubmitted({ navigation, route }) {
           title="Go Home"
           accessibilityLabel="Go Home"
           onPress={() => {
-            // navigation.navigate("Root", {
-            //   route: route,
-            // });
             navigation.reset({
               index: 0,
               routes: [{ name: "Root" }],
