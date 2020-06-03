@@ -46,7 +46,7 @@ export default function ProfessorHome({ navigation, route }) {
   const getAllQuestions = async () => {
     let questionsRef = db.collection("Questions");
     let query = questionsRef
-      .where("author", "==", myUser)
+      .where("author", "==", myUser.uid)
       .get()
       .then((snapshot) => {
         if (snapshot.empty) {
@@ -55,7 +55,14 @@ export default function ProfessorHome({ navigation, route }) {
         snapshot.forEach((doc) => {
           const question = doc.data().question;
           const questionID = doc.id;
-          const questionObj = { id: questionID, question: question };
+          const ISBN = doc.data().isbn;
+          const pageNumber = doc.data().page;
+          const questionObj = {
+            id: questionID,
+            question: question,
+            isbn: ISBN,
+            page: pageNumber,
+          };
           setMyQuestions((oldArray) => [...oldArray, questionObj]);
         });
       })
@@ -74,6 +81,8 @@ export default function ProfessorHome({ navigation, route }) {
             route: route,
             questionID: myQuestions[index].id,
             question: myQuestions[index].question,
+            ISBN: myQuestions[index].isbn,
+            pageNumber: myQuestions[index].page,
           })
         }
       >

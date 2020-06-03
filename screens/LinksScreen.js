@@ -64,8 +64,6 @@ export default function LinksScreen({ navigation, route }) {
     ref2
       .getDownloadURL()
       .then((url) => {
-        // console.log("url", url.status);
-        // return url;
         let query = booksRef
           .where(firebase.firestore.FieldPath.documentId(), "==", ISBN)
           .where("pages", "array-contains", pageNumber)
@@ -213,7 +211,7 @@ export default function LinksScreen({ navigation, route }) {
         .add({
           answer: "",
           question: question,
-          author: myUser,
+          author: myUser.uid,
           isbn: ISBN,
           page: pageNumber,
           image: String(ISBN) + "/" + String(pageNumber),

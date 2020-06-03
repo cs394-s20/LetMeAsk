@@ -18,13 +18,6 @@ import { signout } from "./Login";
 import { UserContext } from "../components/UserContext";
 import firebase from "../shared/firebase";
 
-//Expo Icon
-import {
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
-
 const HomeScreen = ({ username, navigation, route }) => {
   const [search, onChangeSearch] = useState("");
   const [topic, setTopic] = useState("astronomy");
@@ -114,9 +107,9 @@ const HomeScreen = ({ username, navigation, route }) => {
                 <View style={styles.textbookInfo}>
                   <Title>{book.title}</Title>
                   <Text>
-                    Authors:
+                    Authors:{" "}
                     {book.authors.map((a, i) => (
-                      <Text key={i}>{a} , </Text>
+                      <Text key={i}>{a}, </Text>
                     ))}
                   </Text>
                   {/* <Paragraph>{book.author}</Paragraph> */}

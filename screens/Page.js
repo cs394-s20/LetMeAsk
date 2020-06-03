@@ -1,6 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import * as WebBrowser from "expo-web-browser";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { CommonActions } from "@react-navigation/native";
 import {
   StyleSheet,
@@ -18,6 +16,7 @@ import {
 } from "react-native";
 
 import Modal from "react-native-modal";
+import { UserContext } from "../components/UserContext";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -25,32 +24,26 @@ import {
   PanGestureHandler,
   State,
 } from "react-native-gesture-handler";
-import ViewShot from "react-native-view-shot";
 import firebase from "../shared/firebase";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height * 0.5;
 const db = firebase.firestore();
 
-export default function QuestionAnnotation({ navigation, route }) {
-  const { setAnnCoords } = route.params;
-  const { setPhotoUri } = route.params;
-  const { photo_uri } = route.params;
-  const { ISBN } = route.params;
-  const { pageNumber } = route.params;
-  const [isZoom, setIsZoom] = useState(false);
-  const [prevQuestions, setPrevQuestions] = useState({});
-  const viewShotRef = useRef(null);
+export default function Page({ navigation, route }) {
+  const { photo_uri, ISBN, pageNumber } = route.params;
   const [myQuestion, setMyQuestion] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [viewInstruct, setViewInstruct] = useState(false);
   const [pinColor, setPinColor] = useState("#378BE5");
   const [answer, setAnswer] = useState("Pending Answer");
   const [seeAnswer, setSeeAnswer] = useState(false);
   const [questionID, setQuestionID] = useState("");
+  const [myUser, setMyUser] = useContext(UserContext);
 
   console.log(pageNumber);
   console.log(ISBN);
+  //   console.log("DISPLAY NAME" + myUser.displayName);
+  const typeOfUser = myUser.displayName;
 
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -165,23 +158,49 @@ export default function QuestionAnnotation({ navigation, route }) {
             <View style={styles.modalView}>
               <Text style={{ fontSize: 20 }}>QUESTION:</Text>
               <Text style={styles.modalText}>{myQuestion}</Text>
-
-              <TouchableHighlight
-                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <Text
-                  style={styles.textStyle}
+              {typeOfUser === "Student" && (
+                <TouchableHighlight
+                  style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                   onPress={() => {
-                    setSeeAnswer(true);
-                    showAnswer();
+                    setModalVisible(!modalVisible);
                   }}
                 >
-                  View Answer
-                </Text>
-              </TouchableHighlight>
+                  <Text
+                    style={styles.textStyle}
+                    onPress={() => {
+                      setSeeAnswer(true);
+                      showAnswer();
+                    }}
+                  >
+                    View Answer
+                  </Text>
+                </TouchableHighlight>
+              )}
+              {typeOfUser === "Expert" && (
+                <TouchableHighlight
+                  style={{ ...styles.openButton, backgroundColor: "#e57359" }}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                >
+                  <Text
+                    style={styles.textStyle}
+                    onPress={() => {
+                      navigation.navigate("Respond", {
+                        navigation: navigation,
+                        route: route,
+                        question: myQuestion,
+                        questionID: questionID,
+                      });
+
+                      setModalVisible(false);
+                      //   showAnswer();
+                    }}
+                  >
+                    Answer this!
+                  </Text>
+                </TouchableHighlight>
+              )}
             </View>
           )}
           {seeAnswer == true && (
@@ -195,10 +214,6 @@ export default function QuestionAnnotation({ navigation, route }) {
     );
   };
 
-  // if (viewInstruct) {
-  //   return <OnboardingExp />;
-  // }
-
   return (
     <View
       onTouchStart={(e) => {
@@ -210,143 +225,50 @@ export default function QuestionAnnotation({ navigation, route }) {
         }
       }}
     >
-      <TouchableOpacity
-        title="How to annotate a photo?"
-        onPress={() => navigation.navigate("Onboarding")}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 25,
-          }}
-        >
-          <MaterialCommunityIcons
-            name="information"
-            size={24}
-            color="#2196F3"
-          />
-          <Text style={{ marginLeft: 5, fontSize: 24 }}>
-            How to annotate a photo?
-          </Text>
-        </View>
-      </TouchableOpacity>
-
-      <ViewShot
+      <View
         style={{
-          width: deviceWidth,
-          height: deviceHeight + 55,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 25,
         }}
-        ref={viewShotRef}
-        options={{ format: "jpg", quality: 0.9 }}
       >
-        <Animated.View
-          style={{
-            alignItems: "center",
-            width: deviceWidth,
-            height: deviceHeight,
-          }}
+        <MaterialCommunityIcons name="information" size={24} color="#2196F3" />
+        <Text style={{ marginLeft: 5, fontSize: 24 }}>
+          Tap on question marks to view the questions asked on this page
+        </Text>
+      </View>
+
+      <Animated.View
+        style={{
+          alignItems: "center",
+          width: deviceWidth,
+          height: deviceHeight,
+        }}
+      >
+        <PinchGestureHandler
+          onGestureEvent={onPinchEvent}
+          onHandlerStateChange={onPinchStateChange}
         >
-          <PinchGestureHandler
-            onGestureEvent={onPinchEvent}
-            onHandlerStateChange={onPinchStateChange}
+          <Animated.View
+            style={{
+              width: deviceWidth,
+              height: deviceHeight + 55,
+              transform: [{ scale: scale }],
+            }}
           >
-            <Animated.View
-              style={{
-                width: deviceWidth,
-                height: deviceHeight + 55,
-                transform: [{ scale: scale }],
+            <Animated.Image
+              style={styles.photo}
+              resizeMode="stretch"
+              source={{
+                uri: photo_uri,
               }}
-            >
-              <Animated.Image
-                style={styles.photo}
-                resizeMode="stretch"
-                source={{
-                  uri: photo_uri,
-                }}
-              />
-              <Animated.View
-                style={{
-                  transform: [{ translateX: pan.x }, { translateY: pan.y }],
-                }}
-                {...panResponder.panHandlers}
-              >
-                <TouchableWithoutFeedback
-                  onPressIn={() => setPinColor("#378BE5")}
-                  onPress={() => setPinColor("#e57359")}
-                >
-                  <MaterialCommunityIcons
-                    name="map-marker-question"
-                    size={50}
-                    color={pinColor}
-                  />
-                </TouchableWithoutFeedback>
-              </Animated.View>
-            </Animated.View>
-          </PinchGestureHandler>
-        </Animated.View>
-      </ViewShot>
+            />
+          </Animated.View>
+        </PinchGestureHandler>
+      </Animated.View>
 
       <QuestionModal />
-
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <TouchableOpacity
-          onPress={async () => {
-            setAnnCoords([pan.x, pan.y]);
-            const uri = await viewShotRef.current.capture();
-            setPhotoUri(uri);
-
-            navigation.setParams({ xy: [pan.x, pan.y] });
-            navigation.navigate("Root", {
-              route: route,
-              navigation: navigation,
-              xy: [pan.x, pan.y],
-            });
-          }}
-          title="Submit Question"
-          accessibilityLabel="Submit Question"
-          style={{
-            backgroundColor: "#378BE5",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 60,
-            width: "50%",
-            borderRadius: 30,
-            marginTop: 30,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.2,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <View style={{}}>
-            <Text style={{ color: "white", fontSize: 20 }}>Ask a Question</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={{ alignItems: "left", justifyContent: "center" }}>
-        <View style={{ alignItems: "left", justifyContent: "center" }}>
-          {Object.keys(prevQuestions).map((key, index) => (
-            <View>
-              <Text
-                style={{ paddingLeft: 30, paddingBottom: 10, fontSize: 18 }}
-              >
-                {prevQuestions[key].question}
-              </Text>
-              <Text
-                style={{ paddingLeft: 30, paddingBottom: 25, fontSize: 18 }}
-              >
-                This is the answer to this question
-              </Text>
-            </View>
-          ))}
-        </View>
-      </View>
     </View>
   );
 }

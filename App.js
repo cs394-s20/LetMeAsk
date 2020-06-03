@@ -18,6 +18,8 @@ import ProfessorHome from "./screens/ProfessorHome";
 import Response from "./screens/Response";
 import MyQuestions from "./screens/MyQuestions";
 import OnBoarding from "./screens/Onboarding";
+import Page from "./screens/Page";
+import PageDirectory from "./screens/PageDirectory";
 
 import { UserProvider } from "./components/UserContext";
 
@@ -96,6 +98,8 @@ export default function App(props) {
               <Stack.Screen name="Respond" component={Response} />
               <Stack.Screen name="My Questions" component={MyQuestions} />
               <Stack.Screen name="Onboarding" component={OnBoarding} />
+              <Stack.Screen name="Page" component={Page} />
+              <Stack.Screen name="Page Directory" component={PageDirectory} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

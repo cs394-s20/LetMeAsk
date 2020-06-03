@@ -46,12 +46,12 @@ export default function Login({ navigation, route }) {
   const onAuthStateChanged = (user) => {
     if (user !== null) {
       if (user.displayName === "Student") {
-        setMyUser(user.uid);
+        setMyUser(user);
         navigation.navigate("Root");
         console.log(user);
       }
       if (user.displayName === "Expert") {
-        setMyUser(user.uid);
+        setMyUser(user);
         navigation.navigate("Answer Questions");
       }
     }
