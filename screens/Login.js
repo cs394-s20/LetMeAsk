@@ -37,6 +37,12 @@ export default function Login({ navigation, route }) {
     subscribeToAuthChanges(onAuthStateChanged);
   });
 
+  useEffect(() => {
+    if (myUser) {
+      navigation.push('Root')
+    }
+  }, [])
+
   const onAuthStateChanged = (user) => {
     if (user !== null) {
       if (user.displayName === "Student") {

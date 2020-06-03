@@ -95,7 +95,6 @@ const AuthForm = (props) => {
         buttonStyle={styles.switchButton}
         onPress={() => {
           props.switchAuthMode();
-          console.log(props.authMode.authMode);
         }}
         title={
           props.authMode.authMode === "signup" || undefined
